@@ -1,0 +1,7 @@
+digraph {
+	fontname = "UbuntuMono";
+	bgcolor = "#DCDCDC";
+
+	node0x105a00b90 [ shape = Mrecord; style = filled; fillcolor = "#FBEE21"; color = "#D3C70D"; fontcolor = "#000000";label = " { -666\n0x105a00b90 | { <left> Left\n-666\n0x0 | Parent\n-666\n0x0 | <right> Right\n-666\n0x0 } } ";  ];
+	node0x105a00b90 [ fillcolor = "#BD3458"; color = "#7b0d1e"; fontcolor = "#000000"; ];
+}

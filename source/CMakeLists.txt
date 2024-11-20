@@ -1,3 +1,6 @@
 target_sources (${PROJECT_NAME}
     PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/main.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/Differentiator.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/Differentiator_dump.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/Differentiator_errors.cpp
 )
