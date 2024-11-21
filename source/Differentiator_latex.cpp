@@ -2,7 +2,7 @@
 
 BinaryTreeStatusCode LaTexPrintTree(Tree* tree) {
 
-	FILE* tex_file = fopen(DIFF_LATEX_FILE_, "a");
+	FILE* tex_file = fopen(DIFF_LATEX_FILE_ DIFF_TEX_EXTENSION_, "a");
 	if (!tex_file)
 		TREE_ERROR_CHECK(TREE_FILE_OPEN_ERROR);
 
@@ -39,12 +39,14 @@ BinaryTreeStatusCode PrintExpressionTree(Node_t* node, FILE* tex_file) {
 				case '+':
 				case '*':
 				case '-': {
+					fprintf(tex_file, "(");
 					if (node->left) PrintExpressionTree(node->left, tex_file);
 					else TREE_ERROR_CHECK(TREE_LATEX_SYNTAX_ERROR);
 
 					fprintf(tex_file, "%c", node->data);
 					if (node->right) PrintExpressionTree(node->right, tex_file);
 					else TREE_ERROR_CHECK(TREE_LATEX_SYNTAX_ERROR);
+					fprintf(tex_file, ")");
 
 					break;
 				}
@@ -73,7 +75,7 @@ BinaryTreeStatusCode LatexDumpStart() {
 	tree_status = LaTexCreateDir();
 	TREE_ERROR_CHECK(tree_status);
 
-	FILE* tex_file = fopen(DIFF_LATEX_FILE_, "w");
+	FILE* tex_file = fopen(DIFF_LATEX_FILE_ DIFF_TEX_EXTENSION_, "w");
 	if (!tex_file)
 		TREE_ERROR_CHECK(TREE_FILE_OPEN_ERROR);
 
@@ -85,6 +87,7 @@ BinaryTreeStatusCode LatexDumpStart() {
 	TEX_PRINTF("\\date{\\today}\n");
 	TEX_PRINTF("\\begin{document}\n");
 	TEX_PRINTF("\\maketitle\n");
+	TEX_PRINTF("\\newpage\n");
 
 #undef TEX_PRINTF
 
@@ -96,7 +99,7 @@ BinaryTreeStatusCode LatexDumpStart() {
 
 BinaryTreeStatusCode LaTexDumpFinish() {
 
-	FILE* tex_file = fopen(DIFF_LATEX_FILE_, "a");
+	FILE* tex_file = fopen(DIFF_LATEX_FILE_ DIFF_TEX_EXTENSION_, "a");
 	if (!tex_file)
 		TREE_ERROR_CHECK(TREE_FILE_OPEN_ERROR);
 
@@ -108,6 +111,8 @@ BinaryTreeStatusCode LaTexDumpFinish() {
 
 	if (fclose(tex_file))
 		TREE_ERROR_CHECK(TREE_FILE_CLOSE_ERROR);
+
+	system("pdflatex " "-output-directory=" DIFF_LATEX_DIR_ " " DIFF_LATEX_FILE_ DIFF_TEX_EXTENSION_ "  -halt-on-error | grep '^!?' --color=always");
 
 	return TREE_NO_ERROR;
 }

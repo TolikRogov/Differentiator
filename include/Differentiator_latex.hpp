@@ -3,7 +3,11 @@
 #include "Differentiator.hpp"
 
 #define DIFF_LATEX_DIR_			"LaTex/"
-#define DIFF_LATEX_FILE_		DIFF_LATEX_DIR_ "laboratory_work.tex"
+#define DIFF_LATEX_FILE_		DIFF_LATEX_DIR_ "laboratory_work"
+#define DIFF_TEX_EXTENSION_ 	".tex"
+#define DIFF_PDF_EXTENSION_		".pdf"
+
+#define OPEN_LATEX_PDF() system(OPEN DIFF_LATEX_FILE_ DIFF_PDF_EXTENSION_);
 
 #define LATEX_DUMP_START() {			 \
 	tree_status = LatexDumpStart();		\
