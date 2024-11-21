@@ -3,8 +3,9 @@
 #include <stdlib.h>
 #include <dirent.h>
 #include "Differentiator_errors.hpp"
+#include "Defines.hpp"
 
-typedef double Data_t;
+typedef int Data_t;
 
 #define INIT_TREE(tree) Tree tree = {.info = {.name = #tree, .file_name = __FILE__, .line = __LINE__}};
 
@@ -43,14 +44,15 @@ enum TreeDumpCheck {
 };
 
 enum NodeType {
-	NODE_TYPE_NUM,
-	NODE_TYPE_VAR,
-	NODE_TYPE_OP
+	UNW,
+	NUM,
+	VAR,
+	OP
 };
 
 struct Node_t {
-	Data_t data;
 	NodeType type;
+	Data_t data;
 	Node_t* left;
 	Node_t* right;
 	Node_t* parent;

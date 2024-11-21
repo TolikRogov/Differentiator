@@ -25,6 +25,12 @@ static struct Colors {
 	const char* unknown_what_node					= "\"#BD3458\"";
 	const char* unknown_what_node_border			= "\"#7b0d1e\"";
 	const char* unknown_what_edge 					= "\"#3d1308\"";
+	const char* operation_node 						= "\"#FBEE21\"";
+	const char* operation_node_border				= "\"#D3C70D\"";
+	const char* number_node 						= "\"#BDEF9E\"";
+	const char* number_node_border					= "\"#99c2a2\"";
+	const char* variable_node 						= "\"#D5CFE1\"";
+	const char* variable_node_border				= "\"#8797b2\"";
 } color;
 
 static struct Labels {

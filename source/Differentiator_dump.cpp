@@ -265,13 +265,38 @@ BinaryTreeStatusCode NodeGraphDump(Node_t* cur_root, FILE* dot_file, DumpLogInfo
 
 #define DOT_PRINTF(...) fprintf(dot_file, __VA_ARGS__);
 
-	DOT_PRINTF("\tnode%p [ shape = Mrecord; style = filled; fillcolor = %s; color = %s; fontcolor = %s;"
-				"label = \" { %lg\\n%p | { <left> Left\\n%lg\\n%p | Parent\\n%lg\\n%p | <right> Right\\n%lg\\n%p } } \";  ];\n",
-				cur_root, (cur_root->parent ? color.left_node : color.root_node), (cur_root->parent ? color.left_node_border : color.root_node_border), color.node_font,
-				cur_root->data, cur_root,
-				(cur_root->left ? cur_root->left->data : NONE), cur_root->left,
-				(cur_root->parent ? cur_root->parent->data : NONE), cur_root->parent,
-				(cur_root->right ? cur_root->right->data : NONE), cur_root->right);
+	DOT_PRINTF("\tnode%p [ shape = Mrecord; style = filled; ", cur_root);
+
+#define NODE_COLOR_PRINT(...) DOT_PRINTF("fillcolor = %s; color = %s; fontcolor = %s; label = \" { ", __VA_ARGS__);
+
+	switch (cur_root->type) {
+		case UNW: { NODE_COLOR_PRINT(color.unknown_what_node, color.unknown_what_node_border, color.node_font); break; }
+		case NUM: { NODE_COLOR_PRINT(color.number_node, 	  color.number_node_border,    	  color.node_font); break; }
+		case VAR: { NODE_COLOR_PRINT(color.variable_node,  	  color.variable_node_border,  	  color.node_font); break; }
+		case OP:  { NODE_COLOR_PRINT(color.operation_node, 	  color.operation_node_border, 	  color.node_font); break; }
+		default: return TREE_INVALID_TYPE;
+	}
+
+#define SPECIFIER_LABEL_PRINT(node)											 	 \
+	do {																		\
+		if (!(node)) { DOT_PRINTF("%s\\n%p ", "NONE", node); continue; } 		\
+		switch (node->type) {													\
+			case UNW: { DOT_PRINTF("%s\\n%p ", "UNKNOWN WHAT", node); break; } 	\
+			case NUM: { DOT_PRINTF("%d\\n%p ", node->data, node); break; }		\
+			case VAR:															\
+			case OP:  { DOT_PRINTF("%c\\n%p ", node->data, node); break; }		\
+			default: return TREE_INVALID_TYPE;									\
+		}																		\
+	} while(0)
+
+	SPECIFIER_LABEL_PRINT(cur_root);
+	DOT_PRINTF("| { <left> Left\\n");
+	SPECIFIER_LABEL_PRINT(cur_root->left);
+	DOT_PRINTF("| Parent\\n");
+	SPECIFIER_LABEL_PRINT(cur_root->parent);
+	DOT_PRINTF("| <right> Right\\n");
+	SPECIFIER_LABEL_PRINT(cur_root->right);
+	DOT_PRINTF("} } \"; ];\n");
 
 	if (cur_root->left) {
 		if (!IsRootUnknownWhat(cur_root->left)) {
@@ -281,25 +306,22 @@ BinaryTreeStatusCode NodeGraphDump(Node_t* cur_root, FILE* dot_file, DumpLogInfo
 	}
 	if (cur_root->right) {
 		NodeGraphDump(cur_root->right, dot_file, dump_info);
-		if (!IsRootUnknownWhat(cur_root->right)) {
+		if (!IsRootUnknownWhat(cur_root->right))
 			DOT_PRINTF("\tnode%p:<right> -> node%p [ style = \"bold\"; color = %s; label = %s; ];\n", cur_root, cur_root->right, color.right_edge, labels.right_sub_arrow);
-			DOT_PRINTF("\tnode%p [ fillcolor = %s; color = %s; fontcolor = %s; ];\n",
-					cur_root->right, color.right_node, color.right_node_border, color.node_font);
+	}
+
+	if (dump_info->pointer)
+		DOT_PRINTF("\tnode%p [ fillcolor = %s; color = %s; fontcolor = %s; ];\n", dump_info->pointer, color.new_node, color.new_node_border, color.node_font);
+
+	if (IsRootUnknownWhat(cur_root)) {
+		if (cur_root->parent) {
+			DOT_PRINTF("\tnode%p:<right> -> node%p [ style = \"bold\"; color = %s; label = %s; ];\n",
+						cur_root->parent, cur_root, color.unknown_what_edge, labels.unknown_what_arrow);
 		}
 	}
 
-	if (dump_info->pointer) {
-		DOT_PRINTF("\tnode%p [ fillcolor = %s; color = %s; fontcolor = %s; ];\n",
-				dump_info->pointer, color.new_node, color.new_node_border, color.node_font);
-	}
-
-	if (IsRootUnknownWhat(cur_root)) {
-		DOT_PRINTF("\tnode%p [ fillcolor = %s; color = %s; fontcolor = %s; ];\n",
-					cur_root, color.unknown_what_node, color.unknown_what_node_border, color.node_font);
-		if (cur_root->parent)
-			DOT_PRINTF("\tnode%p:<right> -> node%p [ style = \"bold\"; color = %s; label = %s; ];\n", cur_root->parent, cur_root, color.unknown_what_edge, labels.unknown_what_arrow);
-	}
-
+#undef NODE_COLOR_PRINT
+#undef SPECIFIER_LABEL_PRINT
 #undef DOT_PRINTF
 
 	return TREE_NO_ERROR;
