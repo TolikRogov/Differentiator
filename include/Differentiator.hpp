@@ -86,7 +86,6 @@ BinaryTreeStatusCode BinaryTreeHtmlDumpStart();
 BinaryTreeStatusCode BinaryTreeGraphDump(Tree* tree, DumpLogInfo dump_info);
 BinaryTreeStatusCode BinaryTreeHtmlDumpFinish();
 
+BinaryTreeStatusCode IsRootUnknownWhat(Node_t* root);
 Node_t* CreateNode(NodeType type, Data_t data, Node_t* left, Node_t* right, Node_t* parent);
 Node_t* FindTreeRoot(Node_t* node);
-
-BinaryTreeStatusCode IsRootUnknownWhat(Node_t* root);
