@@ -7,7 +7,8 @@
 #define DIFF_TEX_EXTENSION_ 	".tex"
 #define DIFF_PDF_EXTENSION_		".pdf"
 
-#define OPEN_LATEX_PDF() system(OPEN DIFF_LATEX_FILE_ DIFF_PDF_EXTENSION_);
+#define OPEN_LATEX_PDF() system("(pdflatex " "-output-directory=" DIFF_LATEX_DIR_ " " DIFF_LATEX_FILE_ DIFF_TEX_EXTENSION_ "  -halt-on-error" " && " \
+								OPEN DIFF_LATEX_FILE_ DIFF_PDF_EXTENSION_ ") | grep '!.*'");
 
 #define LATEX_DUMP_START() {			 \
 	tree_status = LatexDumpStart();		\

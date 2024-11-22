@@ -18,13 +18,15 @@ BinaryTreeStatusCode LaTexPrintTree(Tree* tree) {
 
 BinaryTreeStatusCode PrintExpressionTree(Node_t* node, FILE* tex_file) {
 
+	#include "Operations"
+
 	if (!node)
 		return TREE_NO_ERROR;
 
 	switch (node->type) {
 		case OP: {
 			switch (node->data) {
-				case '/': {
+				case DIV: {
 					fprintf(tex_file, "\\frac{");
 					if (node->left) PrintExpressionTree(node->left, tex_file);
 					else TREE_ERROR_CHECK(TREE_LATEX_SYNTAX_ERROR);
@@ -36,14 +38,14 @@ BinaryTreeStatusCode PrintExpressionTree(Node_t* node, FILE* tex_file) {
 
 					break;
 				}
-				case '+':
-				case '*':
-				case '-': {
+				case ADD:
+				case MUL:
+				case SUB: {
 					fprintf(tex_file, "(");
 					if (node->left) PrintExpressionTree(node->left, tex_file);
 					else TREE_ERROR_CHECK(TREE_LATEX_SYNTAX_ERROR);
 
-					fprintf(tex_file, "%c", node->data);
+					fprintf(tex_file, "%s", operation[node->data]);
 					if (node->right) PrintExpressionTree(node->right, tex_file);
 					else TREE_ERROR_CHECK(TREE_LATEX_SYNTAX_ERROR);
 					fprintf(tex_file, ")");
@@ -112,7 +114,7 @@ BinaryTreeStatusCode LaTexDumpFinish() {
 	if (fclose(tex_file))
 		TREE_ERROR_CHECK(TREE_FILE_CLOSE_ERROR);
 
-	system("pdflatex " "-output-directory=" DIFF_LATEX_DIR_ " " DIFF_LATEX_FILE_ DIFF_TEX_EXTENSION_ "  -halt-on-error | grep '^!?' --color=always");
+	system("pdflatex " "-output-directory=" DIFF_LATEX_DIR_ " " DIFF_LATEX_FILE_ DIFF_TEX_EXTENSION_ "  -halt-on-error | grep '!.*'");
 
 	return TREE_NO_ERROR;
 }

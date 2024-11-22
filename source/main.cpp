@@ -11,7 +11,6 @@ int main() {
 	TREE_CTOR(&tree);
 
 	*tree.root = {OP, DIV, CreateNode(OP, ADD, _NUM(20), _NUM(50), tree.root), CreateNode(OP, SUB, _NUM(12), _VAR('x'), tree.root)};
-	//*tree.root = {OP, MUL, CreateNode(OP, ADD, _NUM(30), _NUM(50), tree.root), CreateNode(OP, SUB, _NUM(12), _VAR('x'), tree.root)};
 
 	LATEX_PRINT_TREE(&tree);
 

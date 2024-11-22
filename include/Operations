@@ -1,0 +1,9 @@
+static const char* operation[AMOUNT_OF_OPERATIONS] = {};
+operation[ADD] = "+";
+operation[SUB] = "-";
+operation[MUL] = "*";
+operation[DIV] = "/";
+operation[SIN] = "sin";
+operation[COS] = "cos";
+operation[SQRT] = "sqrt";
+operation[POW] = "pow";

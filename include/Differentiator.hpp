@@ -2,6 +2,7 @@
 
 #include <stdlib.h>
 #include <dirent.h>
+#include <unistd.h>
 #include "Differentiator_errors.hpp"
 #include "Defines.hpp"
 

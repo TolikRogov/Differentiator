@@ -13,12 +13,6 @@
 
 #define IMG_EXTENSION 	"svg"
 
-#ifdef __APPLE__
-	#define OPEN	"open "
-#else
-	#define OPEN	"xdg-open "
-#endif
-
 #define OPEN_HTML_FILE system(OPEN HTML_FILE_);
 
 #ifdef UNKNOWN_WHAT_IN_TREE

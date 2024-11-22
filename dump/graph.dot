@@ -2,17 +2,17 @@ digraph {
 	fontname = "UbuntuMono";
 	bgcolor = "#DCDCDC";
 
-	node0x107801e70 [ shape = Mrecord; style = filled; fillcolor = "#FBEE21"; color = "#D3C70D"; fontcolor = "#000000"; label = " { /\n0x107801e70 | { <left> Left\n+\n0x107801de0 | Parent\nNONE\n0x0 | <right> Right\n-\n0x107801d50 } } "; ];
-	node0x107801e70:<left> -> node0x107801de0 [ style = "bold"; color = "#187AE8"; label = ""; ];
-	node0x107801de0 [ shape = Mrecord; style = filled; fillcolor = "#FBEE21"; color = "#D3C70D"; fontcolor = "#000000"; label = " { +\n0x107801de0 | { <left> Left\n20\n0x107801e40 | Parent\n/\n0x107801e70 | <right> Right\n50\n0x107801e10 } } "; ];
-	node0x107801de0:<left> -> node0x107801e40 [ style = "bold"; color = "#187AE8"; label = ""; ];
-	node0x107801e40 [ shape = Mrecord; style = filled; fillcolor = "#BDEF9E"; color = "#99c2a2"; fontcolor = "#000000"; label = " { 20\n0x107801e40 | { <left> Left\nNONE\n0x0 | Parent\n+\n0x107801de0 | <right> Right\nNONE\n0x0 } } "; ];
-	node0x107801e10 [ shape = Mrecord; style = filled; fillcolor = "#BDEF9E"; color = "#99c2a2"; fontcolor = "#000000"; label = " { 50\n0x107801e10 | { <left> Left\nNONE\n0x0 | Parent\n+\n0x107801de0 | <right> Right\nNONE\n0x0 } } "; ];
-	node0x107801de0:<right> -> node0x107801e10 [ style = "bold"; color = "#48E818"; label = ""; ];
-	node0x107801d50 [ shape = Mrecord; style = filled; fillcolor = "#FBEE21"; color = "#D3C70D"; fontcolor = "#000000"; label = " { -\n0x107801d50 | { <left> Left\n12\n0x107801db0 | Parent\n/\n0x107801e70 | <right> Right\nx\n0x107801d80 } } "; ];
-	node0x107801d50:<left> -> node0x107801db0 [ style = "bold"; color = "#187AE8"; label = ""; ];
-	node0x107801db0 [ shape = Mrecord; style = filled; fillcolor = "#BDEF9E"; color = "#99c2a2"; fontcolor = "#000000"; label = " { 12\n0x107801db0 | { <left> Left\nNONE\n0x0 | Parent\n-\n0x107801d50 | <right> Right\nNONE\n0x0 } } "; ];
-	node0x107801d80 [ shape = Mrecord; style = filled; fillcolor = "#D5CFE1"; color = "#8797b2"; fontcolor = "#000000"; label = " { x\n0x107801d80 | { <left> Left\nNONE\n0x0 | Parent\n-\n0x107801d50 | <right> Right\nNONE\n0x0 } } "; ];
-	node0x107801d50:<right> -> node0x107801d80 [ style = "bold"; color = "#48E818"; label = ""; ];
-	node0x107801e70:<right> -> node0x107801d50 [ style = "bold"; color = "#48E818"; label = ""; ];
+	node0x102e01e70 [ shape = Mrecord; style = filled; fillcolor = "#FBEE21"; color = "#D3C70D"; fontcolor = "#000000"; label = " { /\n0x102e01e70 | { <left> Left\n+\n0x102e01de0 | Parent\nNONE\n0x0 | <right> Right\n-\n0x102e01d50 } } "; ];
+	node0x102e01e70:<left> -> node0x102e01de0 [ style = "bold"; color = "#187AE8"; label = ""; ];
+	node0x102e01de0 [ shape = Mrecord; style = filled; fillcolor = "#FBEE21"; color = "#D3C70D"; fontcolor = "#000000"; label = " { +\n0x102e01de0 | { <left> Left\n20\n0x102e01e40 | Parent\n/\n0x102e01e70 | <right> Right\n50\n0x102e01e10 } } "; ];
+	node0x102e01de0:<left> -> node0x102e01e40 [ style = "bold"; color = "#187AE8"; label = ""; ];
+	node0x102e01e40 [ shape = Mrecord; style = filled; fillcolor = "#BDEF9E"; color = "#99c2a2"; fontcolor = "#000000"; label = " { 20\n0x102e01e40 | { <left> Left\nNONE\n0x0 | Parent\n+\n0x102e01de0 | <right> Right\nNONE\n0x0 } } "; ];
+	node0x102e01e10 [ shape = Mrecord; style = filled; fillcolor = "#BDEF9E"; color = "#99c2a2"; fontcolor = "#000000"; label = " { 50\n0x102e01e10 | { <left> Left\nNONE\n0x0 | Parent\n+\n0x102e01de0 | <right> Right\nNONE\n0x0 } } "; ];
+	node0x102e01de0:<right> -> node0x102e01e10 [ style = "bold"; color = "#48E818"; label = ""; ];
+	node0x102e01d50 [ shape = Mrecord; style = filled; fillcolor = "#FBEE21"; color = "#D3C70D"; fontcolor = "#000000"; label = " { -\n0x102e01d50 | { <left> Left\n12\n0x102e01db0 | Parent\n/\n0x102e01e70 | <right> Right\nx\n0x102e01d80 } } "; ];
+	node0x102e01d50:<left> -> node0x102e01db0 [ style = "bold"; color = "#187AE8"; label = ""; ];
+	node0x102e01db0 [ shape = Mrecord; style = filled; fillcolor = "#BDEF9E"; color = "#99c2a2"; fontcolor = "#000000"; label = " { 12\n0x102e01db0 | { <left> Left\nNONE\n0x0 | Parent\n-\n0x102e01d50 | <right> Right\nNONE\n0x0 } } "; ];
+	node0x102e01d80 [ shape = Mrecord; style = filled; fillcolor = "#D5CFE1"; color = "#8797b2"; fontcolor = "#000000"; label = " { x\n0x102e01d80 | { <left> Left\nNONE\n0x0 | Parent\n-\n0x102e01d50 | <right> Right\nNONE\n0x0 } } "; ];
+	node0x102e01d50:<right> -> node0x102e01d80 [ style = "bold"; color = "#48E818"; label = ""; ];
+	node0x102e01e70:<right> -> node0x102e01d50 [ style = "bold"; color = "#48E818"; label = ""; ];
 }

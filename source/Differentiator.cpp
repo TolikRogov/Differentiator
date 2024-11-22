@@ -47,7 +47,7 @@ BinaryTreeStatusCode IsRootUnknownWhat(Node_t* root) {
 
 	if (root->left == NULL && \
 		root->right == NULL && \
-		root->data == UNKNOWN_WHAT)
+		DiffCompareDouble(root->data, UNKNOWN_WHAT))
 		return TREE_ROOT_IS_UNKNOWN;
 
 	return TREE_NO_ERROR;

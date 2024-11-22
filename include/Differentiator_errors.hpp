@@ -9,6 +9,12 @@
 #define BLUE(str)		"\033[34;1m" str "\033[0m"
 #define TEAL(str)		"\033[36;1m" str "\033[0m"
 
+#ifdef __APPLE__
+	#define OPEN	"open "
+#else
+	#define OPEN	"xdg-open "
+#endif
+
 #define TREE_ERROR_CHECK(status) {																					 \
 	if (status != TREE_NO_ERROR) {																					\
 		fprintf(stderr, "\n\n" RED("Error (code %d): %s, ") YELLOW("File: %s, Function: %s, Line: %d\n\n"),   		\
