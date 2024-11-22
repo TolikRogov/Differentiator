@@ -3,10 +3,12 @@
 #include <stdlib.h>
 #include <dirent.h>
 #include <unistd.h>
+#include <sys/stat.h>
 #include "Differentiator_errors.hpp"
 #include "Defines.hpp"
 
-typedef int Data_t;
+typedef double Number_t;
+typedef int Variable_t;
 
 #define INIT_TREE(tree) Tree tree = {.info = {.name = #tree, .file_name = __FILE__, .line = __LINE__}};
 
@@ -51,9 +53,15 @@ enum NodeType {
 	OP
 };
 
+union Data_t {
+	Number_t val_num;
+	OpNum val_op;
+	Variable_t val_var;
+};
+
 struct Node_t {
 	NodeType type;
-	Data_t data;
+	union Data_t data;
 	Node_t* left;
 	Node_t* right;
 	Node_t* parent;
@@ -77,8 +85,8 @@ struct Tree {
 	TreeLogInfo info;
 };
 
-const Data_t UNKNOWN_WHAT = -666;
-const Data_t NONE 		  = -666;
+const Number_t UNKNOWN_WHAT = -666;
+const Number_t NONE 		  = -666;
 
 BinaryTreeStatusCode TreeCtor(Tree* tree);
 BinaryTreeStatusCode TreeDtor(Node_t* node);
@@ -90,3 +98,6 @@ BinaryTreeStatusCode BinaryTreeHtmlDumpFinish();
 BinaryTreeStatusCode IsRootUnknownWhat(Node_t* root);
 Node_t* CreateNode(NodeType type, Data_t data, Node_t* left, Node_t* right, Node_t* parent);
 Node_t* FindTreeRoot(Node_t* node);
+
+const char* OpNameTableGetMathSymbol(OpNum op_number);
+const char* OpNameTableGetTexSymbol(OpNum op_number);

@@ -279,16 +279,16 @@ BinaryTreeStatusCode NodeGraphDump(Node_t* cur_root, FILE* dot_file, DumpLogInfo
 		default: return TREE_INVALID_TYPE;
 	}
 
-#define SPECIFIER_LABEL_PRINT(node)											 	 			 \
-	do {																					\
-		if (!(node)) { DOT_PRINTF("%s\\n%p ", "NONE", node); continue; } 					\
-		switch (node->type) {																\
-			case UNW: { DOT_PRINTF("%s\\n%p ", "UNKNOWN WHAT", node); break; } 				\
-			case NUM: { DOT_PRINTF("%d\\n%p ", node->data, node); break; }					\
-			case VAR: { DOT_PRINTF("%c\\n%p ", node->data, node); break; }					\
-			case OP:  { DOT_PRINTF("%s\\n%p ", operation[node->data], node); break; }		\
-			default: return TREE_INVALID_TYPE;												\
-		}																					\
+#define SPECIFIER_LABEL_PRINT(node)											 	 			 				 \
+	do {																									\
+		if (!(node)) { DOT_PRINTF("%s\\n%p ", "NONE", node); continue; } 									\
+		switch (node->type) {																				\
+			case UNW: { DOT_PRINTF("%s\\n%p ", "UNKNOWN WHAT", node); break; } 								\
+			case NUM: { DOT_PRINTF("%lg\\n%p ", node->data.val_num, node); break; }							\
+			case VAR: { DOT_PRINTF("%c\\n%p ", node->data.val_var, node); break; }							\
+			case OP:  { DOT_PRINTF("%s\\n%p ", OpNameTableGetMathSymbol(node->data.val_op), node); break; } \
+			default: return TREE_INVALID_TYPE;																\
+		}																									\
 	} while(0)
 
 	SPECIFIER_LABEL_PRINT(cur_root);

@@ -5,6 +5,7 @@ const char* BinaryTreeErrorsMessenger(BinaryTreeStatusCode status) {
 		case TREE_NO_ERROR:					return "TREE ERROR - NO ERROR";
 		case TREE_ALLOC_ERROR:				return "TREE ERROR - MEMORY ALLOCATION ERROR";
 		case TREE_NULL_POINTER:				return "TREE ERROR - POINTER IS NULL";
+		case TREE_READ_ERROR:				return "TREE ERROR - ERROR READ FROM FILE";
 
 		case TREE_INVALID_TYPE:				return "TREE ERROR - INVALID TYPE OF INPUT ELEMENT";
 		case TREE_BASE_SYNTAX_ERROR:		return "TREE ERROR - INVALID SYNTAX IN DATA BASE";
