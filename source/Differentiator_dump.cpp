@@ -192,7 +192,7 @@ BinaryTreeStatusCode BinaryTreeBashScript(Tree* tree, DumpLogInfo* dump_info) {
 	BASH_PRINTF("#!/bin/bash\n");
 
 	BASH_PRINTF("script_num=%zu;\\\n", script_num);
-	BASH_PRINTF("dot " DOT_FILE_ " -T" IMG_EXTENSION " -o " DUMP_DIR_ IMG_FILE_ "$script_num" "." IMG_EXTENSION ";\n");
+	BASH_PRINTF("dot " DOT_FILE_ " -T" IMG_EXTENSION " -o " DUMP_DIR_ IMG_FILE_ "$script_num" "." IMG_EXTENSION " || read huishe;\n");
 
 #undef BASH_PRINTF
 
@@ -285,7 +285,7 @@ BinaryTreeStatusCode NodeGraphDump(Node_t* cur_root, FILE* dot_file, DumpLogInfo
 		switch (node->type) {																				\
 			case UNW: { DOT_PRINTF("%s\\n%p ", "UNKNOWN WHAT", node); break; } 								\
 			case NUM: { DOT_PRINTF("%lg\\n%p ", node->data.val_num, node); break; }							\
-			case VAR: { DOT_PRINTF("%c\\n%p ", node->data.val_var, node); break; }							\
+			case VAR: { DOT_PRINTF("%s\\n%p ", VarNameTableGetSymbol(node->data.val_var), node); break; }	\
 			case OP:  { DOT_PRINTF("%s\\n%p ", OpNameTableGetMathSymbol(node->data.val_op), node); break; } \
 			default: return TREE_INVALID_TYPE;																\
 		}																									\

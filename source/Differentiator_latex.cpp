@@ -16,20 +16,6 @@ BinaryTreeStatusCode LaTexPrintTree(Tree* tree) {
 	return TREE_NO_ERROR;
 }
 
-const char* OpNameTableGetTexSymbol(OpNum op_number) {
-
-	#include "Operations"
-
-	return	op_name_table[op_number].tex_symbol;
-}
-
-const char* OpNameTableGetMathSymbol(OpNum op_number) {
-
-	#include "Operations"
-
-	return	op_name_table[op_number].math_symbol;
-}
-
 BinaryTreeStatusCode PrintExpressionTree(Node_t* node, FILE* tex_file) {
 
 	#include "Operations"
@@ -78,6 +64,8 @@ BinaryTreeStatusCode PrintExpressionTree(Node_t* node, FILE* tex_file) {
 
 					break;
 				}
+				case INVALID_OPERATION:
+				default: TREE_ERROR_CHECK(TREE_EXPRESSION_SYNTAX_ERROR);
 			}
 			break;
 		}

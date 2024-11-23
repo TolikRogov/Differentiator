@@ -12,6 +12,7 @@
 #define _SQRT(left) 		CreateNode(OP,  {.val_op = SQRT}, left, NULL, NULL)
 
 enum OpNum {
+	INVALID_OPERATION = -1,
 	ADD,
 	SUB,
 	MUL,
@@ -21,4 +22,17 @@ enum OpNum {
 	SQRT,
 	POW,
 	AMOUNT_OF_OPERATIONS
+};
+
+enum VarNum {
+	INVALID_VARIABLE = -1,
+	VAR_X,
+	VAR_Y,
+	VAR_Z,
+	AMOUNT_OF_VARIABLES
+};
+
+enum OpType {
+	UNARY,
+	BINARY
 };

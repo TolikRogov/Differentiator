@@ -5,5 +5,5 @@
 #define DIFF_DATA_DIR_			"data/"
 #define DIFF_EXPRESSION_FILE_	DIFF_DATA_DIR_ "expression.txt"
 
-BinaryTreeStatusCode ReadFromFileToBuffer();
-BinaryTreeStatusCode RecursionReadExpression(char** buffer);
+BinaryTreeStatusCode InfixReader(Tree* tree);
+BinaryTreeStatusCode RecursionReadExpression(char* buffer, Node_t* node, int prev_node_depth);

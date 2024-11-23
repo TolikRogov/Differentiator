@@ -3,12 +3,12 @@
 #include <stdlib.h>
 #include <dirent.h>
 #include <unistd.h>
+#include <string.h>
 #include <sys/stat.h>
 #include "Differentiator_errors.hpp"
 #include "Defines.hpp"
 
 typedef double Number_t;
-typedef int Variable_t;
 
 #define INIT_TREE(tree) Tree tree = {.info = {.name = #tree, .file_name = __FILE__, .line = __LINE__}};
 
@@ -56,7 +56,7 @@ enum NodeType {
 union Data_t {
 	Number_t val_num;
 	OpNum val_op;
-	Variable_t val_var;
+	VarNum val_var;
 };
 
 struct Node_t {
@@ -87,6 +87,7 @@ struct Tree {
 
 const Number_t UNKNOWN_WHAT = -666;
 const Number_t NONE 		  = -666;
+const size_t MAX_OPERATION_NAME_SIZE = 6;
 
 BinaryTreeStatusCode TreeCtor(Tree* tree);
 BinaryTreeStatusCode TreeDtor(Node_t* node);
@@ -98,6 +99,12 @@ BinaryTreeStatusCode BinaryTreeHtmlDumpFinish();
 BinaryTreeStatusCode IsRootUnknownWhat(Node_t* root);
 Node_t* CreateNode(NodeType type, Data_t data, Node_t* left, Node_t* right, Node_t* parent);
 Node_t* FindTreeRoot(Node_t* node);
+BinaryTreeStatusCode NodePrintData(Node_t* node);
+BinaryTreeStatusCode ReplaceUnknownWhat(Node_t* node, Data_t data, NodeType type);
 
 const char* OpNameTableGetMathSymbol(OpNum op_number);
 const char* OpNameTableGetTexSymbol(OpNum op_number);
+OpNum OpNameTableFindOperation(const char* string);
+
+const char* VarNameTableGetSymbol(VarNum number);
+VarNum VarNameTableFindVariable(const char* string);

@@ -2,14 +2,15 @@ struct Operation {
 	OpNum num;
 	const char* math_symbol;
 	const char* tex_symbol;
+	OpType type;
 };
 
 static Operation op_name_table[AMOUNT_OF_OPERATIONS] = {};
-op_name_table[ADD] 	= 	{ .num = ADD, 	.math_symbol = "+", 	.tex_symbol = "+" 		};
-op_name_table[SUB] 	= 	{ .num = SUB, 	.math_symbol = "-", 	.tex_symbol = "-" 		};
-op_name_table[MUL] 	= 	{ .num = MUL, 	.math_symbol = "*", 	.tex_symbol = "*" 		};
-op_name_table[DIV] 	= 	{ .num = DIV, 	.math_symbol = "/", 	.tex_symbol = "frac" 	};
-op_name_table[SIN] 	= 	{ .num = SIN, 	.math_symbol = "sin", 	.tex_symbol = "sin" 	};
-op_name_table[COS] 	= 	{ .num = COS, 	.math_symbol = "cos", 	.tex_symbol = "cos" 	};
-op_name_table[SQRT] = 	{ .num = SQRT, 	.math_symbol = "sqrt", 	.tex_symbol = "sqrt[]" 	};
-op_name_table[POW] 	= 	{ .num = POW, 	.math_symbol = "^", 	.tex_symbol = "^" 		};
+op_name_table[ADD] 	= 	{ .num = ADD, 	.math_symbol = "+", 	.tex_symbol = "+", 		.type = BINARY	};
+op_name_table[SUB] 	= 	{ .num = SUB, 	.math_symbol = "-", 	.tex_symbol = "-",		.type = BINARY	};
+op_name_table[MUL] 	= 	{ .num = MUL, 	.math_symbol = "*", 	.tex_symbol = "*", 		.type = BINARY	};
+op_name_table[DIV] 	= 	{ .num = DIV, 	.math_symbol = "/", 	.tex_symbol = "frac", 	.type = BINARY	};
+op_name_table[SIN] 	= 	{ .num = SIN, 	.math_symbol = "sin", 	.tex_symbol = "sin", 	.type = UNARY	};
+op_name_table[COS] 	= 	{ .num = COS, 	.math_symbol = "cos", 	.tex_symbol = "cos", 	.type = UNARY	};
+op_name_table[SQRT] = 	{ .num = SQRT, 	.math_symbol = "sqrt", 	.tex_symbol = "sqrt[]",	.type = UNARY	};
+op_name_table[POW] 	= 	{ .num = POW, 	.math_symbol = "^", 	.tex_symbol = "^", 		.type = BINARY	};
