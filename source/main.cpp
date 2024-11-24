@@ -17,6 +17,9 @@ int main() {
 
 	Calculator(&tree);
 
+	INIT_TREE(diff_tree);
+	EXPRESSION_DIFFERENTIATION(&tree, &diff_tree);
+
 	TREE_DTOR(&tree);
 
 	LATEX_DUMP_FINISH();

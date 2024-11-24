@@ -37,10 +37,20 @@ typedef double Number_t;
 }
 
 #define TREE_DTOR(tree) {						 	 	 \
-	BINARY_TREE_GRAPH_DUMP(tree, "TreeDtor", NULL); 	\
 	TREE_HTML_DUMP_FINISH();							\
 	tree_status = TreeDtor((tree)->root);				\
 	TREE_ERROR_CHECK(tree_status);						\
+}
+
+#define COPY_SUBTREE(subtree_root, destination) {								 \
+	(destination)->root = doCopySubtree(subtree_root);							\
+	BINARY_TREE_GRAPH_DUMP(destination, "CopySubtree", (destination)->root);	\
+}
+
+#define EXPRESSION_DIFFERENTIATION(expression_tree, diff_tree) {						 \
+	(diff_tree)->root = Differentiation((expression_tree)->root);						\
+	BINARY_TREE_GRAPH_DUMP(diff_tree, "ExpressionDifferentiation", (diff_tree)->root);	\
+	LATEX_PRINT_TREE(diff_tree);														\
 }
 
 enum TreeDumpCheck {
@@ -116,3 +126,7 @@ BinaryTreeStatusCode ResetVariables();
 
 BinaryTreeStatusCode Calculator(Tree* tree);
 Number_t Eval(Node_t* node);
+
+Node_t* doCopySubtree(Node_t* node);
+Node_t* Differentiation(Node_t* node);
+size_t NumberOfVariablesInSubtree(Node_t* node);

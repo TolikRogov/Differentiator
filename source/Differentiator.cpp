@@ -152,7 +152,7 @@ BinaryTreeStatusCode Calculator(Tree* tree) {
 	printf(BLUE("Set using variables values:")"\n");
 	for (size_t i = 0; i < AMOUNT_OF_VARIABLES; i++) {
 		if (var_name_table[i].status == VAR_STATUS_USING) {
-			printf("\t" YELLOW("%s:")" ", var_name_table[i].symbol);
+			printf("\t" YELLOW("%s")" = ", var_name_table[i].symbol);
 			scanf("%lg", &var_name_table[i].value);
 		}
 	}
@@ -186,5 +186,67 @@ Number_t Eval(Node_t* node) {
 		}
 		case UNW:
 		default:  	TREE_ERROR_CHECK(TREE_INVALID_TYPE);
+	}
+}
+
+Node_t* doCopySubtree(Node_t* node) {
+
+	if (!node)
+		return NULL;
+
+	switch (node->type) {
+		case NUM: return _NUM(node->data.val_num);
+		case VAR: return _VAR(node->data.val_var);
+		case OP: {
+			switch (node->data.val_op) {
+				case ADD: 	return _ADD(cL, cR);
+				case SUB: 	return _SUB(cL, cR);
+				case MUL: 	return _MUL(cL, cR);
+				case DIV: 	return _DIV(cL, cR);
+				case POW: 	return _POW(cL, cR);
+				case SIN: 	return _SIN(cL);
+				case COS: 	return _COS(cL);
+				case SQRT:	return _SQRT(cL);
+
+				case AMOUNT_OF_OPERATIONS:
+				case INVALID_OPERATION:
+				default: return NULL;
+			}
+		}
+		case UNW:
+		default: return NULL;
+	}
+}
+
+size_t NumberOfVariablesInSubtree(Node_t* node) {
+	return (node->type == VAR ? 1 : 0) + (node->left ? NumberOfVariablesInSubtree(node->left) : 0) + (node->right ? NumberOfVariablesInSubtree(node->right) : 0);
+}
+
+Node_t* Differentiation(Node_t* node) {
+
+	if (!node)
+		return NULL;
+
+	switch (node->type) {
+		case NUM: return _NUM(0);
+		case VAR: return _NUM(1);
+		case OP: {
+			switch (node->data.val_op) {
+				case ADD: 	return _ADD(dL, dR);
+				case SUB: 	return _SUB(dL, dR);
+				case MUL: 	return _ADD(_MUL(dL, cR), _MUL(cL, dR));
+				case DIV: 	return _DIV(_SUB(_MUL(dL, cR), _MUL(cL, dR)), _POW(cR, _NUM(2)));
+				case POW: 	return _MUL(_MUL(cR, _POW(cL, _SUB(cR, _NUM(1)))), dL);
+				case SIN: 	return _MUL(_COS(cL), dL);
+				case COS: 	return _MUL(_MUL(_SIN(cL), _NUM(-1)), dL);
+				case SQRT:	return _MUL(_DIV(_NUM(1), _MUL(_NUM(2), _SQRT(cL))), dL);
+
+				case AMOUNT_OF_OPERATIONS:
+				case INVALID_OPERATION:
+				default: return NULL;
+			}
+		}
+		case UNW:
+		default: return NULL;
 	}
 }
