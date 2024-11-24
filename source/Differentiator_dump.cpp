@@ -316,8 +316,12 @@ BinaryTreeStatusCode NodeGraphDump(Node_t* cur_root, FILE* dot_file, DumpLogInfo
 		DOT_PRINTF("\tnode%p [ fillcolor = %s; color = %s; fontcolor = %s; ];\n", dump_info->pointer, color.new_node, color.new_node_border, color.node_font);
 
 	if (IsRootUnknownWhat(cur_root)) {
-		if (cur_root->parent) {
+		if (cur_root->parent && cur_root->parent->right == cur_root) {
 			DOT_PRINTF("\tnode%p:<right> -> node%p [ style = \"bold\"; color = %s; label = %s; ];\n",
+						cur_root->parent, cur_root, color.unknown_what_edge, labels.unknown_what_arrow);
+		}
+		else if (cur_root->parent && cur_root->parent->left == cur_root){
+			DOT_PRINTF("\tnode%p:<left> -> node%p [ style = \"bold\"; color = %s; label = %s; ];\n",
 						cur_root->parent, cur_root, color.unknown_what_edge, labels.unknown_what_arrow);
 		}
 	}

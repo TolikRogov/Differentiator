@@ -28,14 +28,14 @@ BinaryTreeStatusCode PrintExpressionTree(Node_t* node, FILE* tex_file) {
 			switch (node->data.val_op) {
 				case AMOUNT_OF_OPERATIONS: break;
 				case DIV: {
-					fprintf(tex_file, "\\%s{", OpNameTableGetTexSymbol(node->data.val_op));
+					fprintf(tex_file, "(\\%s{", OpNameTableGetTexSymbol(node->data.val_op));
 					if (node->left) PrintExpressionTree(node->left, tex_file);
 					else TREE_ERROR_CHECK(TREE_LATEX_SYNTAX_ERROR);
 
 					fprintf(tex_file, "}{");
 					if (node->right) PrintExpressionTree(node->right, tex_file);
 					else TREE_ERROR_CHECK(TREE_LATEX_SYNTAX_ERROR);
-					fprintf(tex_file, "}");
+					fprintf(tex_file, "})");
 
 					break;
 				}
@@ -43,24 +43,24 @@ BinaryTreeStatusCode PrintExpressionTree(Node_t* node, FILE* tex_file) {
 				case ADD:
 				case MUL:
 				case SUB: {
-					fprintf(tex_file, "(");
+					fprintf(tex_file, "({");
 					if (node->left) PrintExpressionTree(node->left, tex_file);
 					else TREE_ERROR_CHECK(TREE_LATEX_SYNTAX_ERROR);
 
-					fprintf(tex_file, "%s", OpNameTableGetTexSymbol(node->data.val_op));
+					fprintf(tex_file, "}%s{", OpNameTableGetTexSymbol(node->data.val_op));
 					if (node->right) PrintExpressionTree(node->right, tex_file);
 					else TREE_ERROR_CHECK(TREE_LATEX_SYNTAX_ERROR);
-					fprintf(tex_file, ")");
+					fprintf(tex_file, "})");
 
 					break;
 				}
 				case COS:
 				case SQRT:
 				case SIN: {
-					fprintf(tex_file, "\\%s{", OpNameTableGetTexSymbol(node->data.val_op));
+					fprintf(tex_file, "(\\%s{", OpNameTableGetTexSymbol(node->data.val_op));
 					if (node->left) PrintExpressionTree(node->left, tex_file);
 					else TREE_ERROR_CHECK(TREE_LATEX_SYNTAX_ERROR);
-					fprintf(tex_file, "}");
+					fprintf(tex_file, "})");
 
 					break;
 				}
@@ -70,11 +70,11 @@ BinaryTreeStatusCode PrintExpressionTree(Node_t* node, FILE* tex_file) {
 			break;
 		}
 		case NUM: {
-			fprintf(tex_file, "%lg", node->data.val_num);
+			fprintf(tex_file, "(%lg)", node->data.val_num);
 			break;
 		}
 		case VAR: {
-			fprintf(tex_file, "%c", node->data.val_var);
+			fprintf(tex_file, "(%s)", VarNameTableGetSymbol(node->data.val_var));
 			break;
 		}
 		case UNW: return TREE_NO_ERROR;

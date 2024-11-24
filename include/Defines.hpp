@@ -31,8 +31,3 @@ enum VarNum {
 	VAR_Z,
 	AMOUNT_OF_VARIABLES
 };
-
-enum OpType {
-	UNARY,
-	BINARY
-};
