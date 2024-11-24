@@ -10,24 +10,3 @@
 #define _SIN(left) 			CreateNode(OP,  {.val_op = SIN}, left, NULL, NULL)
 #define _COS(left) 			CreateNode(OP,  {.val_op = COS}, left, NULL, NULL)
 #define _SQRT(left) 		CreateNode(OP,  {.val_op = SQRT}, left, NULL, NULL)
-
-enum OpNum {
-	INVALID_OPERATION = -1,
-	ADD,
-	SUB,
-	MUL,
-	DIV,
-	SIN,
-	COS,
-	SQRT,
-	POW,
-	AMOUNT_OF_OPERATIONS
-};
-
-enum VarNum {
-	INVALID_VARIABLE = -1,
-	VAR_X,
-	VAR_Y,
-	VAR_Z,
-	AMOUNT_OF_VARIABLES
-};

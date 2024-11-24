@@ -73,9 +73,6 @@ Node_t* FindTreeRoot(Node_t* node) {
 
 BinaryTreeStatusCode NodePrintData(Node_t* node) {
 
-	#include "Operations"
-	#include "Variables"
-
 	if (!node)
 		TREE_ERROR_CHECK(TREE_NULL_POINTER);
 
@@ -104,22 +101,14 @@ BinaryTreeStatusCode ReplaceUnknownWhat(Node_t* node, Data_t data, NodeType type
 }
 
 const char* OpNameTableGetTexSymbol(OpNum op_number) {
-
-	#include "Operations"
-
 	return	op_name_table[op_number].tex_symbol;
 }
 
 const char* OpNameTableGetMathSymbol(OpNum op_number) {
-
-	#include "Operations"
-
 	return	op_name_table[op_number].math_symbol;
 }
 
 OpNum OpNameTableFindOperation(const char* string) {
-
-	#include "Operations"
 
 	for (size_t i = 0; i < AMOUNT_OF_OPERATIONS; i++) {
 		if (StrCmp(string, op_name_table[i].math_symbol) == 0)
@@ -131,8 +120,6 @@ OpNum OpNameTableFindOperation(const char* string) {
 
 VarNum VarNameTableFindVariable(const char* string) {
 
-	#include "Variables"
-
 	for (size_t i = 0; i < AMOUNT_OF_VARIABLES; i++) {
 		if (StrCmp(string, var_name_table[i].symbol) == 0)
 			return var_name_table[i].num;
@@ -142,8 +129,62 @@ VarNum VarNameTableFindVariable(const char* string) {
 }
 
 const char* VarNameTableGetSymbol(VarNum number) {
-
-	#include "Variables"
-
 	return var_name_table[number].symbol;
+}
+
+Number_t VarNameTableGetValue(VarNum number) {
+	return var_name_table[number].value;
+}
+
+BinaryTreeStatusCode ResetVariables() {
+
+	for (size_t i = 0; i < AMOUNT_OF_VARIABLES; i++) {
+		var_name_table[i].value = 0;
+		var_name_table[i].status = VAR_STATUS_DISUSING;
+	}
+
+	return TREE_NO_ERROR;
+}
+
+BinaryTreeStatusCode Calculator(Tree* tree) {
+
+	printf("-------------------------------------\n");
+	printf(BLUE("Set using variables values:")"\n");
+	for (size_t i = 0; i < AMOUNT_OF_VARIABLES; i++) {
+		if (var_name_table[i].status == VAR_STATUS_USING) {
+			printf("\t" YELLOW("%s:")" ", var_name_table[i].symbol);
+			scanf("%lg", &var_name_table[i].value);
+		}
+	}
+	printf("-------------------------------------\n");
+	printf(GREEN("Eval result: %lg\n"), Eval(tree->root));
+
+	return TREE_NO_ERROR;
+}
+
+Number_t Eval(Node_t* node) {
+	if (!node)
+		TREE_ERROR_CHECK(TREE_NULL_POINTER);
+
+	switch (node->type) {
+		case NUM: return node->data.val_num;
+		case VAR: return VarNameTableGetValue(node->data.val_var);
+		case OP: {
+			switch (node->data.val_op) {
+				case ADD: 					return Eval(node->left) + Eval(node->right);
+				case SUB: 					return Eval(node->left) - Eval(node->right);
+				case MUL: 					return Eval(node->left) * Eval(node->right);
+				case DIV: 					return Eval(node->left) / Eval(node->right);
+				case SIN: 					return sin(Eval(node->left));
+				case COS: 					return cos(Eval(node->left));
+				case SQRT:  				return sqrt(Eval(node->left));
+				case POW:					return pow(Eval(node->left), Eval(node->right));
+				case AMOUNT_OF_OPERATIONS:
+				case INVALID_OPERATION:
+				default:					TREE_ERROR_CHECK(TREE_INVALID_TYPE);
+			}
+		}
+		case UNW:
+		default:  	TREE_ERROR_CHECK(TREE_INVALID_TYPE);
+	}
 }

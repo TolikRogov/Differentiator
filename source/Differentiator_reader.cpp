@@ -37,6 +37,8 @@ BinaryTreeStatusCode InfixReader(Tree* tree) {
 	if (new_row_index - (int)size >= 0)
 		return TREE_NOTHING_TO_READ;
 
+	ResetVariables();
+
 	RecursionReadExpression(buffer + new_row_index, tree->root, 0);
 
 	return TREE_NO_ERROR;
@@ -127,6 +129,7 @@ BinaryTreeStatusCode RecursionReadExpression(char* buffer, Node_t* node, int pre
 #endif
 				node->type = VAR;
 				node->data.val_var = node_data.val_var;
+				var_name_table[node->data.val_var].status = VAR_STATUS_USING;
 
 				index++;
 				RecursionReadExpression(buffer, node, count_brackets);

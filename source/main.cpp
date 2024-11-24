@@ -1,6 +1,7 @@
 #include "Differentiator_dump.hpp"
 #include "Differentiator_latex.hpp"
 #include "Differentiator_reader.hpp"
+#include "NameTable.hpp"
 
 int main() {
 
@@ -12,8 +13,9 @@ int main() {
 	TREE_CTOR(&tree);
 
 	INFIX_EXPRESSION_READER(&tree);
-
 	LATEX_PRINT_TREE(&tree);
+
+	Calculator(&tree);
 
 	TREE_DTOR(&tree);
 

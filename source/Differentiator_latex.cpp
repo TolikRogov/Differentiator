@@ -18,8 +18,6 @@ BinaryTreeStatusCode LaTexPrintTree(Tree* tree) {
 
 BinaryTreeStatusCode PrintExpressionTree(Node_t* node, FILE* tex_file) {
 
-	#include "Operations"
-
 	if (!node)
 		return TREE_NO_ERROR;
 

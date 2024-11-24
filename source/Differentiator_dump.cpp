@@ -260,8 +260,6 @@ BinaryTreeStatusCode BinaryTreeGraphDump(Tree* tree, DumpLogInfo dump_info) {
 
 BinaryTreeStatusCode NodeGraphDump(Node_t* cur_root, FILE* dot_file, DumpLogInfo* dump_info) {
 
-	#include "Operations"
-
 	if (!cur_root)
 		return TREE_NULL_POINTER;
 

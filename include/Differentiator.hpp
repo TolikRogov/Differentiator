@@ -10,6 +10,9 @@
 
 typedef double Number_t;
 
+#include "Variables.hpp"
+#include "Operations.hpp"
+
 #define INIT_TREE(tree) Tree tree = {.info = {.name = #tree, .file_name = __FILE__, .line = __LINE__}};
 
 #define BINARY_TREE_GRAPH_DUMP(tree, func_name, point) {	 																\
@@ -108,3 +111,8 @@ OpNum OpNameTableFindOperation(const char* string);
 
 const char* VarNameTableGetSymbol(VarNum number);
 VarNum VarNameTableFindVariable(const char* string);
+Number_t VarNameTableGetValue(VarNum number);
+BinaryTreeStatusCode ResetVariables();
+
+BinaryTreeStatusCode Calculator(Tree* tree);
+Number_t Eval(Node_t* node);
