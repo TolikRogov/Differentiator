@@ -23,6 +23,11 @@
 	}																												\
 }
 
+#define TREE_ERROR_MESSAGE(error) {																				 	 \
+	fprintf(stderr, "\n\n" RED("Error (code %d): %s, ") YELLOW("File: %s, Function: %s, Line: %d\n\n"),   			\
+				error, BinaryTreeErrorsMessenger(error), __FILE__, __PRETTY_FUNCTION__, __LINE__);					\
+}
+
 enum BinaryTreeStatusCode {
 	TREE_NO_ERROR,
 	TREE_UNDEFINED_ERROR,
@@ -35,6 +40,7 @@ enum BinaryTreeStatusCode {
 	TREE_LATEX_SYNTAX_ERROR,
 	TREE_READ_ERROR,
 	TREE_EXPRESSION_SYNTAX_ERROR,
+	TREE_DEFINITION_AREA_ERROR,
 
 	TREE_INVALID_TYPE,
 	TREE_BASE_SYNTAX_ERROR,

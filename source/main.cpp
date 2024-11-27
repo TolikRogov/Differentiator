@@ -15,8 +15,6 @@ int main() {
 	INFIX_EXPRESSION_READER(&tree);
 	LATEX_PRINT_TREE(&tree);
 
-	Calculator(&tree);
-
 	INIT_TREE(diff_tree);
 	EXPRESSION_DIFFERENTIATION(&tree, &diff_tree);
 

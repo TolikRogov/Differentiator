@@ -41,6 +41,11 @@ BinaryTreeStatusCode InfixReader(Tree* tree) {
 
 	RecursionReadExpression(buffer + new_row_index, tree->root, 0);
 
+	if (buffer) {
+		free(buffer);
+		buffer = NULL;
+	}
+
 	return TREE_NO_ERROR;
 }
 

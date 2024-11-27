@@ -50,6 +50,8 @@ typedef double Number_t;
 #define EXPRESSION_DIFFERENTIATION(expression_tree, diff_tree) {						 \
 	(diff_tree)->root = Differentiation((expression_tree)->root);						\
 	BINARY_TREE_GRAPH_DUMP(diff_tree, "ExpressionDifferentiation", (diff_tree)->root);	\
+	Simplification(diff_tree);													 		 \
+	BINARY_TREE_GRAPH_DUMP(diff_tree, "Simplification", (diff_tree)->root);				 \
 	LATEX_PRINT_TREE(diff_tree);														\
 }
 
@@ -130,3 +132,7 @@ Number_t Eval(Node_t* node);
 Node_t* doCopySubtree(Node_t* node);
 Node_t* Differentiation(Node_t* node);
 size_t NumberOfVariablesInSubtree(Node_t* node);
+
+BinaryTreeStatusCode Simplification(Tree* tree);
+int ConvolutionConstant(Node_t* node, size_t* count_of_changes);
+int TrivialTransformations(Node_t* node, size_t* count_of_changes);

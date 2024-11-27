@@ -25,15 +25,16 @@ BinaryTreeStatusCode PrintExpressionTree(Node_t* node, FILE* tex_file) {
 		case OP: {
 			switch (node->data.val_op) {
 				case AMOUNT_OF_OPERATIONS: break;
+				case LOG:
 				case DIV: {
-					fprintf(tex_file, "\\%s{", OpNameTableGetTexSymbol(node->data.val_op));
+					fprintf(tex_file, "(\\%s{", OpNameTableGetTexSymbol(node->data.val_op));
 					if (node->left) PrintExpressionTree(node->left, tex_file);
 					else TREE_ERROR_CHECK(TREE_LATEX_SYNTAX_ERROR);
 
 					fprintf(tex_file, "}{");
 					if (node->right) PrintExpressionTree(node->right, tex_file);
 					else TREE_ERROR_CHECK(TREE_LATEX_SYNTAX_ERROR);
-					fprintf(tex_file, "}");
+					fprintf(tex_file, "})");
 
 					break;
 				}
@@ -52,6 +53,7 @@ BinaryTreeStatusCode PrintExpressionTree(Node_t* node, FILE* tex_file) {
 
 					break;
 				}
+				case LN:
 				case COS:
 				case SQRT:
 				case SIN: {
@@ -68,11 +70,11 @@ BinaryTreeStatusCode PrintExpressionTree(Node_t* node, FILE* tex_file) {
 			break;
 		}
 		case NUM: {
-			fprintf(tex_file, "(%lg)", node->data.val_num);
+			fprintf(tex_file, "%lg", node->data.val_num);
 			break;
 		}
 		case VAR: {
-			fprintf(tex_file, "(%s)", VarNameTableGetSymbol(node->data.val_var));
+			fprintf(tex_file, "%s", VarNameTableGetSymbol(node->data.val_var));
 			break;
 		}
 		case UNW: return TREE_NO_ERROR;
@@ -96,8 +98,13 @@ BinaryTreeStatusCode LatexDumpStart() {
 #define TEX_PRINTF(...) fprintf(tex_file, __VA_ARGS__);
 
 	TEX_PRINTF("\\documentclass[12pt, letterpaper]{article}\n");
-	TEX_PRINTF("\\title{The best laboratory work!}\n");
-	TEX_PRINTF("\\author{Rogov Anatoliy}\n");
+	TEX_PRINTF("\\usepackage{amsthm,amssymb}\n");
+	TEX_PRINTF("\\usepackage{mathtext}\n");
+	TEX_PRINTF("\\usepackage[T1]{fontenc}\n");
+	TEX_PRINTF("\\usepackage[utf8]{inputenc}\n");
+	TEX_PRINTF("\\usepackage[english,bulgarian,ukrainian,russian]{babel}\n");
+	TEX_PRINTF("\\title{Лабораторная работа минимум на отл 10!}\n");
+	TEX_PRINTF("\\author{Рогов Анатолий}\n");
 	TEX_PRINTF("\\date{\\today}\n");
 	TEX_PRINTF("\\begin{document}\n");
 	TEX_PRINTF("\\maketitle\n");

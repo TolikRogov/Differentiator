@@ -10,6 +10,8 @@ enum OpNum {
 	COS,
 	SQRT,
 	POW,
+	LOG,
+	LN,
 	AMOUNT_OF_OPERATIONS
 };
 
