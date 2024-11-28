@@ -244,7 +244,22 @@ size_t NumberOfVariablesInSubtree(Node_t* node) {
 	return (node->type == VAR ? 1 : 0) + (node->left ? NumberOfVariablesInSubtree(node->left) : 0) + (node->right ? NumberOfVariablesInSubtree(node->right) : 0);
 }
 
-Node_t* Differentiation(Node_t* node) {
+BinaryTreeStatusCode Differentiation(Tree* function_tree, Tree* diff_tree) {
+
+	BinaryTreeStatusCode tree_status = TREE_NO_ERROR;
+
+	diff_tree->root = doDifferentiation(function_tree->root);
+	BINARY_TREE_GRAPH_DUMP(diff_tree, "ExpressionDifferentiation", diff_tree->root);
+
+	Simplification(diff_tree);
+	BINARY_TREE_GRAPH_DUMP(diff_tree, "Simplification", diff_tree->root);
+
+	LATEX_PRINT_TREE(diff_tree);
+
+	return TREE_NO_ERROR;
+}
+
+Node_t* doDifferentiation(Node_t* node) {
 
 	if (!node)
 		return NULL;
@@ -318,7 +333,7 @@ BinaryTreeStatusCode SetNodeValue(Node_t* node, Data_t data) {
 int TrivialTransformations(Node_t* node, size_t* count_of_changes) {
 
 	if (!node)
-		return 0;
+		return SIMPLIFY_IMPOSSIBLE;
 
 	if (node->left) TrivialTransformations(node->left, count_of_changes);
 	if (node->right) TrivialTransformations(node->right, count_of_changes);
@@ -332,7 +347,7 @@ int TrivialTransformations(Node_t* node, size_t* count_of_changes) {
 		TreeDtor(node->left); TreeDtor(node->right);											\
 		node->left = left;	  node->right = right;												\
 		(*count_of_changes)++;																	\
-		break;																					\
+		return SIMPLIFY_ACCESS;																	\
 	}																							\
 }
 
@@ -344,7 +359,7 @@ int TrivialTransformations(Node_t* node, size_t* count_of_changes) {
 		TreeDtor(node->left); TreeDtor(node->right);														\
 		node->left = node->right = NULL;																	\
 		(*count_of_changes)++;																				\
-		break;																								\
+		return SIMPLIFY_ACCESS;																				\
 	}																										\
 }
 
@@ -368,6 +383,7 @@ int TrivialTransformations(Node_t* node, size_t* count_of_changes) {
 					REBINDING(left, right, 1, node->right->data);
 					REBINDING(right, left, 1, node->left->data);
 					NUMBER_AS_RESULT(0, 1);
+					break;
 				}
 				case SIN:
 				case COS:
@@ -376,14 +392,13 @@ int TrivialTransformations(Node_t* node, size_t* count_of_changes) {
 				case SQRT:
 				case AMOUNT_OF_OPERATIONS:
 				case INVALID_OPERATION:
-				default: return 0;
+				default: return SIMPLIFY_IMPOSSIBLE;
 			}
-			return 0;
 		}
 		case NUM:
 		case VAR:
 		case UNW:
-		default: return 0;
+		default: return SIMPLIFY_IMPOSSIBLE;
 	}
 #undef REBINDING
 #undef MUL_TO_ZERO
@@ -392,11 +407,11 @@ int TrivialTransformations(Node_t* node, size_t* count_of_changes) {
 int ConvolutionConstant(Node_t* node, size_t* count_of_changes) {
 
 	if (!node)
-		return 0;
+		return SIMPLIFY_IMPOSSIBLE;
 
 	switch (node->type) {
-		case NUM:	return 1;
-		case VAR:	return 0;
+		case NUM:	return SIMPLIFY_ACCESS;
+		case VAR:	return SIMPLIFY_IMPOSSIBLE;
 		case OP:
 		{
 			switch (node->data.val_op) {
@@ -413,7 +428,7 @@ int ConvolutionConstant(Node_t* node, size_t* count_of_changes) {
 				case COS:
 				case AMOUNT_OF_OPERATIONS:
 				case INVALID_OPERATION:
-				default: return 0;
+				default: return SIMPLIFY_IMPOSSIBLE;
 			}
 
 			int left = ConvolutionConstant(node->left, count_of_changes);
@@ -424,10 +439,10 @@ int ConvolutionConstant(Node_t* node, size_t* count_of_changes) {
 				if (node->parent->left == node)  { node->parent->left = _NUM(Eval(node));  node->parent->left->parent = node->parent;  }
 				TreeDtor(last_node);
 				(*count_of_changes)++;
+				return SIMPLIFY_ACCESS;
 			}
-			return 0;
 		}
 		case UNW:
-		default: return 0;
+		default: return SIMPLIFY_IMPOSSIBLE;
 	}
 }

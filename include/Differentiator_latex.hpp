@@ -20,15 +20,10 @@
 	TREE_ERROR_CHECK(tree_status);		\
 }
 
-#define LATEX_PRINT_TREE(tree) {		 \
-	tree_status = LaTexPrintTree(tree);	\
-	TREE_ERROR_CHECK(tree_status);		\
-}
-
 BinaryTreeStatusCode LatexDumpStart();
 BinaryTreeStatusCode LaTexDumpFinish();
 BinaryTreeStatusCode LaTexCreateDir();
 
+BinaryTreeStatusCode PrintMathExpression(Node_t* node, FILE* tex_file);
 BinaryTreeStatusCode PrintExpressionTree(Node_t* node, FILE* tex_file);
-BinaryTreeStatusCode LaTexPrintTree(Tree* tree);
 BinaryTreeStatusCode DrawGraph(Tree* tree);

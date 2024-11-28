@@ -14,8 +14,8 @@
 #define _LOG(left, right)	CreateNode(OP,  {.val_op = LOG}, 	left, right, NULL)
 #define _LN(left)			CreateNode(OP,	{.val_op = LN},		left, NULL, NULL)
 
-#define dL Differentiation(node->left)
-#define dR Differentiation(node->right)
+#define dL doDifferentiation(node->left)
+#define dR doDifferentiation(node->right)
 
 #define cL doCopySubtree(node->left)
 #define cR doCopySubtree(node->right)

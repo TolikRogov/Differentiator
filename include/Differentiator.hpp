@@ -48,12 +48,14 @@ typedef double Number_t;
 	BINARY_TREE_GRAPH_DUMP(destination, "CopySubtree", (destination)->root);	\
 }
 
-#define EXPRESSION_DIFFERENTIATION(expression_tree, diff_tree) {						 \
-	(diff_tree)->root = Differentiation((expression_tree)->root);						\
-	BINARY_TREE_GRAPH_DUMP(diff_tree, "ExpressionDifferentiation", (diff_tree)->root);	\
-	Simplification(diff_tree);													 		 \
-	BINARY_TREE_GRAPH_DUMP(diff_tree, "Simplification", (diff_tree)->root);				 \
-	LATEX_PRINT_TREE(diff_tree);														\
+#define LATEX_PRINT_TREE(tree) {		 \
+	tree_status = LaTexPrintTree(tree);	\
+	TREE_ERROR_CHECK(tree_status);		\
+}
+
+#define DIFFERENTIATION(function_tree, diff_tree) {				 \
+	tree_status = Differentiation(function_tree, diff_tree);	\
+	TREE_ERROR_CHECK(tree_status);								\
 }
 
 enum TreeDumpCheck {
@@ -67,6 +69,11 @@ enum NodeType {
 	NUM,
 	VAR,
 	OP
+};
+
+enum SimplifierStatus {
+	SIMPLIFY_IMPOSSIBLE = 0,
+	SIMPLIFY_ACCESS		= 1,
 };
 
 union Data_t {
@@ -131,10 +138,13 @@ BinaryTreeStatusCode Calculator(Tree* tree);
 Number_t Eval(Node_t* node);
 
 Node_t* doCopySubtree(Node_t* node);
-Node_t* Differentiation(Node_t* node);
+Node_t* doDifferentiation(Node_t* node);
+BinaryTreeStatusCode Differentiation(Tree* function_tree, Tree* diff_tree);
 size_t NumberOfVariablesInSubtree(Node_t* node);
 BinaryTreeStatusCode SetNodeValue(Node_t* node, Data_t data);
 
 BinaryTreeStatusCode Simplification(Tree* tree);
 int ConvolutionConstant(Node_t* node, size_t* count_of_changes);
 int TrivialTransformations(Node_t* node, size_t* count_of_changes);
+
+BinaryTreeStatusCode LaTexPrintTree(Tree* tree);

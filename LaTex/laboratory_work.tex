@@ -5,26 +5,37 @@
 \usepackage[utf8]{inputenc}
 \usepackage{pgfplots}
 \pgfplotsset{compat=1.9}
-\usepackage[english,bulgarian,ukrainian,russian]{babel}
+\usepackage[english,russian]{babel}
 \title{Лабораторная работа минимум на отл 10!}
 \author{Рогов Анатолий}
 \date{\today}
 \begin{document}
 \maketitle
 \newpage
-$({({1}+{({x}^{({x}+{(\sin{x})})})})}\cdot{x})$\\
+\section{Исходная функция}
+\centering
+$f(x) = ({(\cos{({x}\cdot{2})})}^{3})$\\
+\begin{figure}[h]
+\centering
 \begin{tikzpicture}
 \begin{axis} [
 	legend pos = north west,
-	ymin = 0,
-	grid = major
+	xlabel = {$x$},
+	ylabel = {$f$},
+	xmin = -6,
+	xmax = 6,
+	restrict y to domain=-30:30,
+	grid = major,
+	enlargelimits=true,
 ]
 \legend{
-	$({({1}+{({x}^{({x}+{(\sin{x})})})})}\cdot{x})$
+	$({(\cos{({x}\cdot{2})})}^{3})$
 }
-\addplot {log{2}(x+2)};
+\addplot[blue, samples=750]{(((cos(deg((((x))*((2)))))))^((3)))};
 \end{axis}
 \end{tikzpicture}
+\caption{График функции}
+\end{figure}
 \newpage
-$({({({({x}^{({x}+{(\sin{x})})})}\cdot{({({({1}+{(\cos{x})})}\cdot{(\ln{x})})}+{({({x}+{(\sin{x})})}\cdot{(\frac{1}{x})})})})}\cdot{x})}+{({1}+{({x}^{({x}+{(\sin{x})})})})})$\\
+$({({3}\cdot{({(\cos{({x}\cdot{2})})}^{2})})}\cdot{({({-1}\cdot{(\sin{({x}\cdot{2})})})}\cdot{2})})$
 \end{document}
