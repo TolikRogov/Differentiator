@@ -132,6 +132,7 @@ Number_t Eval(Node_t* node);
 Node_t* doCopySubtree(Node_t* node);
 Node_t* Differentiation(Node_t* node);
 size_t NumberOfVariablesInSubtree(Node_t* node);
+BinaryTreeStatusCode SetNodeValue(Node_t* node, Data_t data);
 
 BinaryTreeStatusCode Simplification(Tree* tree);
 int ConvolutionConstant(Node_t* node, size_t* count_of_changes);

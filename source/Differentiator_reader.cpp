@@ -1,5 +1,74 @@
 #include "Differentiator_reader.hpp"
 
+const char* s = "8000/2*(5-5)$";
+int p = 0;
+
+int GetG();
+int GetP();
+int GetN();
+int GetT();
+int GetE();
+
+int GetN() {
+	int old_p = p;
+	int val = 0;
+	while ('0' <= s[p] && s[p] <= '9') {
+		val = val * 10 + (s[p] - '0');
+		p++;
+	}
+	if (old_p == p) exit(0);
+	return val;
+}
+
+int GetP() {
+	if (s[p] == '(') {
+		p++;
+		int val = GetE();
+		if (s[p] != ')')
+			exit(0);
+		p++;
+		return val;
+	}
+	else
+		return GetN();
+}
+
+int GetT() {
+	int val = GetP();
+	while (s[p] == '*' || s[p] == '/') {
+		int op = s[p];
+		p++;
+		int val2 = GetP();
+		if (op == '*')
+			val *= val2;
+		else
+			val /= val2;
+	}
+	return val;
+}
+
+int GetE() {
+	int val = GetT();
+	while (s[p] == '+' || s[p] == '-') {
+		int op = s[p];
+		p++;
+		int val2 = GetT();
+		if (op == '+')
+			val += val2;
+		else
+			val -= val2;
+	}
+	return val;
+}
+
+int GetG() {
+	int val = GetE();
+	if (s[p] != '$')
+		exit(0);
+	p++;
+	return val;
+}
+
 BinaryTreeStatusCode InfixReader(Tree* tree) {
 
 	FILE* exp_file = fopen(DIFF_EXPRESSION_FILE_, "r");

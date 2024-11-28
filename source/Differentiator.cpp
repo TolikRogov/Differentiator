@@ -163,8 +163,9 @@ BinaryTreeStatusCode Calculator(Tree* tree) {
 }
 
 Number_t Eval(Node_t* node) {
+
 	if (!node)
-		TREE_ERROR_CHECK(TREE_NULL_POINTER);
+		TREE_ERROR_MESSAGE(TREE_NULL_POINTER);
 
 	switch (node->type) {
 		case NUM: return node->data.val_num;
@@ -270,7 +271,7 @@ Node_t* Differentiation(Node_t* node) {
 						return _MUL(cP, _ADD(_MUL(dR, _LN(cL)), _MUL(cR, _DIV(dL, cL))));
 				}
 				case SIN: 	return _MUL(_COS(cL), dL);
-				case COS: 	return _MUL(_MUL(_SIN(cL), _NUM(-1)), dL);
+				case COS: 	return _MUL(_MUL( _NUM(-1), _SIN(cL)), dL);
 				case SQRT:	return _MUL(_DIV(_NUM(1), _MUL(_NUM(2), _SQRT(cL))), dL);
 				case LOG:	return _MUL(_DIV(_NUM(1), _MUL(cR, _LN(cL))), dR);
 				case LN:	return _MUL(_DIV(_NUM(1), cL), dL);
@@ -298,22 +299,51 @@ BinaryTreeStatusCode Simplification(Tree* tree) {
 	return TREE_NO_ERROR;
 }
 
+BinaryTreeStatusCode SetNodeValue(Node_t* node, Data_t data) {
+
+	if (!node)
+		TREE_ERROR_CHECK(TREE_NULL_POINTER);
+
+	switch(node->type) {
+		case OP:  { node->data.val_op = data.val_op; break; }
+		case NUM: { node->data.val_num = data.val_num; break; }
+		case VAR: { node->data.val_var = data.val_var; break; }
+		case UNW:
+		default: return TREE_NO_ERROR;
+	}
+
+	return TREE_NO_ERROR;
+}
+
 int TrivialTransformations(Node_t* node, size_t* count_of_changes) {
 
 	if (!node)
 		return 0;
 
+	if (node->left) TrivialTransformations(node->left, count_of_changes);
+	if (node->right) TrivialTransformations(node->right, count_of_changes);
+
 #define REBINDING(from, to, event, new_data) {									 				 \
 	if (node->from->type == NUM && DiffCompareDouble(node->from->data.val_num, event)) {		\
 		node->type = node->to->type;															\
-		node->data.val_num = new_data;															\
-		Node_t* to = node->to;																	\
-		Node_t* from = node->from;																\
-		node->from = node->to->left;															\
-		node->to = node->to->right;																\
-		node->to->parent = node->from->parent = node;											\
-		if (to) free(to);																		\
-		if (from) free(from);																	\
+		SetNodeValue(node, new_data);															\
+		Node_t* left = doCopySubtree(node->to->left);											\
+		Node_t* right = doCopySubtree(node->to->right);											\
+		TreeDtor(node->left); TreeDtor(node->right);											\
+		node->left = left;	  node->right = right;												\
+		(*count_of_changes)++;																	\
+		break;																					\
+	}																							\
+}
+
+#define MUL_TO_ZERO() {									 				 		 		 		 \
+	if ((node->left->type == NUM && DiffCompareDouble(node->left->data.val_num, 0)) ||			\
+		(node->right->type == NUM && DiffCompareDouble(node->right->data.val_num, 0))) {		\
+		node->type = NUM;																		\
+		node->data.val_num = 0;																	\
+		TreeDtor(node->left); TreeDtor(node->right);											\
+		node->left = node->right = NULL;														\
+		(*count_of_changes)++;																	\
 		break;																					\
 	}																							\
 }
@@ -322,21 +352,21 @@ int TrivialTransformations(Node_t* node, size_t* count_of_changes) {
 		case OP: {
 			switch (node->data.val_op) {
 				case ADD: {
-					REBINDING(left, right, 0, node->right->data.val_num);
-					REBINDING(right, left, 0, node->left->data.val_num);
+					REBINDING(left, right, 0, node->right->data);
+					REBINDING(right, left, 0, node->left->data);
+					break;
 				}
-				case SUB: REBINDING(right, left, 0, node->left->data.val_num);
-				case DIV: REBINDING(right, left, 1, node->left->data.val_num);
+				case SUB: { REBINDING(right, left, 0, node->left->data); break; }
+				case DIV: { REBINDING(right, left, 1, node->left->data); break; }
 				case MUL: {
-					REBINDING(left, right, 1, node->right->data.val_num);
-					REBINDING(right, left, 1, node->left->data.val_num);
-					REBINDING(left, right, 0, 0);
-					REBINDING(right, left, 0, 0);
+					REBINDING(left, right, 1, node->right->data);
+					REBINDING(right, left, 1, node->left->data);
+					MUL_TO_ZERO();
+					break;
 				}
 				case INVALID_OPERATION:
 				default: return 0;
 			}
-			(*count_of_changes)++;
 			return 0;
 		}
 		case NUM:
@@ -345,6 +375,7 @@ int TrivialTransformations(Node_t* node, size_t* count_of_changes) {
 		default: return 0;
 	}
 #undef REBINDING
+#undef MUL_TO_ZERO
 }
 
 int ConvolutionConstant(Node_t* node, size_t* count_of_changes) {
@@ -360,12 +391,10 @@ int ConvolutionConstant(Node_t* node, size_t* count_of_changes) {
 			int left = ConvolutionConstant(node->left, count_of_changes);
 			int right = ConvolutionConstant(node->right, count_of_changes);
 			if ((left && right) || (left && !node->right)) {
-				Number_t result = Eval(node);
-				node->type = NUM;
-				node->data.val_num = result;
-				if (node->left)  free(node->left);
-				if (node->right) free(node->right);
-				node->left = node->right = NULL;
+				Node_t* last_node = node;
+				if (node->parent->right == node) { node->parent->right = _NUM(Eval(node)); node->parent->right->parent = node->parent; }
+				if (node->parent->left == node)  { node->parent->left = _NUM(Eval(node));  node->parent->left->parent = node->parent;  }
+				TreeDtor(last_node);
 				(*count_of_changes)++;
 			}
 			return 0;

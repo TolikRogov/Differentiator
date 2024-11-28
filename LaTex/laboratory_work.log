@@ -1,10 +1,9 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.26 (TeX Live 2024) (preloaded format=pdflatex 2024.11.21)  27 NOV 2024 03:22
+This is pdfTeX, Version 3.141592653-2.6-1.40.26 (TeX Live 2024) (preloaded format=pdflatex 2024.11.21)  28 NOV 2024 04:40
 entering extended mode
  restricted \write18 enabled.
- file:line:error style messages enabled.
  %&-line parsing enabled.
-**/Users/anatolij/Documents/GitHub/Differentiator/LaTex/laboratory_work.tex
-(/Users/anatolij/Documents/GitHub/Differentiator/LaTex/laboratory_work.tex
+**LaTex/laboratory_work.tex -halt-on-error
+(./LaTex/laboratory_work.tex
 LaTeX2e <2023-11-01> patch level 1
 L3 programming layer <2024-02-20>
 (/usr/local/texlive/2024/texmf-dist/tex/latex/base/article.cls
@@ -23,7 +22,8 @@ File: size12.clo 2023/05/17 v1.4n Standard LaTeX file (size option)
 \abovecaptionskip=\skip48
 \belowcaptionskip=\skip49
 \bibindent=\dimen140
-) (/usr/local/texlive/2024/texmf-dist/tex/latex/amscls/amsthm.sty
+)
+(/usr/local/texlive/2024/texmf-dist/tex/latex/amscls/amsthm.sty
 Package: amsthm 2020/05/29 v2.20.6
 \thm@style=\toks17
 \thm@bodyfont=\toks18
@@ -34,9 +34,11 @@ Package: amsthm 2020/05/29 v2.20.6
 \thm@postskip=\skip51
 \thm@headsep=\skip52
 \dth@everypar=\toks22
-) (/usr/local/texlive/2024/texmf-dist/tex/latex/amsfonts/amssymb.sty
+)
+(/usr/local/texlive/2024/texmf-dist/tex/latex/amsfonts/amssymb.sty
 Package: amssymb 2013/01/14 v3.01 AMS font symbols
- (/usr/local/texlive/2024/texmf-dist/tex/latex/amsfonts/amsfonts.sty
+
+(/usr/local/texlive/2024/texmf-dist/tex/latex/amsfonts/amsfonts.sty
 Package: amsfonts 2013/01/14 v3.01 Basic AMSFonts support
 \@emptytoks=\toks23
 \symAMSa=\mathgroup4
@@ -44,24 +46,30 @@ Package: amsfonts 2013/01/14 v3.01 Basic AMSFonts support
 LaTeX Font Info:    Redeclaring math symbol \hbar on input line 98.
 LaTeX Font Info:    Overwriting math alphabet `\mathfrak' in version `bold'
 (Font)                  U/euf/m/n --> U/euf/b/n on input line 106.
-)) (/usr/local/texlive/2024/texmf-dist/tex/latex/t2/mathtext.sty
+))
+(/usr/local/texlive/2024/texmf-dist/tex/latex/t2/mathtext.sty
 Package: mathtext 2018/04/14 v1.0 transparent text-and-math defs
 LaTeX Info: Redefining \halign on input line 121.
-) (/usr/local/texlive/2024/texmf-dist/tex/latex/base/fontenc.sty
+)
+(/usr/local/texlive/2024/texmf-dist/tex/latex/base/fontenc.sty
 Package: fontenc 2021/04/29 v2.0v Standard LaTeX package
-) (/usr/local/texlive/2024/texmf-dist/tex/latex/base/inputenc.sty
+)
+(/usr/local/texlive/2024/texmf-dist/tex/latex/base/inputenc.sty
 Package: inputenc 2021/02/14 v1.3d Input encoding file
 \inpenc@prehook=\toks24
 \inpenc@posthook=\toks25
-) (/usr/local/texlive/2024/texmf-dist/tex/generic/babel/babel.sty
+)
+(/usr/local/texlive/2024/texmf-dist/tex/generic/babel/babel.sty
 Package: babel 2024/02/07 v24.2 The Babel package
 \babel@savecnt=\count196
 \U@D=\dimen141
 \l@unhyphenated=\language89
- (/usr/local/texlive/2024/texmf-dist/tex/generic/babel/txtbabel.def)
+
+(/usr/local/texlive/2024/texmf-dist/tex/generic/babel/txtbabel.def)
 \bbl@readstream=\read2
 \bbl@dirlevel=\count197
- (/usr/local/texlive/2024/texmf-dist/tex/generic/babel-english/english.ldf
+
+(/usr/local/texlive/2024/texmf-dist/tex/generic/babel-english/english.ldf
 Language: english 2017/06/06 v3.3r English support from the babel system
 Package babel Info: Hyphen rules for 'canadian' set to \l@english
 (babel)             (\language0). Reported on input line 102.
@@ -69,19 +77,24 @@ Package babel Info: Hyphen rules for 'australian' set to \l@ukenglish
 (babel)             (\language23). Reported on input line 105.
 Package babel Info: Hyphen rules for 'newzealand' set to \l@ukenglish
 (babel)             (\language23). Reported on input line 108.
-) (/usr/local/texlive/2024/texmf-dist/tex/generic/babel-bulgarian/bulgarian.ldf
+)
+(/usr/local/texlive/2024/texmf-dist/tex/generic/babel-bulgarian/bulgarian.ldf
 Language: bulgarian 2013/10/14 v1.2g Bulgarian support from the babel system
 
 
-Package bulgarian.ldf Warning: No Cyrillic font encoding has been loaded so far.
+Package bulgarian.ldf Warning: No Cyrillic font encoding has been loaded so far
+.
 (bulgarian.ldf)                A font encoding should be declared before babel.
-(bulgarian.ldf)                Default `T2A' encoding will be loaded  on input line 85.
+
+(bulgarian.ldf)                Default `T2A' encoding will be loaded  on input 
+line 85.
 
 (/usr/local/texlive/2024/texmf-dist/tex/latex/cyrillic/t2aenc.def
 File: t2aenc.def 2022/06/11 v1.0j Cyrillic encoding definition file
 Now handling font encoding T2A ...
 ... processing UTF-8 mapping file for font encoding T2A
- (/usr/local/texlive/2024/texmf-dist/tex/latex/base/t2aenc.dfu
+
+(/usr/local/texlive/2024/texmf-dist/tex/latex/base/t2aenc.dfu
 File: t2aenc.dfu 2022/06/07 v1.3c UTF-8 support
    defining Unicode char U+00A4 (decimal 164)
    defining Unicode char U+00A7 (decimal 167)
@@ -284,9 +297,12 @@ File: t2aenc.dfu 2022/06/07 v1.3c UTF-8 support
 )
 \symT2Aletters=\mathgroup6
 )
-Package babel Info: Using `T2A' as a default Cyrillic encoding on input line 89.
-Package bulgarian.ldf Info: Executing the post 3.9 branch for captions on input line 197.
-Package bulgarian.ldf Info: Executing the post 3.9 branch for dates on input line 302.
+Package babel Info: Using `T2A' as a default Cyrillic encoding on input line 89
+.
+Package bulgarian.ldf Info: Executing the post 3.9 branch for captions on input
+ line 197.
+Package bulgarian.ldf Info: Executing the post 3.9 branch for dates on input li
+ne 302.
 Package babel Info: Making " an active character on input line 344.
 LaTeX Font Info:    Overwriting symbol font `T2Aletters' in version `bold'
 (Font)                  T2A/cmr/m/up --> T2A/cmr/b/up on input line 476.
@@ -294,37 +310,51 @@ LaTeX Font Info:    Overwriting math alphabet `\cyrmathsf' in version `bold'
 (Font)                  T2A/cmss/m/up --> T2A/cmss/b/up on input line 476.
 LaTeX Font Info:    Overwriting math alphabet `\cyrmathit' in version `bold'
 (Font)                  T2A/cmr/m/it --> T2A/cmr/b/it on input line 476.
-) (/usr/local/texlive/2024/texmf-dist/tex/generic/babel-ukrainian/ukraineb.ldf
+)
+(/usr/local/texlive/2024/texmf-dist/tex/generic/babel-ukrainian/ukraineb.ldf
 File: ukraineb.ldf 2020/10/14 1.4e Ukrainian support for the Babel system
 LaTeX Info: Redefining \cyrillictext on input line 84.
 LaTeX Info: Redefining \textcyrillic on input line 96.
 Package babel Info: Default for \cyrdash is provided on input line 142.
 LaTeX Info: Redefining \No on input line 350.
-) (/usr/local/texlive/2024/texmf-dist/tex/generic/babel-russian/russianb.ldf
+)
+(/usr/local/texlive/2024/texmf-dist/tex/generic/babel-russian/russianb.ldf
 File: russianb.ldf 2021/01/10 1.3m Russian support for the Babel system
 Language: russian 2020/09/09 1.3k Russian support for the Babel system
 LaTeX Info: Redefining \cyrillictext on input line 83.
 LaTeX Info: Redefining \textcyrillic on input line 99.
 Package babel Info: Default for \cyrdash is provided on input line 163.
-)) (/usr/local/texlive/2024/texmf-dist/tex/generic/babel/locale/ru/babel-russian.tex
+))
+(/usr/local/texlive/2024/texmf-dist/tex/generic/babel/locale/ru/babel-russian.t
+ex
 Package babel Info: Importing font and identification data for russian
 (babel)             from babel-ru.ini. Reported on input line 11.
-) (/usr/local/texlive/2024/texmf-dist/tex/generic/babel/locale/uk/babel-ukrainian.tex
+)
+(/usr/local/texlive/2024/texmf-dist/tex/generic/babel/locale/uk/babel-ukrainian
+.tex
 Package babel Info: Importing font and identification data for ukrainian
 (babel)             from babel-uk.ini. Reported on input line 11.
-) (/usr/local/texlive/2024/texmf-dist/tex/generic/babel/locale/bg/babel-bulgarian.tex
+)
+(/usr/local/texlive/2024/texmf-dist/tex/generic/babel/locale/bg/babel-bulgarian
+.tex
 Package babel Info: Importing font and identification data for bulgarian
 (babel)             from babel-bg.ini. Reported on input line 11.
-) (/usr/local/texlive/2024/texmf-dist/tex/generic/babel/locale/en/babel-english.tex
+)
+(/usr/local/texlive/2024/texmf-dist/tex/generic/babel/locale/en/babel-english.t
+ex
 Package babel Info: Importing font and identification data for english
 (babel)             from babel-en.ini. Reported on input line 11.
-) (/usr/local/texlive/2024/texmf-dist/tex/latex/l3backend/l3backend-pdftex.def
+)
+(/usr/local/texlive/2024/texmf-dist/tex/latex/l3backend/l3backend-pdftex.def
 File: l3backend-pdftex.def 2024-02-20 L3 backend support: PDF output (pdfTeX)
 \l__color_backend_stack_int=\count198
 \l__pdf_internal_box=\box51
-) (./laboratory_work.aux
-LaTeX Font Info:    Trying to load font information for T2A+cmr on input line 5.
- (/usr/local/texlive/2024/texmf-dist/tex/latex/cyrillic/t2acmr.fd
+)
+(LaTex//laboratory_work.aux
+LaTeX Font Info:    Trying to load font information for T2A+cmr on input line 5
+.
+
+(/usr/local/texlive/2024/texmf-dist/tex/latex/cyrillic/t2acmr.fd
 File: t2acmr.fd 2001/08/11 v1.0a Computer Modern Cyrillic font definitions
 ))
 \openout1 = `laboratory_work.aux'.
@@ -355,11 +385,15 @@ LaTeX Info: Redefining \cth on input line 10.
 LaTeX Info: Redefining \cosec on input line 10.
 LaTeX Info: Redefining \th on input line 10.
 LaTeX Font Info:    Trying to load font information for U+msa on input line 11.
- (/usr/local/texlive/2024/texmf-dist/tex/latex/amsfonts/umsa.fd
+
+
+(/usr/local/texlive/2024/texmf-dist/tex/latex/amsfonts/umsa.fd
 File: umsa.fd 2013/01/14 v3.01 AMS symbols A
 )
 LaTeX Font Info:    Trying to load font information for U+msb on input line 11.
- (/usr/local/texlive/2024/texmf-dist/tex/latex/amsfonts/umsb.fd
+
+
+(/usr/local/texlive/2024/texmf-dist/tex/latex/amsfonts/umsb.fd
 File: umsb.fd 2013/01/14 v3.01 AMS symbols B
 )
 
@@ -368,12 +402,18 @@ LaTeX Font Warning: Font shape `T2A/cmr/m/up' undefined
 
 [1
 
-{/usr/local/texlive/2024/texmf-var/fonts/map/pdftex/updmap/pdftex.map}{/usr/local/texlive/2024/texmf-dist/fonts/enc/dvips/cm-super/cm-super-t2a.enc}]
+{/usr/local/texlive/2024/texmf-var/fonts/map/pdftex/updmap/pdftex.map}{/usr/loc
+al/texlive/2024/texmf-dist/fonts/enc/dvips/cm-super/cm-super-t2a.enc}]
+Overfull \hbox (43.91087pt too wide) in paragraph at lines 13--15
+\OT1/cmr/m/n/12 ([] + [])$ 
+ []
+
+
 Underfull \hbox (badness 10000) in paragraph at lines 13--15
 
  []
 
-[2] (./laboratory_work.aux)
+[2] (LaTex//laboratory_work.aux)
  ***********
 LaTeX2e <2023-11-01> patch level 1
 L3 programming layer <2024-02-20>
@@ -384,18 +424,25 @@ LaTeX Font Warning: Some font shapes were not available, defaults substituted.
 
  ) 
 Here is how much of TeX's memory you used:
- 3648 strings out of 474116
- 56753 string characters out of 5743681
+ 3649 strings out of 474116
+ 56656 string characters out of 5743681
  1926187 words of memory out of 5000000
  25986 multiletter control sequences out of 15000+600000
  571702 words of font info for 73 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
- 50i,6n,56p,357b,361s stack positions out of 10000i,1000n,20000p,200000b,200000s
-</usr/local/texlive/2024/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi12.pfb></usr/local/texlive/2024/texmf-dist/fonts/type1/public/amsfonts/cm/cmr12.pfb></usr/local/texlive/2024/texmf-dist/fonts/type1/public/amsfonts/cm/cmr8.pfb></usr/local/texlive/2024/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy10.pfb></usr/local/texlive/2024/texmf-dist/fonts/type1/public/cm-super/sfrm1200.pfb></usr/local/texlive/2024/texmf-dist/fonts/type1/public/cm-super/sfrm1440.pfb></usr/local/texlive/2024/texmf-dist/fonts/type1/public/cm-super/sfrm2074.pfb>
-Output written on laboratory_work.pdf (2 pages, 64126 bytes).
+ 50i,8n,56p,324b,361s stack positions out of 10000i,1000n,20000p,200000b,200000s
+</usr/local/texlive/2024/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi12.pfb
+></usr/local/texlive/2024/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi8.pfb><
+/usr/local/texlive/2024/texmf-dist/fonts/type1/public/amsfonts/cm/cmr12.pfb></u
+sr/local/texlive/2024/texmf-dist/fonts/type1/public/amsfonts/cm/cmr8.pfb></usr/
+local/texlive/2024/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy10.pfb></usr/l
+ocal/texlive/2024/texmf-dist/fonts/type1/public/cm-super/sfrm1200.pfb></usr/loc
+al/texlive/2024/texmf-dist/fonts/type1/public/cm-super/sfrm1440.pfb></usr/local
+/texlive/2024/texmf-dist/fonts/type1/public/cm-super/sfrm2074.pfb>
+Output written on LaTex//laboratory_work.pdf (2 pages, 74363 bytes).
 PDF statistics:
- 47 PDF objects out of 1000 (max. 8388607)
- 28 compressed objects within 1 object stream
+ 52 PDF objects out of 1000 (max. 8388607)
+ 31 compressed objects within 1 object stream
  0 named destinations out of 1000 (max. 500000)
  1 words of extra memory for PDF output out of 10000 (max. 10000000)
 
