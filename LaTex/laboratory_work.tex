@@ -3,6 +3,8 @@
 \usepackage{mathtext}
 \usepackage[T1]{fontenc}
 \usepackage[utf8]{inputenc}
+\usepackage{pgfplots}
+\pgfplotsset{compat=1.9}
 \usepackage[english,bulgarian,ukrainian,russian]{babel}
 \title{Лабораторная работа минимум на отл 10!}
 \author{Рогов Анатолий}
@@ -11,5 +13,18 @@
 \maketitle
 \newpage
 $({({1}+{({x}^{({x}+{(\sin{x})})})})}\cdot{x})$\\
+\begin{tikzpicture}
+\begin{axis} [
+	legend pos = north west,
+	ymin = 0,
+	grid = major
+]
+\legend{
+	$({({1}+{({x}^{({x}+{(\sin{x})})})})}\cdot{x})$
+}
+\addplot {log{2}(x+2)};
+\end{axis}
+\end{tikzpicture}
+\newpage
 $({({({({x}^{({x}+{(\sin{x})})})}\cdot{({({({1}+{(\cos{x})})}\cdot{(\ln{x})})}+{({({x}+{(\sin{x})})}\cdot{(\frac{1}{x})})})})}\cdot{x})}+{({1}+{({x}^{({x}+{(\sin{x})})})})})$\\
 \end{document}

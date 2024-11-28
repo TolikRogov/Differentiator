@@ -13,14 +13,11 @@ int main() {
 	TREE_CTOR(&tree);
 
 	INFIX_EXPRESSION_READER(&tree);
-	LATEX_PRINT_TREE(&tree);
 
 	INIT_TREE(diff_tree);
 	EXPRESSION_DIFFERENTIATION(&tree, &diff_tree);
 
 	TREE_DTOR(&tree);
-
-	LATEX_DUMP_FINISH();
 
 	OPEN_LATEX_PDF();
 	OPEN_HTML_FILE();

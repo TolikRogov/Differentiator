@@ -9,29 +9,113 @@
 											<a class='head'>MEGA DUMP</a><br>
 	<div class='dump'>
 	Colors meanings: 
-		<div class='circle' style='background-color: #D5CFE1; border-color: #8797b2;'>left subtree node</div>		<span style='color: #187AE8'>&#11153; left subtree edge</span>
-		<div class='circle' style='background-color: #BDEF9E; border-color: #99c2a2;'>right subtree node</div>		<span style='color: #48E818'>&#11153; right subtree edge</span>
-		<div class='circle' style='background-color: #FBEE21; border-color: #D3C70D;'>root node</div>			<span style='color: #3d1308'>&#11153; unknown what edge</span>
-		<div class='circle' style='background-color: #F18805; border-color: #AF3800;'>new node</div>
+		<div class='circle' style='background-color: #D5CFE1; border-color: #8797b2;'>variable node</div>		<span style='color: #187AE8'>&#11153; left subtree edge</span>
+		<div class='circle' style='background-color: #BDEF9E; border-color: #99c2a2;'>number node</div>			<span style='color: #48E818'>&#11153; right subtree edge</span>
+		<div class='circle' style='background-color: #FBEE21; border-color: #D3C70D;'>operation node</div>		<span style='color: #3d1308'>&#11153; unknown what edge</span>
+		<div class='circle' style='background-color: #F18805; border-color: #AF3800;'>pointed node</div>
 		<div class='circle' style='background-color: #BD3458; border-color: #7b0d1e;'>unknown what node</div>	</div>
 
-						<b>Binary Tree[0x16b44b0e0] born at "/Users/anatolij/Documents/GitHub/Differentiator/source/main.cpp": 12, name 'tree'</b>
+						<b>Binary Tree[0x16b3eb0e0] born at "/Users/anatolij/Documents/GitHub/Differentiator/source/main.cpp": 12, name 'tree'</b>
 	<div class='dump'>
 	DUMP #1: function TreeCtor was called from /Users/anatolij/Documents/GitHub/Differentiator/source/main.cpp: 13
 	<img src='img/graph1.svg' class='img'></div>
 
 	<div class='dump'>
+	NameTable:
+	<table class='name_table'>
+		<tr>
+			<td>Number</td>
+			<td>Variable</td>
+			<td>Value</td>
+			<td>Status</td>
+		</tr>
+		<tr>
+			<td>0</td>
+			<td>x</td>
+			<td>0</td>
+			<td>VAR_STATUS_USING</td>
+		</tr>
+		<tr>
+			<td>1</td>
+			<td>y</td>
+			<td>0</td>
+			<td>VAR_STATUS_DISUSING</td>
+		</tr>
+		<tr>
+			<td>2</td>
+			<td>z</td>
+			<td>0</td>
+			<td>VAR_STATUS_DISUSING</td>
+		</tr>
+	</table>
+	<table class='name_table'>
+		<tr>
+			<td>Number</td>
+			<td>Operation</td>
+			<td>LaTexSymbol</td>
+		</tr>
+		<tr>
+			<td>0</td>
+			<td>+</td>
+			<td>+</td>
+		</tr>
+		<tr>
+			<td>1</td>
+			<td>-</td>
+			<td>-</td>
+		</tr>
+		<tr>
+			<td>2</td>
+			<td>*</td>
+			<td>\cdot</td>
+		</tr>
+		<tr>
+			<td>3</td>
+			<td>/</td>
+			<td>frac</td>
+		</tr>
+		<tr>
+			<td>4</td>
+			<td>sin</td>
+			<td>sin</td>
+		</tr>
+		<tr>
+			<td>5</td>
+			<td>cos</td>
+			<td>cos</td>
+		</tr>
+		<tr>
+			<td>6</td>
+			<td>sqrt</td>
+			<td>sqrt[]</td>
+		</tr>
+		<tr>
+			<td>7</td>
+			<td>^</td>
+			<td>^</td>
+		</tr>
+		<tr>
+			<td>8</td>
+			<td>log</td>
+			<td>log_</td>
+		</tr>
+		<tr>
+			<td>9</td>
+			<td>ln</td>
+			<td>ln</td>
+		</tr>
+	</table></div>
+
+	<div class='dump'>
 	DUMP #2: function ExpressionReader was called from /Users/anatolij/Documents/GitHub/Differentiator/source/main.cpp: 15
 	<img src='img/graph2.svg' class='img'></div>
 
-						<b>Binary Tree[0x16b44b1a0] born at "/Users/anatolij/Documents/GitHub/Differentiator/source/main.cpp": 18, name 'diff_tree'</b>
+						<b>Binary Tree[0x16b3eb1a0] born at "/Users/anatolij/Documents/GitHub/Differentiator/source/main.cpp": 17, name 'diff_tree'</b>
 	<div class='dump'>
-	DUMP #3: function ExpressionDifferentiation was called from /Users/anatolij/Documents/GitHub/Differentiator/source/main.cpp: 19
+	DUMP #3: function ExpressionDifferentiation was called from /Users/anatolij/Documents/GitHub/Differentiator/source/main.cpp: 18
 	<img src='img/graph3.svg' class='img'></div>
 
 	<div class='dump'>
-	DUMP #4: function Simplification was called from /Users/anatolij/Documents/GitHub/Differentiator/source/main.cpp: 19
+	DUMP #4: function Simplification was called from /Users/anatolij/Documents/GitHub/Differentiator/source/main.cpp: 18
 	<img src='img/graph4.svg' class='img'></div>
 
-	</pre></tt></body>
-</html>

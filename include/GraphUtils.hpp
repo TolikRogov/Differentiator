@@ -1,6 +1,9 @@
 #pragma once
 
 static struct Colors {
+	const char* name_table_odd_tr					= "\"#FFFFFF\"";
+	const char* name_table_even_tr					= "\"#F7F7F7\"";
+	const char* name_table_background 				= "\"#F2F8F8\"";
 	const char* dot_background 						= "\"#DCDCDC\"";
 	const char* html_background 					= "\"#FFFAFA\"";
 	const char* address 							= "\"#4B0082\"";

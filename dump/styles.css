@@ -48,3 +48,31 @@ b {
 	object-fit: contain;
 	padding: 10px 0px 0px 0px;
 }
+.name_table {
+	width: 90%;
+	border: 15px solid #F2F8F8;
+	border-collapse: collapse;
+	margin: auto;
+	table-layout: auto;
+	text-align: center;
+	margin-bottom: 20px;
+	border-top: 5px solid #F2F8F8;
+}
+.name_table th {
+	font-weight: bold;
+	padding: 5px;
+	background: #F2F8F8;
+	border: none;
+	border-bottom: 5px solid #F2F8F8;
+}
+.name_table td {
+	padding: 10px;
+	border: none;
+	border-bottom: 5px solid #F2F8F8;
+}
+.name_table tbody tr:nth-child(odd) {
+	background: #FFFFFF;
+}
+.name_table tbody tr:nth-child(even) {
+	background: #F7F7F7;
+}

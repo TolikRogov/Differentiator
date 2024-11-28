@@ -37,6 +37,7 @@ typedef double Number_t;
 }
 
 #define TREE_DTOR(tree) {						 	 	 \
+	LATEX_DUMP_FINISH();								\
 	TREE_HTML_DUMP_FINISH();							\
 	tree_status = TreeDtor((tree)->root);				\
 	TREE_ERROR_CHECK(tree_status);						\

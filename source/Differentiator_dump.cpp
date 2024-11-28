@@ -33,15 +33,48 @@ BinaryTreeStatusCode BinaryTreeHtmlDumpStart() {
 
 	HTML_PRINTF("\t<div class='dump'>\n");
 	HTML_PRINTF("\tColors meanings: \n");
-	HTML_PRINTF("\t\t<div class='circle' style='background-color: %.7s; border-color: %.7s;'>left subtree node</div>", color.left_node + 1, color.left_node_border + 1);
+	HTML_PRINTF("\t\t<div class='circle' style='background-color: %.7s; border-color: %.7s;'>variable node</div>", color.left_node + 1, color.left_node_border + 1);
 	HTML_PRINTF("\t\t<span style='color: %.7s'>&#11153; left subtree edge</span>\n", color.left_edge + 1);
-	HTML_PRINTF("\t\t<div class='circle' style='background-color: %.7s; border-color: %.7s;'>right subtree node</div>", color.right_node + 1, color.right_node_border + 1);
-	HTML_PRINTF("\t\t<span style='color: %.7s'>&#11153; right subtree edge</span>\n", color.right_edge + 1);
-	HTML_PRINTF("\t\t<div class='circle' style='background-color: %.7s; border-color: %.7s;'>root node</div>", color.root_node + 1, color.root_node_border + 1);
-	HTML_PRINTF("\t\t\t<span style='color: %.7s'>&#11153; unknown what edge</span>\n", color.unknown_what_edge + 1);
-	HTML_PRINTF("\t\t<div class='circle' style='background-color: %.7s; border-color: %.7s;'>new node</div>\n", color.new_node + 1, color.new_node_border + 1);
+	HTML_PRINTF("\t\t<div class='circle' style='background-color: %.7s; border-color: %.7s;'>number node</div>", color.right_node + 1, color.right_node_border + 1);
+	HTML_PRINTF("\t\t\t<span style='color: %.7s'>&#11153; right subtree edge</span>\n", color.right_edge + 1);
+	HTML_PRINTF("\t\t<div class='circle' style='background-color: %.7s; border-color: %.7s;'>operation node</div>", color.root_node + 1, color.root_node_border + 1);
+	HTML_PRINTF("\t\t<span style='color: %.7s'>&#11153; unknown what edge</span>\n", color.unknown_what_edge + 1);
+	HTML_PRINTF("\t\t<div class='circle' style='background-color: %.7s; border-color: %.7s;'>pointed node</div>\n", color.new_node + 1, color.new_node_border + 1);
 	HTML_PRINTF("\t\t<div class='circle' style='background-color: %.7s; border-color: %.7s;'>unknown what node</div>", color.unknown_what_node + 1, color.unknown_what_node_border + 1);
 	HTML_PRINTF("\t</div>\n\n");
+
+#undef HTML_PRINTF
+
+	if (fclose(html_file))
+		TREE_ERROR_CHECK(TREE_FILE_CLOSE_ERROR);
+
+	return TREE_NO_ERROR;
+}
+
+BinaryTreeStatusCode NameTablePrint() {
+
+	FILE* html_file = fopen(HTML_FILE_, "a");
+	if (!html_file)
+		TREE_ERROR_CHECK(TREE_FILE_OPEN_ERROR);
+
+#define HTML_PRINTF(...) fprintf(html_file, __VA_ARGS__);
+
+	HTML_PRINTF("\t<div class='dump'>\n");
+	HTML_PRINTF("\tNameTable:\n\t<table class='name_table'>\n");
+	HTML_PRINTF("\t\t<tr>\n\t\t\t<td>Number</td>\n\t\t\t<td>Variable</td>\n\t\t\t<td>Value</td>\n\t\t\t<td>Status</td>\n\t\t</tr>\n");
+	for (size_t i = 0; i < AMOUNT_OF_VARIABLES; i++) {
+		HTML_PRINTF("\t\t<tr>\n\t\t\t<td>%d</td>\n\t\t\t<td>%s</td>\n\t\t\t<td>%lg</td>\n\t\t\t<td>%s</td>\n\t\t</tr>\n",
+					var_name_table[i].num, var_name_table[i].symbol, var_name_table[i].value,
+					(var_name_table[i].status == VAR_STATUS_USING ? RET_STRING(VAR_STATUS_USING) : RET_STRING(VAR_STATUS_DISUSING)));
+	}
+	HTML_PRINTF("\t</table>\n");
+	HTML_PRINTF("\t<table class='name_table'>\n");
+	HTML_PRINTF("\t\t<tr>\n\t\t\t<td>Number</td>\n\t\t\t<td>Operation</td>\n\t\t\t<td>LaTexSymbol</td>\n\t\t</tr>\n");
+	for (size_t i = 0; i < AMOUNT_OF_OPERATIONS; i++) {
+		HTML_PRINTF("\t\t<tr>\n\t\t\t<td>%d</td>\n\t\t\t<td>%s</td>\n\t\t\t<td>%s</td>\n\t\t</tr>\n",
+					op_name_table[i].num, op_name_table[i].math_symbol, op_name_table[i].tex_symbol);
+	}
+	HTML_PRINTF("\t</table></div>\n\n");
 
 #undef HTML_PRINTF
 
@@ -123,6 +156,39 @@ BinaryTreeStatusCode BinaryTreeCssFile() {
 			   "\tobject-fit: contain;\n"\
 			   "\tpadding: 10px 0px 0px 0px;\n"\
 			   "}\n");
+
+	CSS_PRINTF(".name_table {\n"\
+			"\twidth: 90%%;\n"\
+			"\tborder: 15px solid %.7s;\n"\
+			"\tborder-collapse: collapse;\n"\
+			"\tmargin: auto;\n"\
+			"\ttable-layout: auto;\n"\
+			"\ttext-align: center;\n"\
+			"\tmargin-bottom: 20px;\n"\
+			"\tborder-top: 5px solid %.7s;\n"\
+			"}\n", color.name_table_background + 1, color.name_table_background + 1);
+
+	CSS_PRINTF(".name_table th {\n"\
+			   "\tfont-weight: bold;\n"\
+			   "\tpadding: 5px;\n"\
+			   "\tbackground: %.7s;\n"\
+			   "\tborder: none;\n"\
+			   "\tborder-bottom: 5px solid %.7s;\n"\
+			   "}\n", color.name_table_background + 1, color.name_table_background + 1);
+
+	CSS_PRINTF(".name_table td {\n"\
+			   "\tpadding: 10px;\n"\
+			   "\tborder: none;\n"\
+			   "\tborder-bottom: 5px solid %.7s;\n"\
+			   "}\n", color.name_table_background + 1);
+
+	CSS_PRINTF(".name_table tbody tr:nth-child(odd) {\n"\
+			   "\tbackground: %.7s;\n"\
+			   "}\n", color.name_table_odd_tr + 1);
+
+	CSS_PRINTF(".name_table tbody tr:nth-child(even) {\n"\
+			   "\tbackground: %.7s;\n"\
+			   "}\n", color.name_table_even_tr + 1);
 
 #undef CSS_PRINTF
 

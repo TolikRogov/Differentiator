@@ -8,7 +8,10 @@
 #define INFIX_EXPRESSION_READER(tree) {			 		 		 \
 	tree_status = InfixReader(tree);					 		 \
 	TREE_ERROR_CHECK(tree_status);								\
+	NameTablePrint();											\
 	BINARY_TREE_GRAPH_DUMP(tree, "ExpressionReader", NULL); 	\
+	LATEX_PRINT_TREE(tree);										\
+	DrawGraph(tree);											\
 }
 
 BinaryTreeStatusCode InfixReader(Tree* tree);

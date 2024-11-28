@@ -84,6 +84,39 @@ BinaryTreeStatusCode PrintExpressionTree(Node_t* node, FILE* tex_file) {
 	return TREE_NO_ERROR;
 }
 
+BinaryTreeStatusCode DrawGraph(Tree* tree) {
+
+	FILE* tex_file = fopen(DIFF_LATEX_FILE_ DIFF_TEX_EXTENSION_, "a");
+	if (!tex_file)
+		TREE_ERROR_CHECK(TREE_FILE_OPEN_ERROR);
+
+#define TEX_PRINTF(...) fprintf(tex_file, __VA_ARGS__);
+
+	TEX_PRINTF("\\begin{tikzpicture}\n");
+	TEX_PRINTF("\\begin{axis} [\n");
+    TEX_PRINTF("\tlegend pos = north west,\n");
+    TEX_PRINTF("\tymin = 0,\n");
+    TEX_PRINTF("\tgrid = major\n");
+	TEX_PRINTF("]\n");
+	TEX_PRINTF("\\legend{\n");
+	TEX_PRINTF("\t$");
+	PrintExpressionTree(tree->root, tex_file);
+	TEX_PRINTF("$\n}\n");
+	TEX_PRINTF("\\addplot {");
+	PrintExpressionTree(tree->root, tex_file);
+	TEX_PRINTF("}\n");
+	TEX_PRINTF("\\end{axis}\n");
+	TEX_PRINTF("\\end{tikzpicture}\n");
+	TEX_PRINTF("\\newpage\n");
+
+#undef TEX_PRINTF
+
+	if (fclose(tex_file))
+		TREE_ERROR_CHECK(TREE_FILE_CLOSE_ERROR);
+
+	return TREE_NO_ERROR;
+}
+
 BinaryTreeStatusCode LatexDumpStart() {
 
 	BinaryTreeStatusCode tree_status = TREE_NO_ERROR;
@@ -102,6 +135,8 @@ BinaryTreeStatusCode LatexDumpStart() {
 	TEX_PRINTF("\\usepackage{mathtext}\n");
 	TEX_PRINTF("\\usepackage[T1]{fontenc}\n");
 	TEX_PRINTF("\\usepackage[utf8]{inputenc}\n");
+	TEX_PRINTF("\\usepackage{pgfplots}\n");
+	TEX_PRINTF("\\pgfplotsset{compat=1.9}\n");
 	TEX_PRINTF("\\usepackage[english,bulgarian,ukrainian,russian]{babel}\n");
 	TEX_PRINTF("\\title{Лабораторная работа минимум на отл 10!}\n");
 	TEX_PRINTF("\\author{Рогов Анатолий}\n");

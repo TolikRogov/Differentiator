@@ -336,16 +336,16 @@ int TrivialTransformations(Node_t* node, size_t* count_of_changes) {
 	}																							\
 }
 
-#define MUL_TO_ZERO() {									 				 		 		 		 \
-	if ((node->left->type == NUM && DiffCompareDouble(node->left->data.val_num, 0)) ||			\
-		(node->right->type == NUM && DiffCompareDouble(node->right->data.val_num, 0))) {		\
-		node->type = NUM;																		\
-		node->data.val_num = 0;																	\
-		TreeDtor(node->left); TreeDtor(node->right);											\
-		node->left = node->right = NULL;														\
-		(*count_of_changes)++;																	\
-		break;																					\
-	}																							\
+#define NUMBER_AS_RESULT(compare_number, result) {									 				 		 \
+	if ((node->left->type == NUM && DiffCompareDouble(node->left->data.val_num, compare_number)) ||			\
+		(node->right->type == NUM && DiffCompareDouble(node->right->data.val_num, compare_number))) {		\
+		node->type = NUM;																					\
+		node->data.val_num = result;																		\
+		TreeDtor(node->left); TreeDtor(node->right);														\
+		node->left = node->right = NULL;																	\
+		(*count_of_changes)++;																				\
+		break;																								\
+	}																										\
 }
 
 	switch (node->type) {
@@ -361,9 +361,20 @@ int TrivialTransformations(Node_t* node, size_t* count_of_changes) {
 				case MUL: {
 					REBINDING(left, right, 1, node->right->data);
 					REBINDING(right, left, 1, node->left->data);
-					MUL_TO_ZERO();
+					NUMBER_AS_RESULT(0, 0);
 					break;
 				}
+				case POW: {
+					REBINDING(left, right, 1, node->right->data);
+					REBINDING(right, left, 1, node->left->data);
+					NUMBER_AS_RESULT(0, 1);
+				}
+				case SIN:
+				case COS:
+				case LOG:
+				case LN:
+				case SQRT:
+				case AMOUNT_OF_OPERATIONS:
 				case INVALID_OPERATION:
 				default: return 0;
 			}
@@ -388,6 +399,23 @@ int ConvolutionConstant(Node_t* node, size_t* count_of_changes) {
 		case VAR:	return 0;
 		case OP:
 		{
+			switch (node->data.val_op) {
+				case ADD:
+				case SUB:
+				case MUL:
+				case POW:
+				case DIV:
+				case SQRT: { break; }
+
+				case LOG:
+				case LN:
+				case SIN:
+				case COS:
+				case AMOUNT_OF_OPERATIONS:
+				case INVALID_OPERATION:
+				default: return 0;
+			}
+
 			int left = ConvolutionConstant(node->left, count_of_changes);
 			int right = ConvolutionConstant(node->right, count_of_changes);
 			if ((left && right) || (left && !node->right)) {
