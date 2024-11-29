@@ -61,11 +61,12 @@ BinaryTreeStatusCode NameTablePrint() {
 
 	HTML_PRINTF("\t<div class='dump'>\n");
 	HTML_PRINTF("\tNameTable:\n\t<table class='name_table'>\n");
-	HTML_PRINTF("\t\t<tr>\n\t\t\t<td>Number</td>\n\t\t\t<td>Variable</td>\n\t\t\t<td>Value</td>\n\t\t\t<td>Status</td>\n\t\t</tr>\n");
+	HTML_PRINTF("\t\t<tr>\n\t\t\t<td>Number</td>\n\t\t\t<td>Variable</td>\n\t\t\t<td>Value</td>\n\t\t\t<td>Status</td>\n\t\t\t<td>State</td>\n\t\t</tr>\n");
 	for (size_t i = 0; i < AMOUNT_OF_VARIABLES; i++) {
-		HTML_PRINTF("\t\t<tr>\n\t\t\t<td>%d</td>\n\t\t\t<td>%s</td>\n\t\t\t<td>%lg</td>\n\t\t\t<td>%s</td>\n\t\t</tr>\n",
+		HTML_PRINTF("\t\t<tr>\n\t\t\t<td>%d</td>\n\t\t\t<td>%s</td>\n\t\t\t<td>%lg</td>\n\t\t\t<td>%s</td>\n\t\t\t<td>%s</td>\n\t\t</tr>\n",
 					var_name_table[i].num, var_name_table[i].symbol, var_name_table[i].value,
-					(var_name_table[i].status == VAR_STATUS_USING ? RET_STRING(VAR_STATUS_USING) : RET_STRING(VAR_STATUS_DISUSING)));
+					(var_name_table[i].status == VAR_STATUS_USING ? RET_STRING(VAR_STATUS_USING) : RET_STRING(VAR_STATUS_DISUSING)),
+					(var_name_table[i].state == VAR_DIFF_STATUS_NUM ? RET_STRING(VAR_DIFF_STATUS_NUM) : RET_STRING(VAR_DIFF_STATUS_VAR)));
 	}
 	HTML_PRINTF("\t</table>\n");
 	HTML_PRINTF("\t<table class='name_table'>\n");

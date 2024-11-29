@@ -136,6 +136,10 @@ Number_t VarNameTableGetValue(VarNum number) {
 	return var_name_table[number].value;
 }
 
+VarStatus VarNameTableGetStatus (VarNum number) {
+	return var_name_table[number].status;
+}
+
 BinaryTreeStatusCode ResetVariables() {
 
 	for (size_t i = 0; i < AMOUNT_OF_VARIABLES; i++) {
@@ -147,6 +151,18 @@ BinaryTreeStatusCode ResetVariables() {
 }
 
 BinaryTreeStatusCode Calculator(Tree* tree) {
+
+	printf(BLUE("Do you want to calculate value of expression? [y/n]:")" ");
+	int check = 0;
+	while ((check = getchar()) != EOF) {
+		getchar();
+		if (check == 'y')
+			break;
+		if (check == 'n')
+			return TREE_NO_ERROR;
+		printf(RED("Error! Try again")"\n");
+		printf(BLUE("Do you want to calculate value of expression? [y/n]:")" ");
+	}
 
 	printf("-------------------------------------\n");
 	printf(BLUE("Set using variables values:")"\n");
@@ -246,9 +262,54 @@ size_t NumberOfVariablesInSubtree(Node_t* node) {
 	return (node->type == VAR ? 1 : 0) + (node->left ? NumberOfVariablesInSubtree(node->left) : 0) + (node->right ? NumberOfVariablesInSubtree(node->right) : 0);
 }
 
+size_t NumberOfVarStatusUsingVariables() {
+
+	size_t cnt = 0;
+	for (size_t i = 0; i < AMOUNT_OF_VARIABLES; i++) {
+		if (var_name_table[i].status == VAR_STATUS_USING)
+			cnt++;
+	}
+
+	return cnt;
+}
+
+BinaryTreeStatusCode VarNameTableSetDiff() {
+
+	size_t cnt_of_using_variables = NumberOfVarStatusUsingVariables();
+	if (cnt_of_using_variables == 1) {
+		for (size_t i = 0; i < AMOUNT_OF_VARIABLES; i++) {
+			if (var_name_table[i].status == VAR_STATUS_USING) {
+				var_name_table[i].state = VAR_DIFF_STATUS_VAR;
+				break;
+			}
+		}
+	}
+	else if (cnt_of_using_variables > 1) {
+		char variable[MAX_OPERATION_NAME_SIZE] = {};
+		VarNum var_number = INVALID_VARIABLE;
+
+		printf(BLUE("Using variables"));
+		for (size_t i = 0; i < AMOUNT_OF_VARIABLES; i++) {
+			if (var_name_table[i].status == VAR_STATUS_USING)
+				printf(" - %s", var_name_table[i].symbol);
+		}
+		printf(":\n");
+		do {
+			printf(YELLOW("Enter the variable by which to differentiate:")" ");
+			scanf("%s", variable);
+		} while ((var_number = VarNameTableFindVariable(variable)) == INVALID_VARIABLE || VarNameTableGetStatus(var_number) == VAR_STATUS_DISUSING);
+
+		var_name_table[var_number].state = VAR_DIFF_STATUS_VAR;
+	}
+
+	return TREE_NO_ERROR;
+}
+
 BinaryTreeStatusCode Differentiation(Tree* function_tree, Tree* diff_tree) {
 
 	BinaryTreeStatusCode tree_status = TREE_NO_ERROR;
+
+	VarNameTableSetDiff();
 
 	diff_tree->root = doDifferentiation(function_tree->root);
 	BINARY_TREE_GRAPH_DUMP(diff_tree, "ExpressionDifferentiation", diff_tree->root);
@@ -269,7 +330,12 @@ Node_t* doDifferentiation(Node_t* node) {
 
 	switch (node->type) {
 		case NUM: return _NUM(0);
-		case VAR: return _NUM(1);
+		case VAR: {
+			if (var_name_table[node->data.val_var].state == VAR_DIFF_STATUS_VAR)
+				return _NUM(1);
+			else
+				return _NUM(0);
+		}
 		case OP: {
 			switch (node->data.val_op) {
 				case ADD: 	return _ADD(dL, dR);
@@ -355,9 +421,8 @@ int TrivialTransformations(Node_t* node, size_t* count_of_changes) {
 	}																							\
 }
 
-#define NUMBER_AS_RESULT(compare_number, result) {									 				 		 \
-	if ((node->left->type == NUM && DiffCompareDouble(node->left->data.val_num, compare_number)) ||			\
-		(node->right->type == NUM && DiffCompareDouble(node->right->data.val_num, compare_number))) {		\
+#define NUMBER_AS_RESULT(event_pos, event, result) {									 				 	 \
+	if ((node->event_pos->type == NUM && DiffCompareDouble(node->event_pos->data.val_num, event))) {		\
 		node->type = NUM;																					\
 		node->data.val_num = result;																		\
 		TreeDtor(node->left); TreeDtor(node->right);														\
@@ -376,17 +441,23 @@ int TrivialTransformations(Node_t* node, size_t* count_of_changes) {
 					break;
 				}
 				case SUB: { REBINDING(right, left, 0, node->left->data); break; }
-				case DIV: { REBINDING(right, left, 1, node->left->data); break; }
+				case DIV: {
+					REBINDING(right, left, 1, node->left->data);
+					NUMBER_AS_RESULT(left, 0, 0);
+					break;
+				}
 				case MUL: {
 					REBINDING(left, right, 1, node->right->data);
 					REBINDING(right, left, 1, node->left->data);
-					NUMBER_AS_RESULT(0, 0);
+					NUMBER_AS_RESULT(left, 0, 0);
+					NUMBER_AS_RESULT(right, 0, 0);
 					break;
 				}
 				case POW: {
 					REBINDING(left, right, 1, node->right->data);
 					REBINDING(right, left, 1, node->left->data);
-					NUMBER_AS_RESULT(0, 1);
+					NUMBER_AS_RESULT(right, 0, 1);
+					NUMBER_AS_RESULT(left, 1, 1);
 					break;
 				}
 				case SIN:

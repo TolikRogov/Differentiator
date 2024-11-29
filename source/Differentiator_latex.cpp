@@ -8,7 +8,14 @@ BinaryTreeStatusCode LaTexPrintTree(Tree* tree) {
 
 #define TEX_PRINTF(...) fprintf(tex_file, __VA_ARGS__)
 
-	TEX_PRINTF("$f^{(%zu)}(x) = ", tree->diff_number);
+	TEX_PRINTF("$f^{(%zu)}(", tree->diff_number);
+	for (size_t i = 0, j = 0; i < AMOUNT_OF_VARIABLES; i++) {
+		if (var_name_table[i].state == VAR_DIFF_STATUS_VAR) {
+				TEX_PRINTF("%s", var_name_table[i].symbol);
+				break;
+		}
+	}
+	TEX_PRINTF(") = ");
 	PrintExpressionTree(tree->root, tex_file);
 	TEX_PRINTF("$\\\\\n");
 

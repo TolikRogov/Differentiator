@@ -9,8 +9,13 @@ enum VarNum {
 };
 
 enum VarStatus {
-	VAR_STATUS_USING,
-	VAR_STATUS_DISUSING
+	VAR_STATUS_USING	= 1,
+	VAR_STATUS_DISUSING	= 0,
+};
+
+enum VarDiffStatus {
+	VAR_DIFF_STATUS_NUM = 0,
+	VAR_DIFF_STATUS_VAR = 1,
 };
 
 struct Variable {
@@ -18,6 +23,7 @@ struct Variable {
 	const char* symbol;
 	Number_t value;
 	VarStatus status;
+	VarDiffStatus state;
 };
 
 extern Variable var_name_table[];

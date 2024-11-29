@@ -4,9 +4,9 @@
 #include "Operations.hpp"
 
 Variable var_name_table[AMOUNT_OF_VARIABLES] = {
-	[VAR_X] 	= 	{ .num = VAR_X,	.symbol = "x",	.value = 0,	.status = VAR_STATUS_DISUSING },
-	[VAR_Y] 	= 	{ .num = VAR_Y, .symbol = "y", 	.value = 0, .status = VAR_STATUS_DISUSING },
-	[VAR_Z] 	= 	{ .num = VAR_Z, .symbol = "z", 	.value = 0, .status = VAR_STATUS_DISUSING } };
+	[VAR_X] 	= 	{ .num = VAR_X,	.symbol = "x",	.value = 0,	.status = VAR_STATUS_DISUSING,	.state = VAR_DIFF_STATUS_NUM,	},
+	[VAR_Y] 	= 	{ .num = VAR_Y, .symbol = "y", 	.value = 0, .status = VAR_STATUS_DISUSING, 	.state = VAR_DIFF_STATUS_NUM,	},
+	[VAR_Z] 	= 	{ .num = VAR_Z, .symbol = "z", 	.value = 0, .status = VAR_STATUS_DISUSING, 	.state = VAR_DIFF_STATUS_NUM,	} };
 
 Operation op_name_table[AMOUNT_OF_OPERATIONS] = {
 	[ADD] 	= 	{ .num = ADD, 	.math_symbol = "+", 	.tex_symbol = "+", 			},

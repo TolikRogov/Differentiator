@@ -140,6 +140,7 @@ OpNum OpNameTableFindOperation(const char* string);
 const char* VarNameTableGetSymbol(VarNum number);
 VarNum VarNameTableFindVariable(const char* string);
 Number_t VarNameTableGetValue(VarNum number);
+VarStatus VarNameTableGetStatus (VarNum number);
 BinaryTreeStatusCode ResetVariables();
 
 BinaryTreeStatusCode Calculator(Tree* tree);
@@ -156,3 +157,5 @@ int ConvolutionConstant(Node_t* node, size_t* count_of_changes);
 int TrivialTransformations(Node_t* node, size_t* count_of_changes);
 
 BinaryTreeStatusCode LaTexPrintTree(Tree* tree);
+size_t NumberOfVarStatusUsingVariables();
+BinaryTreeStatusCode VarNameTableSetDiff();

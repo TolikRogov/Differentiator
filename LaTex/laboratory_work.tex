@@ -14,7 +14,7 @@
 \newpage
 \section{Исходная функция}
 \centering
-$f(x) = ({2}\cdot{(e^{({x}\cdot{2})})})$\\
+$f(x) = (\cos{({2}\cdot{x})})$\\
 \begin{figure}[h]
 \centering
 \begin{tikzpicture}
@@ -29,24 +29,14 @@ $f(x) = ({2}\cdot{(e^{({x}\cdot{2})})})$\\
 	enlargelimits=true,
 ]
 \legend{
-	$({2}\cdot{(e^{({x}\cdot{2})})})$
+	$(\cos{({2}\cdot{x})})$
 }
-\addplot[blue, samples=750]{(((2))*((exp((((x))*((2)))))))};
+\addplot[blue, samples=750]{(cos(deg((((2))*((x))))))};
 \end{axis}
 \end{tikzpicture}
 \caption{График функции}
 \end{figure}
 \newpage
 \section{Дифференцирование}
-$f^{(1)}(x) = ({2}\cdot{({(e^{({x}\cdot{2})})}\cdot{2})})$\\
-$f^{(2)}(x) = ({2}\cdot{({({(e^{({x}\cdot{2})})}\cdot{2})}\cdot{2})})$\\
-$f^{(3)}(x) = ({2}\cdot{({({({(e^{({x}\cdot{2})})}\cdot{2})}\cdot{2})}\cdot{2})})$\\
-$f^{(4)}(x) = ({2}\cdot{({({({({(e^{({x}\cdot{2})})}\cdot{2})}\cdot{2})}\cdot{2})}\cdot{2})})$\\
-$f^{(5)}(x) = ({2}\cdot{({({({({({(e^{({x}\cdot{2})})}\cdot{2})}\cdot{2})}\cdot{2})}\cdot{2})}\cdot{2})})$\\
-$f^{(6)}(x) = ({2}\cdot{({({({({({({(e^{({x}\cdot{2})})}\cdot{2})}\cdot{2})}\cdot{2})}\cdot{2})}\cdot{2})}\cdot{2})})$\\
-$f^{(7)}(x) = ({2}\cdot{({({({({({({({(e^{({x}\cdot{2})})}\cdot{2})}\cdot{2})}\cdot{2})}\cdot{2})}\cdot{2})}\cdot{2})}\cdot{2})})$\\
-$f^{(8)}(x) = ({2}\cdot{({({({({({({({({(e^{({x}\cdot{2})})}\cdot{2})}\cdot{2})}\cdot{2})}\cdot{2})}\cdot{2})}\cdot{2})}\cdot{2})}\cdot{2})})$\\
-$f^{(9)}(x) = ({2}\cdot{({({({({({({({({({(e^{({x}\cdot{2})})}\cdot{2})}\cdot{2})}\cdot{2})}\cdot{2})}\cdot{2})}\cdot{2})}\cdot{2})}\cdot{2})}\cdot{2})})$\\
-$f^{(10)}(x) = ({2}\cdot{({({({({({({({({({({(e^{({x}\cdot{2})})}\cdot{2})}\cdot{2})}\cdot{2})}\cdot{2})}\cdot{2})}\cdot{2})}\cdot{2})}\cdot{2})}\cdot{2})}\cdot{2})})$\\
-$f^{(11)}(x) = ({2}\cdot{({({({({({({({({({({({(e^{({x}\cdot{2})})}\cdot{2})}\cdot{2})}\cdot{2})}\cdot{2})}\cdot{2})}\cdot{2})}\cdot{2})}\cdot{2})}\cdot{2})}\cdot{2})}\cdot{2})})$\\
+$f^{(1)}(x) = ({({-1}\cdot{(\sin{({2}\cdot{x})})})}\cdot{2})$\\
 \end{document}
