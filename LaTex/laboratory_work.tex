@@ -7,14 +7,14 @@
 \pgfplotsset{compat=1.9}
 \usepackage[english,russian]{babel}
 \title{Лабораторная работа минимум на отл 10!}
-\author{Рогов Анатолий}
+\author{Рогов Анатолий Б01-406}
 \date{\today}
 \begin{document}
 \maketitle
 \newpage
 \section{Исходная функция}
 \centering
-$f(x) = ({(\cos{({x}\cdot{2})})}^{3})$\\
+$f(x) = ({2}\cdot{(e^{({x}\cdot{2})})})$\\
 \begin{figure}[h]
 \centering
 \begin{tikzpicture}
@@ -29,13 +29,24 @@ $f(x) = ({(\cos{({x}\cdot{2})})}^{3})$\\
 	enlargelimits=true,
 ]
 \legend{
-	$({(\cos{({x}\cdot{2})})}^{3})$
+	$({2}\cdot{(e^{({x}\cdot{2})})})$
 }
-\addplot[blue, samples=750]{(((cos(deg((((x))*((2)))))))^((3)))};
+\addplot[blue, samples=750]{(((2))*((exp((((x))*((2)))))))};
 \end{axis}
 \end{tikzpicture}
 \caption{График функции}
 \end{figure}
 \newpage
-$({({3}\cdot{({(\cos{({x}\cdot{2})})}^{2})})}\cdot{({({-1}\cdot{(\sin{({x}\cdot{2})})})}\cdot{2})})$
+\section{Дифференцирование}
+$f^{(1)}(x) = ({2}\cdot{({(e^{({x}\cdot{2})})}\cdot{2})})$\\
+$f^{(2)}(x) = ({2}\cdot{({({(e^{({x}\cdot{2})})}\cdot{2})}\cdot{2})})$\\
+$f^{(3)}(x) = ({2}\cdot{({({({(e^{({x}\cdot{2})})}\cdot{2})}\cdot{2})}\cdot{2})})$\\
+$f^{(4)}(x) = ({2}\cdot{({({({({(e^{({x}\cdot{2})})}\cdot{2})}\cdot{2})}\cdot{2})}\cdot{2})})$\\
+$f^{(5)}(x) = ({2}\cdot{({({({({({(e^{({x}\cdot{2})})}\cdot{2})}\cdot{2})}\cdot{2})}\cdot{2})}\cdot{2})})$\\
+$f^{(6)}(x) = ({2}\cdot{({({({({({({(e^{({x}\cdot{2})})}\cdot{2})}\cdot{2})}\cdot{2})}\cdot{2})}\cdot{2})}\cdot{2})})$\\
+$f^{(7)}(x) = ({2}\cdot{({({({({({({({(e^{({x}\cdot{2})})}\cdot{2})}\cdot{2})}\cdot{2})}\cdot{2})}\cdot{2})}\cdot{2})}\cdot{2})})$\\
+$f^{(8)}(x) = ({2}\cdot{({({({({({({({({(e^{({x}\cdot{2})})}\cdot{2})}\cdot{2})}\cdot{2})}\cdot{2})}\cdot{2})}\cdot{2})}\cdot{2})}\cdot{2})})$\\
+$f^{(9)}(x) = ({2}\cdot{({({({({({({({({({(e^{({x}\cdot{2})})}\cdot{2})}\cdot{2})}\cdot{2})}\cdot{2})}\cdot{2})}\cdot{2})}\cdot{2})}\cdot{2})}\cdot{2})})$\\
+$f^{(10)}(x) = ({2}\cdot{({({({({({({({({({({(e^{({x}\cdot{2})})}\cdot{2})}\cdot{2})}\cdot{2})}\cdot{2})}\cdot{2})}\cdot{2})}\cdot{2})}\cdot{2})}\cdot{2})}\cdot{2})})$\\
+$f^{(11)}(x) = ({2}\cdot{({({({({({({({({({({({(e^{({x}\cdot{2})})}\cdot{2})}\cdot{2})}\cdot{2})}\cdot{2})}\cdot{2})}\cdot{2})}\cdot{2})}\cdot{2})}\cdot{2})}\cdot{2})}\cdot{2})})$\\
 \end{document}

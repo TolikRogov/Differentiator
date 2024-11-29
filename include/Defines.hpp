@@ -13,6 +13,7 @@
 #define _SQRT(left) 		CreateNode(OP,  {.val_op = SQRT},	left, NULL, NULL)
 #define _LOG(left, right)	CreateNode(OP,  {.val_op = LOG}, 	left, right, NULL)
 #define _LN(left)			CreateNode(OP,	{.val_op = LN},		left, NULL, NULL)
+#define _EXP(left)			CreateNode(OP,	{.val_op = EXP},	left, NULL, NULL)
 
 #define dL doDifferentiation(node->left)
 #define dR doDifferentiation(node->right)

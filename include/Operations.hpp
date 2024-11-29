@@ -12,6 +12,7 @@ enum OpNum {
 	POW,
 	LOG,
 	LN,
+	EXP,
 	AMOUNT_OF_OPERATIONS
 };
 

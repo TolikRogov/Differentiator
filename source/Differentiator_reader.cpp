@@ -71,9 +71,51 @@ int GetG() {
 	return val;
 }
 
-BinaryTreeStatusCode ReadExpression(Tree* tree) {
+BinaryTreeStatusCode OriginalFunction(Tree* tree) {
 
 	BinaryTreeStatusCode tree_status = TREE_NO_ERROR;
+
+	tree_status = ReadExpression(tree);
+	TREE_ERROR_CHECK(tree_status);
+
+	NameTablePrint();
+	BINARY_TREE_GRAPH_DUMP(tree, "ExpressionReader", NULL);
+
+	FILE* tex_file = fopen(DIFF_LATEX_FILE_ DIFF_TEX_EXTENSION_, "a");
+	if (!tex_file)
+		TREE_ERROR_CHECK(TREE_FILE_OPEN_ERROR);
+
+#define TEX_PRINTF(...) fprintf(tex_file, __VA_ARGS__)
+
+	TEX_PRINTF("\\section{Исходная функция}\n");
+	TEX_PRINTF("\\centering\n");
+	TEX_PRINTF("$f(");
+	for (size_t i = 0, j = 0; i < AMOUNT_OF_VARIABLES; i++) {
+		if (var_name_table[i].status == VAR_STATUS_USING) {
+			j++;
+			if (j == 1)
+				TEX_PRINTF("%s", var_name_table[i].symbol);
+			else
+				TEX_PRINTF(", %s", var_name_table[i].symbol);
+		}
+	}
+	TEX_PRINTF(") = ");
+
+	PrintExpressionTree(tree->root, tex_file);
+	TEX_PRINTF("$\\\\\n");
+
+	DrawGraph(tree, tex_file);
+
+	TEX_PRINTF("\\newpage\n");
+	TEX_PRINTF("\\section{Дифференцирование}\n");
+
+	if(fclose(tex_file))
+		TREE_ERROR_CHECK(TREE_FILE_CLOSE_ERROR);
+
+	return TREE_NO_ERROR;
+}
+
+BinaryTreeStatusCode ReadExpression(Tree* tree) {
 
 	FILE* exp_file = fopen(DIFF_EXPRESSION_FILE_, "r");
 	if (!exp_file)
@@ -118,35 +160,6 @@ BinaryTreeStatusCode ReadExpression(Tree* tree) {
 		free(buffer);
 		buffer = NULL;
 	}
-
-	NameTablePrint();
-	BINARY_TREE_GRAPH_DUMP(tree, "ExpressionReader", NULL);
-
-	FILE* tex_file = fopen(DIFF_LATEX_FILE_ DIFF_TEX_EXTENSION_, "a");
-	if (!tex_file)
-		TREE_ERROR_CHECK(TREE_FILE_OPEN_ERROR);
-
-	fprintf(tex_file, "\\section{Исходная функция}\n");
-	fprintf(tex_file, "\\centering\n");
-	fprintf(tex_file, "$f(");
-	for (size_t i = 0, j = 0; i < AMOUNT_OF_VARIABLES; i++) {
-		if (var_name_table[i].status == VAR_STATUS_USING) {
-			j++;
-			if (j == 1)
-				fprintf(tex_file, "%s", var_name_table[i].symbol);
-			else
-				fprintf(tex_file, ", %s", var_name_table[i].symbol);
-		}
-	}
-	fprintf(tex_file, ") = ");
-
-	PrintExpressionTree(tree->root, tex_file);
-	fprintf(tex_file, "$\\\\\n");
-
-	if(fclose(tex_file))
-		TREE_ERROR_CHECK(TREE_FILE_CLOSE_ERROR);
-
-	DrawGraph(tree);
 
 	return TREE_NO_ERROR;
 }

@@ -6,12 +6,16 @@ BinaryTreeStatusCode LaTexPrintTree(Tree* tree) {
 	if (!tex_file)
 		TREE_ERROR_CHECK(TREE_FILE_OPEN_ERROR);
 
-	fprintf(tex_file, "$");
+#define TEX_PRINTF(...) fprintf(tex_file, __VA_ARGS__)
+
+	TEX_PRINTF("$f^{(%zu)}(x) = ", tree->diff_number);
 	PrintExpressionTree(tree->root, tex_file);
-	fprintf(tex_file, "$\n");
+	TEX_PRINTF("$\\\\\n");
 
 	if (fclose(tex_file))
 		TREE_ERROR_CHECK(TREE_FILE_CLOSE_ERROR);
+
+#undef TEX_PRINTF
 
 	return TREE_NO_ERROR;
 }
@@ -56,8 +60,9 @@ BinaryTreeStatusCode PrintExpressionTree(Node_t* node, FILE* tex_file) {
 				case LN:
 				case COS:
 				case SQRT:
+				case EXP:
 				case SIN: {
-					fprintf(tex_file, "(\\%s{", OpNameTableGetTexSymbol(node->data.val_op));
+					fprintf(tex_file, "(%s{", OpNameTableGetTexSymbol(node->data.val_op));
 					if (node->left) PrintExpressionTree(node->left, tex_file);
 					else TREE_ERROR_CHECK(TREE_LATEX_SYNTAX_ERROR);
 					fprintf(tex_file, "})");
@@ -124,6 +129,7 @@ BinaryTreeStatusCode PrintMathExpression(Node_t* node, FILE* tex_file) {
 					break;
 				}
 				case LN:
+				case EXP:
 				case SQRT: {
 					TEX_PRINTF("(%s(", OpNameTableGetMathSymbol(node->data.val_op));
 					if (node->left) PrintMathExpression(node->left, tex_file);
@@ -163,11 +169,7 @@ BinaryTreeStatusCode PrintMathExpression(Node_t* node, FILE* tex_file) {
 	return TREE_NO_ERROR;
 }
 
-BinaryTreeStatusCode DrawGraph(Tree* tree) {
-
-	FILE* tex_file = fopen(DIFF_LATEX_FILE_ DIFF_TEX_EXTENSION_, "a");
-	if (!tex_file)
-		TREE_ERROR_CHECK(TREE_FILE_OPEN_ERROR);
+BinaryTreeStatusCode DrawGraph(Tree* tree, FILE* tex_file) {
 
 	for (size_t i = 0, j = 0; i < AMOUNT_OF_VARIABLES; i++) {
 		if (var_name_table[i].status == VAR_STATUS_USING)
@@ -204,13 +206,9 @@ BinaryTreeStatusCode DrawGraph(Tree* tree) {
 	TEX_PRINTF("\\end{tikzpicture}\n");
 	TEX_PRINTF("\\caption{График функции}\n");
 	TEX_PRINTF("\\end{figure}\n");
-	TEX_PRINTF("\\newpage\n");
 
 #undef TEX_PRINTF
 #undef ABS_X
-
-	if (fclose(tex_file))
-		TREE_ERROR_CHECK(TREE_FILE_CLOSE_ERROR);
 
 	return TREE_NO_ERROR;
 }
@@ -237,7 +235,7 @@ BinaryTreeStatusCode LatexDumpStart() {
 	TEX_PRINTF("\\pgfplotsset{compat=1.9}\n");
 	TEX_PRINTF("\\usepackage[english,russian]{babel}\n");
 	TEX_PRINTF("\\title{Лабораторная работа минимум на отл 10!}\n");
-	TEX_PRINTF("\\author{Рогов Анатолий}\n");
+	TEX_PRINTF("\\author{Рогов Анатолий Б01-406}\n");
 	TEX_PRINTF("\\date{\\today}\n");
 	TEX_PRINTF("\\begin{document}\n");
 	TEX_PRINTF("\\maketitle\n");

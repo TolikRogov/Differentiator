@@ -30,11 +30,18 @@ typedef double Number_t;
 	TREE_ERROR_CHECK(tree_status);				\
 }
 
-#define TREE_CTOR(tree) {						 		 \
-	tree_status = TreeCtor(tree);						\
-	TREE_ERROR_CHECK(tree_status);						\
-	BINARY_TREE_GRAPH_DUMP(tree, "TreeCtor", NULL);		\
-}
+#ifdef PRINT_DEBUG
+	#define TREE_CTOR(tree) {						 		 \
+		tree_status = TreeCtor(tree);						\
+		TREE_ERROR_CHECK(tree_status);						\
+		BINARY_TREE_GRAPH_DUMP(tree, "TreeCtor", NULL);		\
+	}
+#else
+	#define TREE_CTOR(tree) {						 		 \
+		tree_status = TreeCtor(tree);						\
+		TREE_ERROR_CHECK(tree_status);						\
+	}
+#endif
 
 #define TREE_DTOR(tree) {						 	 	 \
 	LATEX_DUMP_FINISH();								\
@@ -106,6 +113,7 @@ struct DumpLogInfo {
 struct Tree {
 	Node_t* root;
 	TreeLogInfo info;
+	size_t diff_number;
 };
 
 const Number_t UNKNOWN_WHAT = -666;

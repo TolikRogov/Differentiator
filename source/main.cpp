@@ -16,6 +16,8 @@ int main() {
 
 	INIT_TREE(diff_tree);
 	DIFFERENTIATION(&tree, &diff_tree);
+	for (size_t i = 0; i < 10; i++)
+		DIFFERENTIATION(&diff_tree, &diff_tree);
 
 	TREE_DTOR(&tree);
 

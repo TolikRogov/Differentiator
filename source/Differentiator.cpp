@@ -199,6 +199,7 @@ Number_t Eval(Node_t* node) {
 									return log(arg);
 							  	else { TREE_ERROR_MESSAGE(TREE_DEFINITION_AREA_ERROR); return 0; }
 							}
+				case EXP:   return exp(Eval(node->left));
 				case AMOUNT_OF_OPERATIONS:
 				case INVALID_OPERATION:
 				default:					TREE_ERROR_CHECK(TREE_INVALID_TYPE);
@@ -229,6 +230,7 @@ Node_t* doCopySubtree(Node_t* node) {
 				case SQRT:	return _SQRT(cL);
 				case LOG:	return _LOG(cL, cR);
 				case LN:	return _LN(cL);
+				case EXP:	return _EXP(cL);
 
 				case AMOUNT_OF_OPERATIONS:
 				case INVALID_OPERATION:
@@ -254,6 +256,7 @@ BinaryTreeStatusCode Differentiation(Tree* function_tree, Tree* diff_tree) {
 	Simplification(diff_tree);
 	BINARY_TREE_GRAPH_DUMP(diff_tree, "Simplification", diff_tree->root);
 
+	diff_tree->diff_number = function_tree->diff_number + 1;
 	LATEX_PRINT_TREE(diff_tree);
 
 	return TREE_NO_ERROR;
@@ -290,6 +293,7 @@ Node_t* doDifferentiation(Node_t* node) {
 				case SQRT:	return _MUL(_DIV(_NUM(1), _MUL(_NUM(2), _SQRT(cL))), dL);
 				case LOG:	return _MUL(_DIV(_NUM(1), _MUL(cR, _LN(cL))), dR);
 				case LN:	return _MUL(_DIV(_NUM(1), cL), dL);
+				case EXP:	return _MUL(cP, dL);
 
 				case AMOUNT_OF_OPERATIONS:
 				case INVALID_OPERATION:
@@ -390,6 +394,7 @@ int TrivialTransformations(Node_t* node, size_t* count_of_changes) {
 				case LOG:
 				case LN:
 				case SQRT:
+				case EXP:
 				case AMOUNT_OF_OPERATIONS:
 				case INVALID_OPERATION:
 				default: return SIMPLIFY_IMPOSSIBLE;
@@ -420,6 +425,7 @@ int ConvolutionConstant(Node_t* node, size_t* count_of_changes) {
 				case MUL:
 				case POW:
 				case DIV:
+				case EXP:
 				case SQRT: { break; }
 
 				case LOG:
@@ -434,10 +440,11 @@ int ConvolutionConstant(Node_t* node, size_t* count_of_changes) {
 			int left = ConvolutionConstant(node->left, count_of_changes);
 			int right = ConvolutionConstant(node->right, count_of_changes);
 			if ((left && right) || (left && !node->right)) {
-				Node_t* last_node = node;
-				if (node->parent->right == node) { node->parent->right = _NUM(Eval(node)); node->parent->right->parent = node->parent; }
-				if (node->parent->left == node)  { node->parent->left = _NUM(Eval(node));  node->parent->left->parent = node->parent;  }
-				TreeDtor(last_node);
+				Number_t result = Eval(node);
+				node->type = NUM;
+				SetNodeValue(node, {.val_num = result});
+				if (node->right) { TreeDtor(node->right); node->right = NULL; }
+				if (node->left)  { TreeDtor(node->left); node->left = NULL;  }
 				(*count_of_changes)++;
 				return SIMPLIFY_ACCESS;
 			}
