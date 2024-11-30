@@ -2,73 +2,130 @@
 #include "Differentiator_dump.hpp"
 #include "Differentiator_latex.hpp"
 
-const char* s = "8000/2*(5-5)$";
-int p = 0;
+Node_t* GetGrammar(const char* buffer, size_t* pc);
+Node_t* GetExpression(const char* buffer, size_t* pc);
+Node_t* GetTerminator(const char* buffer, size_t* pc);
+Node_t* GetPriority(const char* buffer, size_t* pc);
+Node_t* GetVariable(const char* buffer, size_t* pc);
+Node_t* GetNumber(const char* buffer, size_t* pc);
 
-int GetG();
-int GetP();
-int GetN();
-int GetT();
-int GetE();
+Node_t* GetNumber(const char* buffer, size_t* pc) {
+	printf("%s - %c(%zu)\n", __PRETTY_FUNCTION__, buffer[*pc], *pc);
+	size_t old_p = *pc;
+	Number_t value = 0;
 
-int GetN() {
-	int old_p = p;
-	int val = 0;
-	while ('0' <= s[p] && s[p] <= '9') {
-		val = val * 10 + (s[p] - '0');
-		p++;
+	while ('0' <= buffer[*pc] && buffer[*pc] <= '9')
+		value = value * 10 + (buffer[(*pc)++] - '0');
+
+	if (old_p == *pc) {
+		//TREE_ERROR_MESSAGE(TREE_EXPRESSION_SYNTAX_ERROR);
+		return NULL;
 	}
-	if (old_p == p) exit(0);
-	return val;
+	return _NUM(value);
 }
 
-int GetP() {
-	if (s[p] == '(') {
-		p++;
-		int val = GetE();
-		if (s[p] != ')')
-			exit(0);
-		p++;
-		return val;
+Node_t* GetVariable(const char* buffer, size_t* pc) {
+	switch (buffer[(*pc)]) {
+		case 'x': return _VAR(VAR_X);
+		case 'y': return _VAR(VAR_Y);
+		case 'z': return _VAR(VAR_Z);
+		default: {
+			TREE_ERROR_MESSAGE(TREE_EXPRESSION_SYNTAX_ERROR);
+			return NULL;
+		}
 	}
+}
+
+Node_t* GetPriority(const char* buffer, size_t* pc) {
+
+	Node_t* node = NULL;
+
+	if (buffer[*pc] == '(') {
+		(*pc)++;
+		node = GetExpression(buffer, pc);
+		if (!node) {
+			TREE_ERROR_MESSAGE(TREE_EXPRESSION_SYNTAX_ERROR);
+			return NULL;
+		}
+
+		if (buffer[*pc] != ')') {
+			TREE_ERROR_MESSAGE(TREE_EXPRESSION_SYNTAX_ERROR);
+			return NULL;
+		}
+
+		(*pc)++;
+		return node;
+	}
+	else if ((node = GetNumber(buffer, pc)) != NULL)
+		return	node;
 	else
-		return GetN();
+		return GetVariable(buffer, pc);
 }
 
-int GetT() {
-	int val = GetP();
-	while (s[p] == '*' || s[p] == '/') {
-		int op = s[p];
-		p++;
-		int val2 = GetP();
+Node_t* GetTerminator(const char* buffer, size_t* pc) {
+
+	Node_t* node1 = GetPriority(buffer, pc);
+	if (!node1) {
+		TREE_ERROR_MESSAGE(TREE_EXPRESSION_SYNTAX_ERROR);
+		return NULL;
+	}
+
+	while (buffer[*pc] == '*' || buffer[*pc] == '/') {
+		int op = buffer[(*pc)++];
+		Node_t* node2 = GetPriority(buffer, pc);
+		if (!node2) {
+			TREE_ERROR_MESSAGE(TREE_EXPRESSION_SYNTAX_ERROR);
+			return NULL;
+		}
+
 		if (op == '*')
-			val *= val2;
+			node1 = _MUL(node1, node2);
 		else
-			val /= val2;
+			node1 = _DIV(node1, node2);
 	}
-	return val;
+
+	return node1;
 }
 
-int GetE() {
-	int val = GetT();
-	while (s[p] == '+' || s[p] == '-') {
-		int op = s[p];
-		p++;
-		int val2 = GetT();
+Node_t* GetExpression(const char* buffer, size_t* pc) {
+
+	Node_t* node1 = GetTerminator(buffer, pc);
+	if (!node1) {
+		TREE_ERROR_MESSAGE(TREE_EXPRESSION_SYNTAX_ERROR);
+		return NULL;
+	}
+
+	while (buffer[*pc] == '+' || buffer[*pc] == '-') {
+		int op = buffer[(*pc)++];
+		Node_t* node2 = GetTerminator(buffer, pc);
+		if (!node2) {
+			TREE_ERROR_MESSAGE(TREE_EXPRESSION_SYNTAX_ERROR);
+			return NULL;
+		}
+
 		if (op == '+')
-			val += val2;
+			node1 = _ADD(node1, node2);
 		else
-			val -= val2;
+			node1 = _SUB(node1, node2);
 	}
-	return val;
+
+	return node1;
 }
 
-int GetG() {
-	int val = GetE();
-	if (s[p] != '$')
-		exit(0);
-	p++;
-	return val;
+Node_t* GetGrammar(const char* buffer, size_t* pc) {
+
+	Node_t* node = GetExpression(buffer, pc);
+	if (!node) {
+		TREE_ERROR_MESSAGE(TREE_EXPRESSION_SYNTAX_ERROR);
+		return NULL;
+	}
+
+	if (buffer[(*pc)++] != ';') {
+		TREE_ERROR_MESSAGE(TREE_EXPRESSION_SYNTAX_ERROR);
+		return NULL;
+	}
+
+	return node;
 }
 
 BinaryTreeStatusCode OriginalFunction(Tree* tree) {
@@ -78,6 +135,7 @@ BinaryTreeStatusCode OriginalFunction(Tree* tree) {
 	tree_status = ReadExpression(tree);
 	TREE_ERROR_CHECK(tree_status);
 
+	VarNameTableSetDiff();
 	NameTablePrint();
 	BINARY_TREE_GRAPH_DUMP(tree, "ExpressionReader", NULL);
 
@@ -88,8 +146,7 @@ BinaryTreeStatusCode OriginalFunction(Tree* tree) {
 #define TEX_PRINTF(...) fprintf(tex_file, __VA_ARGS__)
 
 	TEX_PRINTF("\\section{Исходная функция}\n");
-	TEX_PRINTF("\\centering\n");
-	TEX_PRINTF("$f(");
+	TEX_PRINTF("\\hfil $f(");
 	for (size_t i = 0, j = 0; i < AMOUNT_OF_VARIABLES; i++) {
 		if (var_name_table[i].status == VAR_STATUS_USING) {
 			j++;
@@ -104,13 +161,11 @@ BinaryTreeStatusCode OriginalFunction(Tree* tree) {
 	PrintExpressionTree(tree->root, tex_file);
 	TEX_PRINTF("$\\\\\n");
 
-	DrawGraph(tree, tex_file);
-
-	TEX_PRINTF("\\newpage\n");
-	TEX_PRINTF("\\section{Дифференцирование}\n");
-
 	if(fclose(tex_file))
 		TREE_ERROR_CHECK(TREE_FILE_CLOSE_ERROR);
+
+	tree_status = DrawGraph(tree);
+	TREE_ERROR_CHECK(tree_status);
 
 	return TREE_NO_ERROR;
 }
@@ -155,6 +210,10 @@ BinaryTreeStatusCode ReadExpression(Tree* tree) {
 	ResetVariables();
 
 	RecursionReadExpression(buffer + new_row_index, tree->root, 0);
+	// size_t pc = 0;
+	// tree->root = GetGrammar(buffer + new_row_index, &pc);
+	// if (!tree->root)
+	// 	TREE_ERROR_CHECK(TREE_EXPRESSION_SYNTAX_ERROR);
 
 	if (buffer) {
 		free(buffer);

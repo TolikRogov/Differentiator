@@ -25,5 +25,4 @@ BinaryTreeStatusCode LaTexDumpFinish();
 BinaryTreeStatusCode LaTexCreateDir();
 
 BinaryTreeStatusCode PrintMathExpression(Node_t* node, FILE* tex_file);
-BinaryTreeStatusCode PrintExpressionTree(Node_t* node, FILE* tex_file);
-BinaryTreeStatusCode DrawGraph(Tree* tree, FILE* tex_file);
+BinaryTreeStatusCode DrawGraph(Tree* tree);

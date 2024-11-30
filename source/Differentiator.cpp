@@ -136,8 +136,18 @@ Number_t VarNameTableGetValue(VarNum number) {
 	return var_name_table[number].value;
 }
 
-VarStatus VarNameTableGetStatus (VarNum number) {
+VarStatus VarNameTableGetStatus(VarNum number) {
 	return var_name_table[number].status;
+}
+
+const char* VarNameTableGetStateVariable() {
+
+	for (size_t i = 0; i < AMOUNT_OF_VARIABLES; i++) {
+		if (var_name_table[i].state == VAR_DIFF_STATUS_VAR)
+			return var_name_table[i].symbol;
+	}
+
+	return NULL;
 }
 
 BinaryTreeStatusCode ResetVariables() {
@@ -164,8 +174,10 @@ BinaryTreeStatusCode Calculator(Tree* tree) {
 		printf(BLUE("Do you want to calculate value of expression? [y/n]:")" ");
 	}
 
-	printf("-------------------------------------\n");
-	printf(BLUE("Set using variables values:")"\n");
+	if (NumberOfVarStatusUsingVariables()) {
+		printf("-------------------------------------\n");
+		printf(BLUE("Set using variables values:")"\n");
+	}
 	for (size_t i = 0; i < AMOUNT_OF_VARIABLES; i++) {
 		if (var_name_table[i].status == VAR_STATUS_USING) {
 			printf("\t" YELLOW("%s")" = ", var_name_table[i].symbol);
@@ -297,6 +309,7 @@ BinaryTreeStatusCode VarNameTableSetDiff() {
 		do {
 			printf(YELLOW("Enter the variable by which to differentiate:")" ");
 			scanf("%s", variable);
+			getchar();
 		} while ((var_number = VarNameTableFindVariable(variable)) == INVALID_VARIABLE || VarNameTableGetStatus(var_number) == VAR_STATUS_DISUSING);
 
 		var_name_table[var_number].state = VAR_DIFF_STATUS_VAR;
@@ -305,28 +318,12 @@ BinaryTreeStatusCode VarNameTableSetDiff() {
 	return TREE_NO_ERROR;
 }
 
-BinaryTreeStatusCode Differentiation(Tree* function_tree, Tree* diff_tree) {
-
-	BinaryTreeStatusCode tree_status = TREE_NO_ERROR;
-
-	VarNameTableSetDiff();
-
-	diff_tree->root = doDifferentiation(function_tree->root);
-	BINARY_TREE_GRAPH_DUMP(diff_tree, "ExpressionDifferentiation", diff_tree->root);
-
-	Simplification(diff_tree);
-	BINARY_TREE_GRAPH_DUMP(diff_tree, "Simplification", diff_tree->root);
-
-	diff_tree->diff_number = function_tree->diff_number + 1;
-	LATEX_PRINT_TREE(diff_tree);
-
-	return TREE_NO_ERROR;
-}
-
 Node_t* doDifferentiation(Node_t* node) {
 
 	if (!node)
 		return NULL;
+
+	Node_t* new_node = NULL;
 
 	switch (node->type) {
 		case NUM: return _NUM(0);
@@ -338,47 +335,47 @@ Node_t* doDifferentiation(Node_t* node) {
 		}
 		case OP: {
 			switch (node->data.val_op) {
-				case ADD: 	return _ADD(dL, dR);
-				case SUB: 	return _SUB(dL, dR);
-				case MUL: 	return _ADD(_MUL(dL, cR), _MUL(cL, dR));
-				case DIV: 	return _DIV(_SUB(_MUL(dL, cR), _MUL(cL, dR)), _POW(cR, _NUM(2)));
+				case ADD: 	{ new_node = _ADD(dL, dR); break; }
+				case SUB: 	{ new_node = _SUB(dL, dR); break; }
+				case MUL: 	{ new_node = _ADD(_MUL(dL, cR), _MUL(cL, dR)); break; }
+				case DIV: 	{ new_node = _DIV(_SUB(_MUL(dL, cR), _MUL(cL, dR)), _POW(cR, _NUM(2))); break; }
 				case POW:
 				{
 					size_t left_subtree = NumberOfVariablesInSubtree(node->left);
 					size_t right_subtree = NumberOfVariablesInSubtree(node->right);
 
-					if (left_subtree && !right_subtree)
-						return _MUL(_MUL(cR, _POW(cL, _SUB(cR, _NUM(1)))), dL);
-					if (right_subtree && !left_subtree)
-						return _MUL(_MUL(cP, _LN(cL)), dR);
-					if (left_subtree && right_subtree)
-						return _MUL(cP, _ADD(_MUL(dR, _LN(cL)), _MUL(cR, _DIV(dL, cL))));
+					if (left_subtree && !right_subtree) { new_node = _MUL(_MUL(cR, _POW(cL, _SUB(cR, _NUM(1)))), dL); break; }
+					if (right_subtree && !left_subtree) { new_node = _MUL(_MUL(cP, _LN(cL)), dR); break; }
+					if (left_subtree && right_subtree)  { new_node = _MUL(cP, _ADD(_MUL(dR, _LN(cL)), _MUL(cR, _DIV(dL, cL)))); break; }
 				}
-				case SIN: 	return _MUL(_COS(cL), dL);
-				case COS: 	return _MUL(_MUL( _NUM(-1), _SIN(cL)), dL);
-				case SQRT:	return _MUL(_DIV(_NUM(1), _MUL(_NUM(2), _SQRT(cL))), dL);
-				case LOG:	return _MUL(_DIV(_NUM(1), _MUL(cR, _LN(cL))), dR);
-				case LN:	return _MUL(_DIV(_NUM(1), cL), dL);
-				case EXP:	return _MUL(cP, dL);
+				case SIN: 	{ new_node = _MUL(_COS(cL), dL); break; }
+				case COS: 	{ new_node = _MUL(_MUL( _NUM(-1), _SIN(cL)), dL); break; }
+				case SQRT:	{ new_node = _MUL(_DIV(_NUM(1), _MUL(_NUM(2), _SQRT(cL))), dL); break; }
+				case LOG:	{ new_node = _DIV(_SUB(_MUL(_DIV(dR, cR), _LN(cL)), _MUL(_LN(cR), _DIV(dL, cL))), _POW(_LN(cL), _NUM(2))); break; }
+				case LN:	{ new_node = _MUL(_DIV(_NUM(1), cL), dL); break; }
+				case EXP:	{ new_node = _MUL(cP, dL); break; }
 
 				case AMOUNT_OF_OPERATIONS:
 				case INVALID_OPERATION:
 				default: return NULL;
 			}
+			Simplification(new_node);
+			LaTexSubtreeDifferential(node, new_node);
+			return new_node;
 		}
 		case UNW:
 		default: return NULL;
 	}
 }
 
-BinaryTreeStatusCode Simplification(Tree* tree) {
+BinaryTreeStatusCode Simplification(Node_t* subtree_root) {
 
 	size_t count_of_changes = 0;
 
 	do {
 		count_of_changes = 0;
-		ConvolutionConstant(tree->root, &count_of_changes);
-		TrivialTransformations(tree->root, &count_of_changes);
+		ConvolutionConstant(subtree_root, &count_of_changes);
+		TrivialTransformations(subtree_root, &count_of_changes);
 	} while (count_of_changes);
 
 	return TREE_NO_ERROR;
@@ -432,6 +429,15 @@ int TrivialTransformations(Node_t* node, size_t* count_of_changes) {
 	}																										\
 }
 
+#define CHANGE_OPERATION(event_pos, event, new_op, new_data) {												 \
+	if ((node->event_pos->type == NUM && DiffCompareDouble(node->event_pos->data.val_num, event))) {		\
+		node->data.val_op = new_op;																			\
+		node->event_pos->data.val_num = new_data;															\
+		(*count_of_changes)++;																				\
+		return SIMPLIFY_ACCESS;																				\
+	}																										\
+}
+
 	switch (node->type) {
 		case OP: {
 			switch (node->data.val_op) {
@@ -440,7 +446,11 @@ int TrivialTransformations(Node_t* node, size_t* count_of_changes) {
 					REBINDING(right, left, 0, node->left->data);
 					break;
 				}
-				case SUB: { REBINDING(right, left, 0, node->left->data); break; }
+				case SUB: {
+					REBINDING(right, left, 0, node->left->data);
+					CHANGE_OPERATION(left, 0, MUL, -1);
+					break;
+				}
 				case DIV: {
 					REBINDING(right, left, 1, node->left->data);
 					NUMBER_AS_RESULT(left, 0, 0);
@@ -477,7 +487,8 @@ int TrivialTransformations(Node_t* node, size_t* count_of_changes) {
 		default: return SIMPLIFY_IMPOSSIBLE;
 	}
 #undef REBINDING
-#undef MUL_TO_ZERO
+#undef NUMBER_AS_RESULT
+#undef CHANGE_OPERATION
 }
 
 int ConvolutionConstant(Node_t* node, size_t* count_of_changes) {

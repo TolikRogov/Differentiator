@@ -60,9 +60,9 @@ typedef double Number_t;
 	TREE_ERROR_CHECK(tree_status);		\
 }
 
-#define DIFFERENTIATION(function_tree, diff_tree) {				 \
-	tree_status = Differentiation(function_tree, diff_tree);	\
-	TREE_ERROR_CHECK(tree_status);								\
+#define DIFFERENTIATION(function_tree, diff_tree) {				 	 \
+	tree_status = LaTexDifferentiation(function_tree, diff_tree);	\
+	TREE_ERROR_CHECK(tree_status);									\
 }
 
 enum TreeDumpCheck {
@@ -88,6 +88,14 @@ union Data_t {
 	OpNum val_op;
 	VarNum val_var;
 };
+
+//TODO:
+// struct LexerItem {
+// 	NodeType type;
+// 	union Data_t data;
+// };
+//
+// LexerItem array[] = {};
 
 struct Node_t {
 	NodeType type;
@@ -141,6 +149,7 @@ const char* VarNameTableGetSymbol(VarNum number);
 VarNum VarNameTableFindVariable(const char* string);
 Number_t VarNameTableGetValue(VarNum number);
 VarStatus VarNameTableGetStatus (VarNum number);
+const char* VarNameTableGetStateVariable();
 BinaryTreeStatusCode ResetVariables();
 
 BinaryTreeStatusCode Calculator(Tree* tree);
@@ -148,14 +157,17 @@ Number_t Eval(Node_t* node);
 
 Node_t* doCopySubtree(Node_t* node);
 Node_t* doDifferentiation(Node_t* node);
-BinaryTreeStatusCode Differentiation(Tree* function_tree, Tree* diff_tree);
 size_t NumberOfVariablesInSubtree(Node_t* node);
 BinaryTreeStatusCode SetNodeValue(Node_t* node, Data_t data);
 
-BinaryTreeStatusCode Simplification(Tree* tree);
+BinaryTreeStatusCode Simplification(Node_t* node);
 int ConvolutionConstant(Node_t* node, size_t* count_of_changes);
 int TrivialTransformations(Node_t* node, size_t* count_of_changes);
 
 BinaryTreeStatusCode LaTexPrintTree(Tree* tree);
 size_t NumberOfVarStatusUsingVariables();
 BinaryTreeStatusCode VarNameTableSetDiff();
+
+BinaryTreeStatusCode PrintExpressionTree(Node_t* node, FILE* tex_file);
+BinaryTreeStatusCode LaTexSubtreeDifferential(Node_t* subtree_root, Node_t* diff_subtree_root);
+BinaryTreeStatusCode LaTexDifferentiation(Tree* function_tree, Tree* diff_tree);

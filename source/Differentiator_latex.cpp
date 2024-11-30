@@ -1,5 +1,60 @@
 #include "Differentiator_latex.hpp"
 
+BinaryTreeStatusCode LaTexDifferentiation(Tree* function_tree, Tree* diff_tree) {
+
+	BinaryTreeStatusCode tree_status = TREE_NO_ERROR;
+
+	FILE* tex_file = fopen(DIFF_LATEX_FILE_ DIFF_TEX_EXTENSION_, "a");
+	if (!tex_file)
+		TREE_ERROR_CHECK(TREE_FILE_OPEN_ERROR);
+
+#define TEX_PRINTF(...) fprintf(tex_file, __VA_ARGS__)
+
+	diff_tree->diff_number = function_tree->diff_number + 1;
+
+	TEX_PRINTF("\\section{Производная (%zu) по переменной \"%s\"}\n", diff_tree->diff_number, VarNameTableGetStateVariable());
+	TEX_PRINTF("\\renewcommand{\\thesubsection}{\\arabic{subsection}}\n"
+			   "\\titleformat{\\subsection}{\\normalfont\\bfseries}{}{0em}{#1\\ \\thesubsection}\n");
+
+#undef TEX_PRINTF
+
+	if (fclose(tex_file))
+		TREE_ERROR_CHECK(TREE_FILE_CLOSE_ERROR);
+
+	diff_tree->root = doDifferentiation(function_tree->root);
+	BINARY_TREE_GRAPH_DUMP(diff_tree, "ExpressionDifferentiation", diff_tree->root);
+
+	LATEX_PRINT_TREE(diff_tree);
+
+	tree_status = DrawGraph(diff_tree);
+	TREE_ERROR_CHECK(tree_status);
+
+	return TREE_NO_ERROR;
+}
+
+BinaryTreeStatusCode LaTexSubtreeDifferential(Node_t* subtree_root, Node_t* diff_subtree_root) {
+
+	FILE* tex_file = fopen(DIFF_LATEX_FILE_ DIFF_TEX_EXTENSION_, "a");
+	if (!tex_file)
+		TREE_ERROR_CHECK(TREE_FILE_OPEN_ERROR);
+
+#define TEX_PRINTF(...) fprintf(tex_file, __VA_ARGS__)
+
+	TEX_PRINTF("\\subsection{Шаг}\n"
+			   "\\hfil $");
+	PrintExpressionTree(subtree_root, tex_file);
+	TEX_PRINTF("^{\\prime} = ");
+	PrintExpressionTree(diff_subtree_root, tex_file);
+	TEX_PRINTF("$\n\n");
+
+#undef TEX_PRINTF
+
+	if (fclose(tex_file))
+		TREE_ERROR_CHECK(TREE_FILE_CLOSE_ERROR);
+
+	return TREE_NO_ERROR;
+}
+
 BinaryTreeStatusCode LaTexPrintTree(Tree* tree) {
 
 	FILE* tex_file = fopen(DIFF_LATEX_FILE_ DIFF_TEX_EXTENSION_, "a");
@@ -8,8 +63,11 @@ BinaryTreeStatusCode LaTexPrintTree(Tree* tree) {
 
 #define TEX_PRINTF(...) fprintf(tex_file, __VA_ARGS__)
 
-	TEX_PRINTF("$f^{(%zu)}(", tree->diff_number);
-	for (size_t i = 0, j = 0; i < AMOUNT_OF_VARIABLES; i++) {
+	TEX_PRINTF("\\titleformat{\\subsection}{\\normalfont\\bfseries}{}{0em}{\\thesubsection \\ #1\\ }\n"
+			   "\\subsection{Результат}\n");
+
+	TEX_PRINTF("\\hfil $f^{(%zu)}(", tree->diff_number);
+	for (size_t i = 0; i < AMOUNT_OF_VARIABLES; i++) {
 		if (var_name_table[i].state == VAR_DIFF_STATUS_VAR) {
 				TEX_PRINTF("%s", var_name_table[i].symbol);
 				break;
@@ -17,7 +75,7 @@ BinaryTreeStatusCode LaTexPrintTree(Tree* tree) {
 	}
 	TEX_PRINTF(") = ");
 	PrintExpressionTree(tree->root, tex_file);
-	TEX_PRINTF("$\\\\\n");
+	TEX_PRINTF("$\n");
 
 	if (fclose(tex_file))
 		TREE_ERROR_CHECK(TREE_FILE_CLOSE_ERROR);
@@ -176,7 +234,11 @@ BinaryTreeStatusCode PrintMathExpression(Node_t* node, FILE* tex_file) {
 	return TREE_NO_ERROR;
 }
 
-BinaryTreeStatusCode DrawGraph(Tree* tree, FILE* tex_file) {
+BinaryTreeStatusCode DrawGraph(Tree* tree) {
+
+	FILE* tex_file = fopen(DIFF_LATEX_FILE_ DIFF_TEX_EXTENSION_, "a");
+	if (!tex_file)
+		TREE_ERROR_CHECK(TREE_FILE_OPEN_ERROR);
 
 	for (size_t i = 0, j = 0; i < AMOUNT_OF_VARIABLES; i++) {
 		if (var_name_table[i].status == VAR_STATUS_USING)
@@ -186,36 +248,35 @@ BinaryTreeStatusCode DrawGraph(Tree* tree, FILE* tex_file) {
 	}
 
 #define TEX_PRINTF(...) fprintf(tex_file, __VA_ARGS__);
-#define ABS_X 6
-#define ABS_Y 1
 
-	TEX_PRINTF("\\begin{figure}[h]\n");
-	TEX_PRINTF("\\centering\n");
-	TEX_PRINTF("\\begin{tikzpicture}\n");
-	TEX_PRINTF("\\begin{axis} [\n");
-    TEX_PRINTF("\tlegend pos = north west,\n");
-	TEX_PRINTF("\txlabel = {$x$},\n");
-	TEX_PRINTF("\tylabel = {$f$},\n");
-	TEX_PRINTF("\txmin = %d,\n", (-1) * ABS_X);
-	TEX_PRINTF("\txmax = %d,\n", ABS_X);
-	TEX_PRINTF("\trestrict y to domain=-30:30,\n");
-    TEX_PRINTF("\tgrid = major,\n");
-	TEX_PRINTF("\tenlargelimits=true,\n");
-	TEX_PRINTF("]\n");
-	TEX_PRINTF("\\legend{\n");
-	TEX_PRINTF("\t$");
-	PrintExpressionTree(tree->root, tex_file);
-	TEX_PRINTF("$\n}\n");
+	TEX_PRINTF("\\begin{figure}[h]\n"
+			   "\\centering\n"
+			   "\\begin{tikzpicture}\n"
+			   "\\begin{axis} [\n"
+    		   "\tlegend pos = north west,\n"
+			   "\txlabel = {$x$},\n"
+			   "\tylabel = {$f$},\n"
+			   "\twidth = 300,\n"
+			   "\theight = 300,\n"
+			   "\trestrict y to domain=-30:30,\n"
+    		   "\tgrid = major,\n"
+			   "\tenlargelimits=true,\n"
+			   "]\n"
+			   "\\legend{\n"
+			   "\t$f^{(%zu)}$\n}\n", tree->diff_number);
 	TEX_PRINTF("\\addplot[blue, samples=750]{");
 	PrintMathExpression(tree->root, tex_file);
-	TEX_PRINTF("};\n");
-	TEX_PRINTF("\\end{axis}\n");
-	TEX_PRINTF("\\end{tikzpicture}\n");
-	TEX_PRINTF("\\caption{График функции}\n");
-	TEX_PRINTF("\\end{figure}\n");
+	TEX_PRINTF("};\n"
+			   "\\end{axis}\n"
+			   "\\end{tikzpicture}\n"
+			   "\\caption{График функции}\n"
+			   "\\end{figure}\n");
 
 #undef TEX_PRINTF
 #undef ABS_X
+
+	if (fclose(tex_file))
+		TREE_ERROR_CHECK(TREE_FILE_CLOSE_ERROR);
 
 	return TREE_NO_ERROR;
 }
@@ -233,20 +294,28 @@ BinaryTreeStatusCode LatexDumpStart() {
 
 #define TEX_PRINTF(...) fprintf(tex_file, __VA_ARGS__);
 
-	TEX_PRINTF("\\documentclass[12pt, letterpaper]{article}\n");
-	TEX_PRINTF("\\usepackage{amsthm,amssymb}\n");
-	TEX_PRINTF("\\usepackage{mathtext}\n");
-	TEX_PRINTF("\\usepackage[T1]{fontenc}\n");
-	TEX_PRINTF("\\usepackage[utf8]{inputenc}\n");
-	TEX_PRINTF("\\usepackage{pgfplots}\n");
-	TEX_PRINTF("\\pgfplotsset{compat=1.9}\n");
-	TEX_PRINTF("\\usepackage[english,russian]{babel}\n");
-	TEX_PRINTF("\\title{Лабораторная работа минимум на отл 10!}\n");
-	TEX_PRINTF("\\author{Рогов Анатолий Б01-406}\n");
-	TEX_PRINTF("\\date{\\today}\n");
-	TEX_PRINTF("\\begin{document}\n");
-	TEX_PRINTF("\\maketitle\n");
-	TEX_PRINTF("\\newpage\n");
+	TEX_PRINTF("\\documentclass[12pt, letterpaper]{article}\n"
+				"\\usepackage{amsthm,amssymb}\n"
+				"\\usepackage{mathtext}\n"
+				"\\usepackage[T1]{fontenc}\n"
+				"\\usepackage[utf8]{inputenc}\n"
+				"\\usepackage{pgfplots}\n"
+				"\\usepackage[explicit]{titlesec}\n"
+				"\\pgfplotsset{compat=1.9}\n"
+				"\\usepackage[english,russian]{babel}\n"
+				"\\begin{document}\n"
+				"\\begin{titlepage}\n"
+   				"\\begin{center}\n"
+				"\\vspace*{1cm}\n"
+				"\\textbf{МОСКОВСКИЙ ФИЗИКО-ТЕХНИЧЕСКИЙ ИНСТИТУТ (НАЦИОНАЛЬНЫЙ ИССЛЕДОВАТЕЛЬСКИЙ УНИВЕРСИТЕТ)}\\\\\n"
+				"\\vspace{0.5cm} Физтех-школа Радиотехники и компьютерных технологий\\\\\n"
+				"\\vspace{5cm} \\LARGE{Исследование функции}\n"
+				"\\vfill\n"
+				"\\large{\\textbf{Рогов Анатолий Б01-406}} \\\\\n"
+				"\\large \\today\n"
+				"\\vspace{0.8cm}\n"
+				"\\end{center}\n"
+				"\\end{titlepage}\n");
 
 #undef TEX_PRINTF
 

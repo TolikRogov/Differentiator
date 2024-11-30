@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.26 (TeX Live 2024) (preloaded format=pdflatex 2024.11.21)  29 NOV 2024 18:14
+This is pdfTeX, Version 3.141592653-2.6-1.40.26 (TeX Live 2024) (preloaded format=pdflatex 2024.11.21)  30 NOV 2024 04:55
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -500,10 +500,23 @@ File: tikzlibraryplotmarks.code.tex 2023-01-15 v3.1.10 (3.1.10)
 (/usr/local/texlive/2024/texmf-dist/tex/generic/pgf/libraries/pgflibraryplotmar
 ks.code.tex
 File: pgflibraryplotmarks.code.tex 2023-01-15 v3.1.10 (3.1.10)
-))) (/usr/local/texlive/2024/texmf-dist/tex/generic/babel/babel.sty
+)))
+(/usr/local/texlive/2024/texmf-dist/tex/latex/titlesec/titlesec.sty
+Package: titlesec 2023/10/27 v2.16 Sectioning titles
+\ttl@box=\box63
+\beforetitleunit=\skip53
+\aftertitleunit=\skip54
+\ttl@plus=\dimen263
+\ttl@minus=\dimen264
+\ttl@toksa=\toks46
+\titlewidth=\dimen265
+\titlewidthlast=\dimen266
+\titlewidthfirst=\dimen267
+)
+(/usr/local/texlive/2024/texmf-dist/tex/generic/babel/babel.sty
 Package: babel 2024/02/07 v24.2 The Babel package
 \babel@savecnt=\count290
-\U@D=\dimen263
+\U@D=\dimen268
 \l@unhyphenated=\language89
 
 (/usr/local/texlive/2024/texmf-dist/tex/generic/babel/txtbabel.def)
@@ -753,47 +766,47 @@ Package babel Info: Importing font and identification data for english
 (/usr/local/texlive/2024/texmf-dist/tex/latex/l3backend/l3backend-pdftex.def
 File: l3backend-pdftex.def 2024-02-20 L3 backend support: PDF output (pdfTeX)
 \l__color_backend_stack_int=\count292
-\l__pdf_internal_box=\box63
+\l__pdf_internal_box=\box64
 )
-(LaTex//laboratory_work.aux
-LaTeX Font Info:    Trying to load font information for T2A+cmr on input line 5
-.
+(LaTex//laboratory_work.aux)
+\openout1 = `laboratory_work.aux'.
+
+LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 10.
+LaTeX Font Info:    ... okay on input line 10.
+LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 10.
+LaTeX Font Info:    ... okay on input line 10.
+LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 10.
+LaTeX Font Info:    ... okay on input line 10.
+LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 10.
+LaTeX Font Info:    ... okay on input line 10.
+LaTeX Font Info:    Checking defaults for TS1/cmr/m/n on input line 10.
+LaTeX Font Info:    ... okay on input line 10.
+LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 10.
+LaTeX Font Info:    ... okay on input line 10.
+LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 10.
+LaTeX Font Info:    ... okay on input line 10.
+LaTeX Font Info:    Checking defaults for T2A/cmr/m/n on input line 10.
+LaTeX Font Info:    Trying to load font information for T2A+cmr on input line 1
+0.
 
 (/usr/local/texlive/2024/texmf-dist/tex/latex/cyrillic/t2acmr.fd
 File: t2acmr.fd 2001/08/11 v1.0a Computer Modern Cyrillic font definitions
-))
-\openout1 = `laboratory_work.aux'.
-
-LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 12.
-LaTeX Font Info:    ... okay on input line 12.
-LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 12.
-LaTeX Font Info:    ... okay on input line 12.
-LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 12.
-LaTeX Font Info:    ... okay on input line 12.
-LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 12.
-LaTeX Font Info:    ... okay on input line 12.
-LaTeX Font Info:    Checking defaults for TS1/cmr/m/n on input line 12.
-LaTeX Font Info:    ... okay on input line 12.
-LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 12.
-LaTeX Font Info:    ... okay on input line 12.
-LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 12.
-LaTeX Font Info:    ... okay on input line 12.
-LaTeX Font Info:    Checking defaults for T2A/cmr/m/n on input line 12.
-LaTeX Font Info:    ... okay on input line 12.
+)
+LaTeX Font Info:    ... okay on input line 10.
 
 (/usr/local/texlive/2024/texmf-dist/tex/context/base/mkii/supp-pdf.mkii
 [Loading MPS to PDF converter (version 2006.09.02).]
 \scratchcounter=\count293
-\scratchdimen=\dimen264
-\scratchbox=\box64
+\scratchdimen=\dimen269
+\scratchbox=\box65
 \nofMPsegments=\count294
 \nofMParguments=\count295
-\everyMPshowfont=\toks46
+\everyMPshowfont=\toks47
 \MPscratchCnt=\count296
-\MPscratchDim=\dimen265
+\MPscratchDim=\dimen270
 \MPnumerator=\count297
 \makeMPintoPDFobject=\count298
-\everyMPtoPDFconversion=\toks47
+\everyMPtoPDFconversion=\toks48
 ) (/usr/local/texlive/2024/texmf-dist/tex/latex/epstopdf-pkg/epstopdf-base.sty
 Package: epstopdf-base 2020-01-24 v2.11 Base part for package epstopdf
 
@@ -839,13 +852,18 @@ e
 Package pgfplots notification 'compat/show suggested version=true': you might b
 enefit from \pgfplotsset{compat=1.18} (current compat level: 1.9).
 
-LaTeX Info: Redefining \th on input line 12.
-LaTeX Font Info:    Trying to load font information for U+msa on input line 13.
+LaTeX Info: Redefining \th on input line 10.
+[1
+
+{/usr/local/texlive/2024/texmf-var/fonts/map/pdftex/updmap/pdftex.map}{/usr/loc
+al/texlive/2024/texmf-dist/fonts/enc/dvips/cm-super/cm-super-t2a.enc}]
+LaTeX Font Info:    Trying to load font information for U+msa on input line 24.
+
 
 (/usr/local/texlive/2024/texmf-dist/tex/latex/amsfonts/umsa.fd
 File: umsa.fd 2013/01/14 v3.01 AMS symbols A
 )
-LaTeX Font Info:    Trying to load font information for U+msb on input line 13.
+LaTeX Font Info:    Trying to load font information for U+msb on input line 24.
 
 
 (/usr/local/texlive/2024/texmf-dist/tex/latex/amsfonts/umsb.fd
@@ -853,13 +871,55 @@ File: umsb.fd 2013/01/14 v3.01 AMS symbols B
 )
 
 LaTeX Font Warning: Font shape `T2A/cmr/m/up' undefined
-(Font)              using `T2A/cmr/m/n' instead on input line 13.
+(Font)              using `T2A/cmr/m/n' instead on input line 24.
 
-[1
+[1]
+Overfull \hbox (43.91087pt too wide) in paragraph at lines 62--63
+\OT1/cmr/m/n/12 ([] + [])$ 
+ []
 
-{/usr/local/texlive/2024/texmf-var/fonts/map/pdftex/updmap/pdftex.map}{/usr/loc
-al/texlive/2024/texmf-dist/fonts/enc/dvips/cm-super/cm-super-t2a.enc}]
-[2] [3] (LaTex//laboratory_work.aux)
+
+Overfull \hbox (43.91087pt too wide) in paragraph at lines 66--88
+\OT1/cmr/m/n/12 ([] + [])$
+ []
+
+
+LaTeX Warning: `h' float specifier changed to `ht'.
+
+[2] [3]
+Overfull \hbox (87.92903pt too wide) in paragraph at lines 125--126
+\OT1/cmr/m/n/12 ([] + [])$ 
+ []
+
+
+Overfull \hbox (174.32253pt too wide) in paragraph at lines 128--129
+\OT1/cmr/m/n/12 ([] +
+ []
+
+
+Overfull \hbox (173.20901pt too wide) in paragraph at lines 128--129
+[]\OT1/cmr/m/n/12 )$ 
+ []
+
+
+Overfull \hbox (781.0554pt too wide) in paragraph at lines 131--132
+\OT1/cmr/m/n/12 ([] +
+ []
+
+[4]
+Overfull \hbox (1218.99742pt too wide) in paragraph at lines 146--147
+[]\OT1/cmr/m/n/12 )[] = ([] +
+ []
+
+
+Overfull \hbox (1108.75938pt too wide) in paragraph at lines 150--172
+\OT1/cmr/m/n/12 ([] +
+ []
+
+
+LaTeX Warning: `h' float specifier changed to `ht'.
+
+[5] [6] (LaTex//laboratory_work.aux)
  ***********
 LaTeX2e <2023-11-01> patch level 1
 L3 programming layer <2024-02-20>
@@ -870,25 +930,32 @@ LaTeX Font Warning: Some font shapes were not available, defaults substituted.
 
  ) 
 Here is how much of TeX's memory you used:
- 25684 strings out of 474116
- 653520 string characters out of 5743681
- 1937187 words of memory out of 5000000
- 47624 multiletter control sequences out of 15000+600000
- 573327 words of font info for 75 fonts, out of 8000000 for 9000
+ 26022 strings out of 474116
+ 658296 string characters out of 5743681
+ 1946187 words of memory out of 5000000
+ 47958 multiletter control sequences out of 15000+600000
+ 570762 words of font info for 64 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
- 99i,19n,107p,756b,2186s stack positions out of 10000i,1000n,20000p,200000b,200000s
+ 99i,20n,107p,972b,2196s stack positions out of 10000i,1000n,20000p,200000b,200000s
 </usr/local/texlive/2024/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi12.pfb
-></usr/local/texlive/2024/texmf-dist/fonts/type1/public/amsfonts/cm/cmr12.pfb><
-/usr/local/texlive/2024/texmf-dist/fonts/type1/public/amsfonts/cm/cmr8.pfb></us
-r/local/texlive/2024/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy10.pfb></usr
-/local/texlive/2024/texmf-dist/fonts/type1/public/cm-super/sfbx1728.pfb></usr/l
-ocal/texlive/2024/texmf-dist/fonts/type1/public/cm-super/sfrm1200.pfb></usr/loc
-al/texlive/2024/texmf-dist/fonts/type1/public/cm-super/sfrm1440.pfb></usr/local
-/texlive/2024/texmf-dist/fonts/type1/public/cm-super/sfrm2074.pfb>
-Output written on LaTex//laboratory_work.pdf (3 pages, 96438 bytes).
+></usr/local/texlive/2024/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi8.pfb><
+/usr/local/texlive/2024/texmf-dist/fonts/type1/public/amsfonts/cm/cmr12.pfb></u
+sr/local/texlive/2024/texmf-dist/fonts/type1/public/amsfonts/cm/cmr6.pfb></usr/
+local/texlive/2024/texmf-dist/fonts/type1/public/amsfonts/cm/cmr8.pfb></usr/loc
+al/texlive/2024/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy10.pfb></usr/loca
+l/texlive/2024/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy8.pfb></usr/local/
+texlive/2024/texmf-dist/fonts/type1/public/cm-super/sfbx1200.pfb></usr/local/te
+xlive/2024/texmf-dist/fonts/type1/public/cm-super/sfbx1440.pfb></usr/local/texl
+ive/2024/texmf-dist/fonts/type1/public/cm-super/sfbx1728.pfb></usr/local/texliv
+e/2024/texmf-dist/fonts/type1/public/cm-super/sfrm1200.pfb></usr/local/texlive/
+2024/texmf-dist/fonts/type1/public/cm-super/sfrm1440.pfb></usr/local/texlive/20
+24/texmf-dist/fonts/type1/public/cm-super/sfrm2074.pfb>
+Output written on LaTex//laboratory_work.pdf (7 pages, 168707 bytes).
 PDF statistics:
- 58 PDF objects out of 1000 (max. 8388607)
- 36 compressed objects within 1 object stream
+ 97 PDF objects out of 1000 (max. 8388607)
+ 61 compressed objects within 1 object stream
  0 named destinations out of 1000 (max. 500000)
  13 words of extra memory for PDF output out of 10000 (max. 10000000)
+
+
 

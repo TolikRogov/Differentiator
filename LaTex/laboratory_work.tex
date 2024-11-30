@@ -4,17 +4,24 @@
 \usepackage[T1]{fontenc}
 \usepackage[utf8]{inputenc}
 \usepackage{pgfplots}
+\usepackage[explicit]{titlesec}
 \pgfplotsset{compat=1.9}
 \usepackage[english,russian]{babel}
-\title{Лабораторная работа минимум на отл 10!}
-\author{Рогов Анатолий Б01-406}
-\date{\today}
 \begin{document}
-\maketitle
-\newpage
+\begin{titlepage}
+\begin{center}
+\vspace*{1cm}
+\textbf{МОСКОВСКИЙ ФИЗИКО-ТЕХНИЧЕСКИЙ ИНСТИТУТ (НАЦИОНАЛЬНЫЙ ИССЛЕДОВАТЕЛЬСКИЙ УНИВЕРСИТЕТ)}\\
+\vspace{0.5cm} Физтех-школа Радиотехники и компьютерных технологий\\
+\vspace{5cm} \LARGE{Исследование функции}
+\vfill
+\large{\textbf{Рогов Анатолий Б01-406}} \\
+\large \today
+\vspace{0.8cm}
+\end{center}
+\end{titlepage}
 \section{Исходная функция}
-\centering
-$f(x) = (\cos{({2}\cdot{x})})$\\
+\hfil $f(x) = ({({1}+{({x}^{({x}+{(\sin{x})})})})}\cdot{x})$\\
 \begin{figure}[h]
 \centering
 \begin{tikzpicture}
@@ -22,21 +29,144 @@ $f(x) = (\cos{({2}\cdot{x})})$\\
 	legend pos = north west,
 	xlabel = {$x$},
 	ylabel = {$f$},
-	xmin = -6,
-	xmax = 6,
+	width = 300,
+	height = 300,
 	restrict y to domain=-30:30,
 	grid = major,
 	enlargelimits=true,
 ]
 \legend{
-	$(\cos{({2}\cdot{x})})$
+	$f^{(0)}$
 }
-\addplot[blue, samples=750]{(cos(deg((((2))*((x))))))};
+\addplot[blue, samples=750]{(((((1))+((((x))^((((x))+((sin(deg((x)))))))))))*((x)))};
 \end{axis}
 \end{tikzpicture}
 \caption{График функции}
 \end{figure}
-\newpage
-\section{Дифференцирование}
-$f^{(1)}(x) = ({({-1}\cdot{(\sin{({2}\cdot{x})})})}\cdot{2})$\\
+\section{Производная (1) по переменной "x"}
+\renewcommand{\thesubsection}{\arabic{subsection}}
+\titleformat{\subsection}{\normalfont\bfseries}{}{0em}{#1\ \thesubsection}
+\subsection{Шаг}
+\hfil $(\sin{x})^{\prime} = (\cos{x})$
+
+\subsection{Шаг}
+\hfil $({x}+{(\sin{x})})^{\prime} = ({1}+{(\cos{x})})$
+
+\subsection{Шаг}
+\hfil $({x}^{({x}+{(\sin{x})})})^{\prime} = ({({x}^{({x}+{(\sin{x})})})}\cdot{({({({1}+{(\cos{x})})}\cdot{(\ln{x})})}+{({({x}+{(\sin{x})})}\cdot{(\frac{1}{x})})})})$
+
+\subsection{Шаг}
+\hfil $({1}+{({x}^{({x}+{(\sin{x})})})})^{\prime} = ({({x}^{({x}+{(\sin{x})})})}\cdot{({({({1}+{(\cos{x})})}\cdot{(\ln{x})})}+{({({x}+{(\sin{x})})}\cdot{(\frac{1}{x})})})})$
+
+\subsection{Шаг}
+\hfil $({({1}+{({x}^{({x}+{(\sin{x})})})})}\cdot{x})^{\prime} = ({({({({x}^{({x}+{(\sin{x})})})}\cdot{({({({1}+{(\cos{x})})}\cdot{(\ln{x})})}+{({({x}+{(\sin{x})})}\cdot{(\frac{1}{x})})})})}\cdot{x})}+{({1}+{({x}^{({x}+{(\sin{x})})})})})$
+
+\titleformat{\subsection}{\normalfont\bfseries}{}{0em}{\thesubsection \ #1\ }
+\subsection{Результат}
+\hfil $f^{(1)}(x) = ({({({({x}^{({x}+{(\sin{x})})})}\cdot{({({({1}+{(\cos{x})})}\cdot{(\ln{x})})}+{({({x}+{(\sin{x})})}\cdot{(\frac{1}{x})})})})}\cdot{x})}+{({1}+{({x}^{({x}+{(\sin{x})})})})})$
+\begin{figure}[h]
+\centering
+\begin{tikzpicture}
+\begin{axis} [
+	legend pos = north west,
+	xlabel = {$x$},
+	ylabel = {$f$},
+	width = 300,
+	height = 300,
+	restrict y to domain=-30:30,
+	grid = major,
+	enlargelimits=true,
+]
+\legend{
+	$f^{(1)}$
+}
+\addplot[blue, samples=750]{(((((((((x))^((((x))+((sin(deg((x)))))))))*((((((((1))+((cos(deg((x)))))))*((ln((x))))))+((((((x))+((sin(deg((x)))))))*((((1))/((x))))))))))*((x))))+((((1))+((((x))^((((x))+((sin(deg((x))))))))))))};
+\end{axis}
+\end{tikzpicture}
+\caption{График функции}
+\end{figure}
+\section{Производная (2) по переменной "x"}
+\renewcommand{\thesubsection}{\arabic{subsection}}
+\titleformat{\subsection}{\normalfont\bfseries}{}{0em}{#1\ \thesubsection}
+\subsection{Шаг}
+\hfil $(\sin{x})^{\prime} = (\cos{x})$
+
+\subsection{Шаг}
+\hfil $({x}+{(\sin{x})})^{\prime} = ({1}+{(\cos{x})})$
+
+\subsection{Шаг}
+\hfil $({x}^{({x}+{(\sin{x})})})^{\prime} = ({({x}^{({x}+{(\sin{x})})})}\cdot{({({({1}+{(\cos{x})})}\cdot{(\ln{x})})}+{({({x}+{(\sin{x})})}\cdot{(\frac{1}{x})})})})$
+
+\subsection{Шаг}
+\hfil $(\cos{x})^{\prime} = ({-1}\cdot{(\sin{x})})$
+
+\subsection{Шаг}
+\hfil $({1}+{(\cos{x})})^{\prime} = ({-1}\cdot{(\sin{x})})$
+
+\subsection{Шаг}
+\hfil $(\ln{x})^{\prime} = (\frac{1}{x})$
+
+\subsection{Шаг}
+\hfil $({({1}+{(\cos{x})})}\cdot{(\ln{x})})^{\prime} = ({({({-1}\cdot{(\sin{x})})}\cdot{(\ln{x})})}+{({({1}+{(\cos{x})})}\cdot{(\frac{1}{x})})})$
+
+\subsection{Шаг}
+\hfil $(\sin{x})^{\prime} = (\cos{x})$
+
+\subsection{Шаг}
+\hfil $({x}+{(\sin{x})})^{\prime} = ({1}+{(\cos{x})})$
+
+\subsection{Шаг}
+\hfil $(\frac{1}{x})^{\prime} = (\frac{-1}{({x}^{2})})$
+
+\subsection{Шаг}
+\hfil $({({x}+{(\sin{x})})}\cdot{(\frac{1}{x})})^{\prime} = ({({({1}+{(\cos{x})})}\cdot{(\frac{1}{x})})}+{({({x}+{(\sin{x})})}\cdot{(\frac{-1}{({x}^{2})})})})$
+
+\subsection{Шаг}
+\hfil $({({({1}+{(\cos{x})})}\cdot{(\ln{x})})}+{({({x}+{(\sin{x})})}\cdot{(\frac{1}{x})})})^{\prime} = ({({({({-1}\cdot{(\sin{x})})}\cdot{(\ln{x})})}+{({({1}+{(\cos{x})})}\cdot{(\frac{1}{x})})})}+{({({({1}+{(\cos{x})})}\cdot{(\frac{1}{x})})}+{({({x}+{(\sin{x})})}\cdot{(\frac{-1}{({x}^{2})})})})})$
+
+\subsection{Шаг}
+\hfil $({({x}^{({x}+{(\sin{x})})})}\cdot{({({({1}+{(\cos{x})})}\cdot{(\ln{x})})}+{({({x}+{(\sin{x})})}\cdot{(\frac{1}{x})})})})^{\prime} = ({({({({x}^{({x}+{(\sin{x})})})}\cdot{({({({1}+{(\cos{x})})}\cdot{(\ln{x})})}+{({({x}+{(\sin{x})})}\cdot{(\frac{1}{x})})})})}\cdot{({({({1}+{(\cos{x})})}\cdot{(\ln{x})})}+{({({x}+{(\sin{x})})}\cdot{(\frac{1}{x})})})})}+{({({x}^{({x}+{(\sin{x})})})}\cdot{({({({({-1}\cdot{(\sin{x})})}\cdot{(\ln{x})})}+{({({1}+{(\cos{x})})}\cdot{(\frac{1}{x})})})}+{({({({1}+{(\cos{x})})}\cdot{(\frac{1}{x})})}+{({({x}+{(\sin{x})})}\cdot{(\frac{-1}{({x}^{2})})})})})})})$
+
+\subsection{Шаг}
+\hfil $({({({x}^{({x}+{(\sin{x})})})}\cdot{({({({1}+{(\cos{x})})}\cdot{(\ln{x})})}+{({({x}+{(\sin{x})})}\cdot{(\frac{1}{x})})})})}\cdot{x})^{\prime} = ({({({({({({x}^{({x}+{(\sin{x})})})}\cdot{({({({1}+{(\cos{x})})}\cdot{(\ln{x})})}+{({({x}+{(\sin{x})})}\cdot{(\frac{1}{x})})})})}\cdot{({({({1}+{(\cos{x})})}\cdot{(\ln{x})})}+{({({x}+{(\sin{x})})}\cdot{(\frac{1}{x})})})})}+{({({x}^{({x}+{(\sin{x})})})}\cdot{({({({({-1}\cdot{(\sin{x})})}\cdot{(\ln{x})})}+{({({1}+{(\cos{x})})}\cdot{(\frac{1}{x})})})}+{({({({1}+{(\cos{x})})}\cdot{(\frac{1}{x})})}+{({({x}+{(\sin{x})})}\cdot{(\frac{-1}{({x}^{2})})})})})})})}\cdot{x})}+{({({x}^{({x}+{(\sin{x})})})}\cdot{({({({1}+{(\cos{x})})}\cdot{(\ln{x})})}+{({({x}+{(\sin{x})})}\cdot{(\frac{1}{x})})})})})$
+
+\subsection{Шаг}
+\hfil $(\sin{x})^{\prime} = (\cos{x})$
+
+\subsection{Шаг}
+\hfil $({x}+{(\sin{x})})^{\prime} = ({1}+{(\cos{x})})$
+
+\subsection{Шаг}
+\hfil $({x}^{({x}+{(\sin{x})})})^{\prime} = ({({x}^{({x}+{(\sin{x})})})}\cdot{({({({1}+{(\cos{x})})}\cdot{(\ln{x})})}+{({({x}+{(\sin{x})})}\cdot{(\frac{1}{x})})})})$
+
+\subsection{Шаг}
+\hfil $({1}+{({x}^{({x}+{(\sin{x})})})})^{\prime} = ({({x}^{({x}+{(\sin{x})})})}\cdot{({({({1}+{(\cos{x})})}\cdot{(\ln{x})})}+{({({x}+{(\sin{x})})}\cdot{(\frac{1}{x})})})})$
+
+\subsection{Шаг}
+\hfil $({({({({x}^{({x}+{(\sin{x})})})}\cdot{({({({1}+{(\cos{x})})}\cdot{(\ln{x})})}+{({({x}+{(\sin{x})})}\cdot{(\frac{1}{x})})})})}\cdot{x})}+{({1}+{({x}^{({x}+{(\sin{x})})})})})^{\prime} = ({({({({({({({x}^{({x}+{(\sin{x})})})}\cdot{({({({1}+{(\cos{x})})}\cdot{(\ln{x})})}+{({({x}+{(\sin{x})})}\cdot{(\frac{1}{x})})})})}\cdot{({({({1}+{(\cos{x})})}\cdot{(\ln{x})})}+{({({x}+{(\sin{x})})}\cdot{(\frac{1}{x})})})})}+{({({x}^{({x}+{(\sin{x})})})}\cdot{({({({({-1}\cdot{(\sin{x})})}\cdot{(\ln{x})})}+{({({1}+{(\cos{x})})}\cdot{(\frac{1}{x})})})}+{({({({1}+{(\cos{x})})}\cdot{(\frac{1}{x})})}+{({({x}+{(\sin{x})})}\cdot{(\frac{-1}{({x}^{2})})})})})})})}\cdot{x})}+{({({x}^{({x}+{(\sin{x})})})}\cdot{({({({1}+{(\cos{x})})}\cdot{(\ln{x})})}+{({({x}+{(\sin{x})})}\cdot{(\frac{1}{x})})})})})}+{({({x}^{({x}+{(\sin{x})})})}\cdot{({({({1}+{(\cos{x})})}\cdot{(\ln{x})})}+{({({x}+{(\sin{x})})}\cdot{(\frac{1}{x})})})})})$
+
+\titleformat{\subsection}{\normalfont\bfseries}{}{0em}{\thesubsection \ #1\ }
+\subsection{Результат}
+\hfil $f^{(2)}(x) = ({({({({({({({x}^{({x}+{(\sin{x})})})}\cdot{({({({1}+{(\cos{x})})}\cdot{(\ln{x})})}+{({({x}+{(\sin{x})})}\cdot{(\frac{1}{x})})})})}\cdot{({({({1}+{(\cos{x})})}\cdot{(\ln{x})})}+{({({x}+{(\sin{x})})}\cdot{(\frac{1}{x})})})})}+{({({x}^{({x}+{(\sin{x})})})}\cdot{({({({({-1}\cdot{(\sin{x})})}\cdot{(\ln{x})})}+{({({1}+{(\cos{x})})}\cdot{(\frac{1}{x})})})}+{({({({1}+{(\cos{x})})}\cdot{(\frac{1}{x})})}+{({({x}+{(\sin{x})})}\cdot{(\frac{-1}{({x}^{2})})})})})})})}\cdot{x})}+{({({x}^{({x}+{(\sin{x})})})}\cdot{({({({1}+{(\cos{x})})}\cdot{(\ln{x})})}+{({({x}+{(\sin{x})})}\cdot{(\frac{1}{x})})})})})}+{({({x}^{({x}+{(\sin{x})})})}\cdot{({({({1}+{(\cos{x})})}\cdot{(\ln{x})})}+{({({x}+{(\sin{x})})}\cdot{(\frac{1}{x})})})})})$
+\begin{figure}[h]
+\centering
+\begin{tikzpicture}
+\begin{axis} [
+	legend pos = north west,
+	xlabel = {$x$},
+	ylabel = {$f$},
+	width = 300,
+	height = 300,
+	restrict y to domain=-30:30,
+	grid = major,
+	enlargelimits=true,
+]
+\legend{
+	$f^{(2)}$
+}
+\addplot[blue, samples=750]{(((((((((((((((x))^((((x))+((sin(deg((x)))))))))*((((((((1))+((cos(deg((x)))))))*((ln((x))))))+((((((x))+((sin(deg((x)))))))*((((1))/((x))))))))))*((((((((1))+((cos(deg((x)))))))*((ln((x))))))+((((((x))+((sin(deg((x)))))))*((((1))/((x))))))))))+((((((x))^((((x))+((sin(deg((x)))))))))*((((((((((-1))*((sin(deg((x)))))))*((ln((x))))))+((((((1))+((cos(deg((x)))))))*((((1))/((x))))))))+((((((((1))+((cos(deg((x)))))))*((((1))/((x))))))+((((((x))+((sin(deg((x)))))))*((((-1))/((((x))^((2))))))))))))))))*((x))))+((((((x))^((((x))+((sin(deg((x)))))))))*((((((((1))+((cos(deg((x)))))))*((ln((x))))))+((((((x))+((sin(deg((x)))))))*((((1))/((x))))))))))))+((((((x))^((((x))+((sin(deg((x)))))))))*((((((((1))+((cos(deg((x)))))))*((ln((x))))))+((((((x))+((sin(deg((x)))))))*((((1))/((x)))))))))))};
+\end{axis}
+\end{tikzpicture}
+\caption{График функции}
+\end{figure}
 \end{document}
