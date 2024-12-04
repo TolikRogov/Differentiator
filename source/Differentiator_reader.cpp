@@ -145,7 +145,7 @@ BinaryTreeStatusCode OriginalFunction(Tree* tree) {
 
 #define TEX_PRINTF(...) fprintf(tex_file, __VA_ARGS__)
 
-	TEX_PRINTF("\\section{Исходная функция}\n");
+	TEX_PRINTF("\\chapter{Исходная функция}\n");
 	TEX_PRINTF("\\hfil $f(");
 	for (size_t i = 0, j = 0; i < AMOUNT_OF_VARIABLES; i++) {
 		if (var_name_table[i].status == VAR_STATUS_USING) {

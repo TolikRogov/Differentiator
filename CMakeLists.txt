@@ -9,11 +9,16 @@ set (DEBUG_FLAGS   ${SFML_FLAGS} -std=c++17 -ggdb3 -O3 -Wall -Wextra -Weffc++ -W
 set (RELEASE_FLAGS ${SFML_FLAGS} -std=c++17)
 
 set (DEBUG OFF)
+set (PLOT OFF)
 
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/include)
 
 if (${DEBUG})
 	add_compile_definitions(PRINT_DEBUG)
+endif()
+
+if (${PLOT})
+	add_compile_definitions(DRAW_PLOT)
 endif()
 
 add_executable(${PROJECT_NAME})

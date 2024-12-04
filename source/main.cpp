@@ -5,6 +5,8 @@
 
 int main() {
 
+	srand((unsigned int)time(NULL));
+
 	BinaryTreeStatusCode tree_status = TREE_NO_ERROR;
 
 	LATEX_DUMP_START();
@@ -16,9 +18,7 @@ int main() {
 
 	Calculator(&tree);
 
-	INIT_TREE(diff_tree);
-	DIFFERENTIATION(&tree, &diff_tree);
-	DIFFERENTIATION(&diff_tree, &diff_tree);
+	GET_TAYLOR(&tree);
 
 	TREE_DTOR(&tree);
 

@@ -5,4 +5,5 @@ target_sources (${PROJECT_NAME}
     ${CMAKE_CURRENT_SOURCE_DIR}/Differentiator_errors.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/Differentiator_latex.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/Differentiator_reader.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/Tree.cpp
 )
