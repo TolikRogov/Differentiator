@@ -102,6 +102,7 @@ BinaryTreeStatusCode LaTexTaylorExpansion(Tree* tree) {
 			   "\twidth = 300,\n"
 			   "\theight = 300,\n"
 			   "\tgrid = major,\n"
+			   "\trestrict y to domain=-1:1,\n"
 			   "\tenlargelimits=true,\n"
 			   "\tcolormap name=bright,\n"
 			   "\tcycle list={[of colormap]},\n"
@@ -111,7 +112,7 @@ BinaryTreeStatusCode LaTexTaylorExpansion(Tree* tree) {
 	for (size_t i = 0; i < (size_t)(max_degree + 1); i++) {
 		TEX_PRINTF("\\addplot+ [samples=750]{%lg", members[0]);
 		for (size_t j = 0; j < i; j++)
-			TEX_PRINTF(" + (1/%d) * (%s - %lg) ^ %zu", Factorial(int(j + 1)), used_variable, point, j + 1);
+			TEX_PRINTF(" + (%lg/%d) * (%s - %lg) ^ %zu", members[j + 1], Factorial(int(j + 1)), used_variable, point, j + 1);
 		TEX_PRINTF("};\n");
 	}
 
