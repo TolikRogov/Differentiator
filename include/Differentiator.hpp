@@ -2,6 +2,8 @@
 
 #include "Tree.hpp"
 
+#define RET_STRING(val) #val
+
 #define BINARY_TREE_GRAPH_DUMP(tree, func_name, point) {	 																\
 	tree_status = BinaryTreeGraphDump(tree, {.file = __FILE__, .line = __LINE__, .func = func_name, .pointer = point});		\
 	TREE_ERROR_CHECK(tree_status);																	 					   \
@@ -26,14 +28,6 @@ enum SimplifierStatus {
 	SIMPLIFY_IMPOSSIBLE = 0,
 	SIMPLIFY_ACCESS		= 1,
 };
-
-//TODO:
-// struct LexerItem {
-// 	NodeType type;
-// 	union Data_t data;
-// };
-//
-// LexerItem array[] = {};
 
 struct DumpLogInfo {
 	const char* file;

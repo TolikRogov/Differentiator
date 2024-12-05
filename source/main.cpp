@@ -16,14 +16,14 @@ int main() {
 
 	READ_EXPRESSION(&tree);
 
-	Calculator(&tree);
-
-	GET_TAYLOR(&tree);
-
-	TREE_DTOR(&tree);
-
-	OPEN_LATEX_PDF();
-	OPEN_HTML_FILE();
+// 	Calculator(&tree);
+//
+// 	GET_TAYLOR(&tree);
+//
+// 	TREE_DTOR(&tree);
+//
+// 	OPEN_LATEX_PDF();
+// 	OPEN_HTML_FILE();
 
 	return 0;
 }

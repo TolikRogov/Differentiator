@@ -102,7 +102,6 @@ BinaryTreeStatusCode LaTexTaylorExpansion(Tree* tree) {
 			   "\twidth = 300,\n"
 			   "\theight = 300,\n"
 			   "\tgrid = major,\n"
-			   "\trestrict y to domain=-1:1,\n"
 			   "\tenlargelimits=true,\n"
 			   "\tcolormap name=bright,\n"
 			   "\tcycle list={[of colormap]},\n"

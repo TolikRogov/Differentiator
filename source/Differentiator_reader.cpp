@@ -1,6 +1,7 @@
 #include "Differentiator_reader.hpp"
 #include "Differentiator_dump.hpp"
 #include "Differentiator_latex.hpp"
+#include "Differentiator_lexer.hpp"
 
 Node_t* GetGrammar(const char* buffer, size_t* pc);
 Node_t* GetExpression(const char* buffer, size_t* pc);
@@ -172,6 +173,8 @@ BinaryTreeStatusCode OriginalFunction(Tree* tree) {
 
 BinaryTreeStatusCode ReadExpression(Tree* tree) {
 
+	BinaryTreeStatusCode tree_status = TREE_NO_ERROR;
+
 	FILE* exp_file = fopen(DIFF_EXPRESSION_FILE_, "r");
 	if (!exp_file)
 		TREE_ERROR_CHECK(TREE_FILE_OPEN_ERROR);
@@ -197,19 +200,24 @@ BinaryTreeStatusCode ReadExpression(Tree* tree) {
 	}
 #endif
 
-	int new_row_index = 0;
-	for (; new_row_index < (int)size;) {
-		if (*(buffer + new_row_index) == '#')
-			while (*(buffer + new_row_index++) != '\n') {}
-		else
-			break;
-	}
-	if (new_row_index - (int)size >= 0)
-		return TREE_NOTHING_TO_READ;
+	// int new_row_index = 0;
+	// for (; new_row_index < (int)size;) {
+	// 	if (*(buffer + new_row_index) == '#')
+	// 		while (*(buffer + new_row_index++) != '\n') {}
+	// 	else
+	// 		break;
+	// }
+	// if (new_row_index - (int)size >= 0)
+	// 	return TREE_NOTHING_TO_READ;
 
 	ResetVariables();
 
-	RecursionReadExpression(buffer + new_row_index, tree->root, 0);
+	Lexer lexer = {};
+	LEXER_CTOR(&lexer);
+
+	LexicalAnalysis(buffer, &lexer);
+
+	//RecursionReadExpression(buffer + new_row_index, tree->root, 0);
 	// size_t pc = 0;
 	// tree->root = GetGrammar(buffer + new_row_index, &pc);
 	// if (!tree->root)

@@ -121,7 +121,7 @@ const char* OpNameTableGetTexSymbol(OpNum op_number) {
 }
 
 const char* OpNameTableGetMathSymbol(OpNum op_number) {
-	return	op_name_table[op_number].math_symbol;
+	return	(op_number == INVALID_OPERATION ? "INVALID" : op_name_table[op_number].math_symbol);
 }
 
 OpNum OpNameTableFindOperation(const char* string) {

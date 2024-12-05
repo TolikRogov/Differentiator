@@ -21,8 +21,6 @@
 	#define UNKNOWN_WHAT_(...) NULL
 #endif
 
-#define RET_STRING(val) #val
-
 BinaryTreeStatusCode BinaryTreeCssFile();
 BinaryTreeStatusCode BinaryTreeCreateDumpDir();
 BinaryTreeStatusCode BinaryTreeBashScript(Tree* tree, DumpLogInfo* dump_info);
