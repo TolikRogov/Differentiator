@@ -12,10 +12,10 @@
 
 typedef double Number_t;
 
-#include "Variables.hpp"
 #include "Operations.hpp"
 
 #define INIT_TREE(tree) Tree tree = {.info = {.name = #tree, .file_name = __FILE__, .line = __LINE__}};
+#define INIT_VAR_NAME_TABLE(var_name_table) VariableNameTable var_name_table = {};
 
 #define TREE_HTML_DUMP_START() {				 \
 	tree_status = BinaryTreeHtmlDumpStart();	\
@@ -63,7 +63,7 @@ enum NodeType {
 union Data_t {
 	Number_t val_num;
 	OpNum val_op;
-	VarNum val_var;
+	size_t val_var;
 };
 
 struct Node_t {
@@ -104,11 +104,3 @@ BinaryTreeStatusCode ReplaceUnknownWhat(Node_t* node, Data_t data, NodeType type
 const char* OpNameTableGetMathSymbol(OpNum op_number);
 const char* OpNameTableGetTexSymbol(OpNum op_number);
 OpNum OpNameTableFindOperation(const char* string);
-
-const char* VarNameTableGetSymbol(VarNum number);
-VarNum VarNameTableFindVariable(const char* string);
-Number_t VarNameTableGetValue(VarNum number);
-VarStatus VarNameTableGetStatus (VarNum number);
-const char* VarNameTableGetStateVariable();
-VarNum VarNameTableGetStateVariableNumber();
-BinaryTreeStatusCode ResetVariables();

@@ -2,9 +2,9 @@
 
 #include "Differentiator.hpp"
 
-#define SKIP_EXTRA(buffer, token_start, token_end) {					 \
-	tree_status = SkipExtra(buffer, token_start, token_end);			\
-	TREE_ERROR_CHECK(tree_status);										\
+#define SKIP_EXTRA(buffer, token_start) {					 \
+	tree_status = SkipExtra(buffer, token_start);			\
+	TREE_ERROR_CHECK(tree_status);							\
 }
 
 #define LEXER_CTOR(lexer) {					 \
@@ -22,9 +22,9 @@
 	TREE_ERROR_CHECK(tree_status);			\
 }
 
-#define LEXER_PRINT(lexer) {				 \
-	tree_status = PrintLexer(lexer);		\
-	TREE_ERROR_CHECK(tree_status);			\
+#define LEXER_PRINT(lexer, var_name_table) {				 \
+	tree_status = PrintLexer(lexer, var_name_table);		\
+	TREE_ERROR_CHECK(tree_status);							\
 }
 
 struct Token {
@@ -44,6 +44,6 @@ const size_t LEXER_DEFAULT_CAPACITY = 4;
 BinaryTreeStatusCode LexerCtor(Lexer* lexer);
 BinaryTreeStatusCode LexerDtor(Lexer* lexer);
 BinaryTreeStatusCode LexerRealloc(Lexer* lexer);
-BinaryTreeStatusCode PrintLexer(Lexer* lexer);
-BinaryTreeStatusCode SkipExtra(const char* buffer, size_t* token_start, size_t* token_end);
-BinaryTreeStatusCode LexicalAnalysis(const char* buffer, Lexer* lexer);
+BinaryTreeStatusCode PrintLexer(Lexer* lexer, VariableNameTable* var_name_table);
+BinaryTreeStatusCode SkipExtra(const char* buffer, size_t* token_start);
+BinaryTreeStatusCode LexicalAnalysis(const char* buffer, Lexer* lexer, VariableNameTable* var_name_table);

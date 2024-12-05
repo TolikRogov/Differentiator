@@ -79,7 +79,7 @@ BinaryTreeStatusCode NodePrintData(Node_t* node) {
 	switch (node->type) {
 		case OP:  { printf("%s\n", op_name_table[node->data.val_op].math_symbol); 	 break; }
 		case NUM: { printf("%lg\n", node->data.val_num); break; }
-		case VAR: { printf("%s\n", var_name_table[node->data.val_var].symbol);  break; }
+		case VAR: { printf("%zu\n", node->data.val_var);  break; }
 		case UNW: { printf("%s\n", "UNKOWN WHAT"); break; }
 		default: TREE_ERROR_CHECK(TREE_INVALID_TYPE);
 	}
@@ -92,7 +92,7 @@ BinaryTreeStatusCode ReplaceUnknownWhat(Node_t* node, Data_t data, NodeType type
 	switch (type) {
 		case OP:  { node->type = OP;  node->data.val_op  = data.val_op;  break; }
 		case NUM: { node->type = NUM; node->data.val_num = data.val_num; break; }
-		case VAR: { node->type = VAR; node->data.val_num = data.val_var; break; }
+		case VAR: { node->type = VAR; node->data.val_var = data.val_var; break; }
 		case UNW:
 		default: TREE_ERROR_CHECK(TREE_INVALID_TYPE);
 	}
@@ -132,57 +132,4 @@ OpNum OpNameTableFindOperation(const char* string) {
 	}
 
 	return INVALID_OPERATION;
-}
-
-VarNum VarNameTableFindVariable(const char* string) {
-
-	for (size_t i = 0; i < AMOUNT_OF_VARIABLES; i++) {
-		if (StrCmp(string, var_name_table[i].symbol) == 0)
-			return var_name_table[i].num;
-	}
-
-	return INVALID_VARIABLE;
-}
-
-const char* VarNameTableGetSymbol(VarNum number) {
-	return var_name_table[number].symbol;
-}
-
-Number_t VarNameTableGetValue(VarNum number) {
-	return var_name_table[number].value;
-}
-
-VarStatus VarNameTableGetStatus(VarNum number) {
-	return var_name_table[number].status;
-}
-
-const char* VarNameTableGetStateVariable() {
-
-	for (size_t i = 0; i < AMOUNT_OF_VARIABLES; i++) {
-		if (var_name_table[i].state == VAR_DIFF_STATUS_VAR)
-			return var_name_table[i].symbol;
-	}
-
-	return NULL;
-}
-
-VarNum VarNameTableGetStateVariableNumber() {
-
-	for (size_t i = 0; i < AMOUNT_OF_VARIABLES; i++) {
-		if (var_name_table[i].state == VAR_DIFF_STATUS_VAR)
-			return var_name_table[i].num;
-	}
-
-	return INVALID_VARIABLE;
-
-}
-
-BinaryTreeStatusCode ResetVariables() {
-
-	for (size_t i = 0; i < AMOUNT_OF_VARIABLES; i++) {
-		var_name_table[i].value = 0;
-		var_name_table[i].status = VAR_STATUS_DISUSING;
-	}
-
-	return TREE_NO_ERROR;
 }

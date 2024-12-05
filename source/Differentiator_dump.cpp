@@ -51,7 +51,7 @@ BinaryTreeStatusCode BinaryTreeHtmlDumpStart() {
 	return TREE_NO_ERROR;
 }
 
-BinaryTreeStatusCode NameTablePrint() {
+BinaryTreeStatusCode NameTablePrint(VariableNameTable* var_name_table) {
 
 	FILE* html_file = fopen(HTML_FILE_, "a");
 	if (!html_file)
@@ -62,11 +62,11 @@ BinaryTreeStatusCode NameTablePrint() {
 	HTML_PRINTF("\t<div class='dump'>\n");
 	HTML_PRINTF("\tNameTable:\n\t<table class='name_table'>\n");
 	HTML_PRINTF("\t\t<tr>\n\t\t\t<td>Number</td>\n\t\t\t<td>Variable</td>\n\t\t\t<td>Value</td>\n\t\t\t<td>Status</td>\n\t\t\t<td>State</td>\n\t\t</tr>\n");
-	for (size_t i = 0; i < AMOUNT_OF_VARIABLES; i++) {
-		HTML_PRINTF("\t\t<tr>\n\t\t\t<td>%d</td>\n\t\t\t<td>%s</td>\n\t\t\t<td>%lg</td>\n\t\t\t<td>%s</td>\n\t\t\t<td>%s</td>\n\t\t</tr>\n",
-					var_name_table[i].num, var_name_table[i].symbol, var_name_table[i].value,
-					(var_name_table[i].status == VAR_STATUS_USING ? RET_STRING(VAR_STATUS_USING) : RET_STRING(VAR_STATUS_DISUSING)),
-					(var_name_table[i].state == VAR_DIFF_STATUS_NUM ? RET_STRING(VAR_DIFF_STATUS_NUM) : RET_STRING(VAR_DIFF_STATUS_VAR)));
+	for (size_t i = 0; i < var_name_table->size; i++) {
+		HTML_PRINTF("\t\t<tr>\n\t\t\t<td>%zu</td>\n\t\t\t<td>%s</td>\n\t\t\t<td>%lg</td>\n\t\t\t<td>%s</td>\n\t\t\t<td>%s</td>\n\t\t</tr>\n",
+					var_name_table->data[i].num, var_name_table->data[i].symbol, var_name_table->data[i].value,
+					(var_name_table->data[i].status == VAR_STATUS_USING ? RET_STRING(VAR_STATUS_USING) : RET_STRING(VAR_STATUS_DISUSING)),
+					(var_name_table->data[i].state == VAR_DIFF_STATUS_NUM ? RET_STRING(VAR_DIFF_STATUS_NUM) : RET_STRING(VAR_DIFF_STATUS_VAR)));
 	}
 	HTML_PRINTF("\t</table>\n");
 	HTML_PRINTF("\t<table class='name_table'>\n");
@@ -295,7 +295,7 @@ BinaryTreeStatusCode BinaryTreeBashScript(Tree* tree, DumpLogInfo* dump_info) {
 	return TREE_NO_ERROR;
 }
 
-BinaryTreeStatusCode BinaryTreeGraphDump(Tree* tree, DumpLogInfo dump_info) {
+BinaryTreeStatusCode BinaryTreeGraphDump(Tree* tree, DumpLogInfo dump_info, VariableNameTable* var_name_table) {
 
 	BinaryTreeStatusCode tree_status = TREE_NO_ERROR;
 
@@ -310,7 +310,7 @@ BinaryTreeStatusCode BinaryTreeGraphDump(Tree* tree, DumpLogInfo dump_info) {
 	DOT_PRINTF("\tfontname = \"UbuntuMono\";\n");
 	DOT_PRINTF("\tbgcolor = %s;\n\n", color.dot_background);
 
-	NodeGraphDump(tree->root, dot_file, &dump_info);
+	NodeGraphDump(tree->root, dot_file, &dump_info, var_name_table);
 
 	DOT_PRINTF("}\n");
 
@@ -325,7 +325,7 @@ BinaryTreeStatusCode BinaryTreeGraphDump(Tree* tree, DumpLogInfo dump_info) {
 	return TREE_NO_ERROR;
 }
 
-BinaryTreeStatusCode NodeGraphDump(Node_t* cur_root, FILE* dot_file, DumpLogInfo* dump_info) {
+BinaryTreeStatusCode NodeGraphDump(Node_t* cur_root, FILE* dot_file, DumpLogInfo* dump_info, VariableNameTable* var_name_table) {
 
 	if (!cur_root)
 		return TREE_NULL_POINTER;
@@ -344,16 +344,16 @@ BinaryTreeStatusCode NodeGraphDump(Node_t* cur_root, FILE* dot_file, DumpLogInfo
 		default: return TREE_INVALID_TYPE;
 	}
 
-#define SPECIFIER_LABEL_PRINT(node)											 	 			 				 \
-	do {																									\
-		if (!(node)) { DOT_PRINTF("%s\\n%p ", "NONE", node); continue; } 									\
-		switch (node->type) {																				\
-			case UNW: { DOT_PRINTF("%s\\n%p ", "UNKNOWN WHAT", node); break; } 								\
-			case NUM: { DOT_PRINTF("%lg\\n%p ", node->data.val_num, node); break; }							\
-			case VAR: { DOT_PRINTF("%s\\n%p ", VarNameTableGetSymbol(node->data.val_var), node); break; }	\
-			case OP:  { DOT_PRINTF("%s\\n%p ", OpNameTableGetMathSymbol(node->data.val_op), node); break; } \
-			default: return TREE_INVALID_TYPE;																\
-		}																									\
+#define SPECIFIER_LABEL_PRINT(node)											 	 			 				 				 \
+	do {																													\
+		if (!(node)) { DOT_PRINTF("%s\\n%p ", "NONE", node); continue; } 													\
+		switch (node->type) {																								\
+			case UNW: { DOT_PRINTF("%s\\n%p ", "UNKNOWN WHAT", node); break; } 												\
+			case NUM: { DOT_PRINTF("%lg\\n%p ", node->data.val_num, node); break; }											\
+			case VAR: { DOT_PRINTF("%s\\n%p ", VarNameTableGetSymbol(var_name_table, node->data.val_var), node); break; }	\
+			case OP:  { DOT_PRINTF("%s\\n%p ", OpNameTableGetMathSymbol(node->data.val_op), node); break; } 				\
+			default: return TREE_INVALID_TYPE;																				\
+		}																													\
 	} while(0)
 
 	SPECIFIER_LABEL_PRINT(cur_root);
@@ -369,10 +369,10 @@ BinaryTreeStatusCode NodeGraphDump(Node_t* cur_root, FILE* dot_file, DumpLogInfo
 		if (!IsRootUnknownWhat(cur_root->left)) {
 			DOT_PRINTF("\tnode%p:<left> -> node%p [ style = \"bold\"; color = %s; label = %s; ];\n", cur_root, cur_root->left, color.left_edge, labels.left_sub_arrow);
 		}
-		NodeGraphDump(cur_root->left, dot_file, dump_info);
+		NodeGraphDump(cur_root->left, dot_file, dump_info, var_name_table);
 	}
 	if (cur_root->right) {
-		NodeGraphDump(cur_root->right, dot_file, dump_info);
+		NodeGraphDump(cur_root->right, dot_file, dump_info, var_name_table);
 		if (!IsRootUnknownWhat(cur_root->right))
 			DOT_PRINTF("\tnode%p:<right> -> node%p [ style = \"bold\"; color = %s; label = %s; ];\n", cur_root, cur_root->right, color.right_edge, labels.right_sub_arrow);
 	}

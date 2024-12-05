@@ -1,6 +1,6 @@
 #include "Differentiator.hpp"
 
-BinaryTreeStatusCode Calculator(Tree* tree) {
+BinaryTreeStatusCode Calculator(Tree* tree, VariableNameTable* var_name_table) {
 
 	printf("-------------------------------------------------------------------------------------------------\n");
 	printf("\t\t\t" BLUE("CALCULATOR")"\n");
@@ -17,60 +17,60 @@ BinaryTreeStatusCode Calculator(Tree* tree) {
 		printf(BLUE("Do you want to calculate value of expression? [y/n]:")" ");
 	}
 
-	if (NumberOfVarStatusUsingVariables()) {
+	if (NumberOfVarStatusUsingVariables(var_name_table)) {
 		printf("-------------------------------------\n");
 		printf(BLUE("Set using variables values:")"\n");
 	}
-	for (size_t i = 0; i < AMOUNT_OF_VARIABLES; i++) {
-		if (var_name_table[i].status == VAR_STATUS_USING) {
-			printf("\t" YELLOW("%s")" = ", var_name_table[i].symbol);
-			scanf("%lg", &var_name_table[i].value);
+	for (size_t i = 0; i < var_name_table->size; i++) {
+		if (var_name_table->data[i].status == VAR_STATUS_USING) {
+			printf("\t" YELLOW("%s")" = ", var_name_table->data[i].symbol);
+			scanf("%lg", &var_name_table->data[i].value);
 		}
 	}
 	printf("-------------------------------------\n");
-	printf(GREEN("Eval result: %lg\n"), Eval(tree->root));
+	printf(GREEN("Eval result: %lg\n"), Eval(tree->root, var_name_table));
 
 	return TREE_NO_ERROR;
 }
 
-Number_t Eval(Node_t* node) {
+Number_t Eval(Node_t* node, VariableNameTable* var_name_table) {
 
 	if (!node)
 		TREE_ERROR_MESSAGE(TREE_NULL_POINTER);
 
 	switch (node->type) {
 		case NUM: return node->data.val_num;
-		case VAR: return VarNameTableGetValue(node->data.val_var);
+		case VAR: return VarNameTableGetValue(var_name_table, node->data.val_var);
 		case OP: {
 			switch (node->data.val_op) {
-				case ADD: 	return Eval(node->left) + Eval(node->right);
-				case SUB: 	return Eval(node->left) - Eval(node->right);
-				case MUL: 	return Eval(node->left) * Eval(node->right);
+				case ADD: 	return eL + eR;
+				case SUB: 	return eL - eR;
+				case MUL: 	return eL * eR;
 				case DIV: 	{
-								Number_t denominator = Eval(node->right);
+								Number_t denominator = eR;
 								if (!DiffCompareDouble(denominator, 0))
-									return Eval(node->left) / denominator;
+									return eL / denominator;
 								else { TREE_ERROR_MESSAGE(TREE_DEFINITION_AREA_ERROR); return 0; }
 							}
-				case SIN: 	return sin(Eval(node->left));
-				case COS: 	return cos(Eval(node->left));
-				case SQRT:  return sqrt(Eval(node->left));
-				case POW:	return pow(Eval(node->left), Eval(node->right));
+				case SIN: 	return sin(eL);
+				case COS: 	return cos(eL);
+				case SQRT:  return sqrt(eL);
+				case POW:	return pow(eL, eR);
 				case LOG:	{
-								Number_t arg1 = Eval(node->left);
-								Number_t arg2 = Eval(node->right);
+								Number_t arg1 = eL;
+								Number_t arg2 = eR;
 								Number_t denominator = log(arg1);
 								if (arg1 > 0 && arg2 > 0 && !DiffCompareDouble(denominator, 0))
 									return log(arg2) / denominator;
 							  	else { TREE_ERROR_MESSAGE(TREE_DEFINITION_AREA_ERROR); return 0; }
 							}
 				case LN:	{
-								Number_t arg = Eval(node->left);
+								Number_t arg = eL;
 								if (arg > 0)
 									return log(arg);
 							  	else { TREE_ERROR_MESSAGE(TREE_DEFINITION_AREA_ERROR); return 0; }
 							}
-				case EXP:   return exp(Eval(node->left));
+				case EXP:   return exp(eL);
 				case AMOUNT_OF_OPERATIONS:
 				case INVALID_OPERATION:
 				default:					TREE_ERROR_CHECK(TREE_INVALID_TYPE);
@@ -113,55 +113,7 @@ Node_t* doCopySubtree(Node_t* node) {
 	}
 }
 
-size_t NumberOfVariablesInSubtree(Node_t* node) {
-	return (node->type == VAR ? 1 : 0) + (node->left ? NumberOfVariablesInSubtree(node->left) : 0) + (node->right ? NumberOfVariablesInSubtree(node->right) : 0);
-}
-
-size_t NumberOfVarStatusUsingVariables() {
-
-	size_t cnt = 0;
-	for (size_t i = 0; i < AMOUNT_OF_VARIABLES; i++) {
-		if (var_name_table[i].status == VAR_STATUS_USING)
-			cnt++;
-	}
-
-	return cnt;
-}
-
-BinaryTreeStatusCode VarNameTableSetDiff() {
-
-	size_t cnt_of_using_variables = NumberOfVarStatusUsingVariables();
-	if (cnt_of_using_variables == 1) {
-		for (size_t i = 0; i < AMOUNT_OF_VARIABLES; i++) {
-			if (var_name_table[i].status == VAR_STATUS_USING) {
-				var_name_table[i].state = VAR_DIFF_STATUS_VAR;
-				break;
-			}
-		}
-	}
-	else if (cnt_of_using_variables > 1) {
-		char variable[MAX_OPERATION_NAME_SIZE] = {};
-		VarNum var_number = INVALID_VARIABLE;
-
-		printf(BLUE("Using variables"));
-		for (size_t i = 0; i < AMOUNT_OF_VARIABLES; i++) {
-			if (var_name_table[i].status == VAR_STATUS_USING)
-				printf(" - %s", var_name_table[i].symbol);
-		}
-		printf(":\n");
-		do {
-			printf(YELLOW("Enter the variable by which to differentiate:")" ");
-			scanf("%s", variable);
-			getchar();
-		} while ((var_number = VarNameTableFindVariable(variable)) == INVALID_VARIABLE || VarNameTableGetStatus(var_number) == VAR_STATUS_DISUSING);
-
-		var_name_table[var_number].state = VAR_DIFF_STATUS_VAR;
-	}
-
-	return TREE_NO_ERROR;
-}
-
-Node_t* doDifferentiation(Node_t* node) {
+Node_t* doDifferentiation(Node_t* node, VariableNameTable* var_name_table) {
 
 	if (!node)
 		return NULL;
@@ -171,7 +123,7 @@ Node_t* doDifferentiation(Node_t* node) {
 	switch (node->type) {
 		case NUM: return _NUM(0);
 		case VAR: {
-			if (var_name_table[node->data.val_var].state == VAR_DIFF_STATUS_VAR)
+			if (var_name_table->data[node->data.val_var].state == VAR_DIFF_STATUS_VAR)
 				return _NUM(1);
 			else
 				return _NUM(0);
@@ -202,8 +154,8 @@ Node_t* doDifferentiation(Node_t* node) {
 				case INVALID_OPERATION:
 				default: return NULL;
 			}
-			Simplification(new_node);
-			LaTexSubtreeDifferential(node, new_node);
+			Simplification(new_node, var_name_table);
+			LaTexSubtreeDifferential(node, new_node, var_name_table);
 			return new_node;
 		}
 		case UNW:
@@ -211,13 +163,13 @@ Node_t* doDifferentiation(Node_t* node) {
 	}
 }
 
-BinaryTreeStatusCode Simplification(Node_t* subtree_root) {
+BinaryTreeStatusCode Simplification(Node_t* subtree_root, VariableNameTable* var_name_table) {
 
 	size_t count_of_changes = 0;
 
 	do {
 		count_of_changes = 0;
-		ConvolutionConstant(subtree_root, &count_of_changes);
+		ConvolutionConstant(subtree_root, &count_of_changes, var_name_table);
 		TrivialTransformations(subtree_root, &count_of_changes);
 	} while (count_of_changes);
 
@@ -318,7 +270,7 @@ int TrivialTransformations(Node_t* node, size_t* count_of_changes) {
 #undef CHANGE_OPERATION
 }
 
-int ConvolutionConstant(Node_t* node, size_t* count_of_changes) {
+int ConvolutionConstant(Node_t* node, size_t* count_of_changes, VariableNameTable* var_name_table) {
 
 	if (!node)
 		return SIMPLIFY_IMPOSSIBLE;
@@ -346,10 +298,10 @@ int ConvolutionConstant(Node_t* node, size_t* count_of_changes) {
 				default: return SIMPLIFY_IMPOSSIBLE;
 			}
 
-			int left = ConvolutionConstant(node->left, count_of_changes);
-			int right = ConvolutionConstant(node->right, count_of_changes);
+			int left = ConvolutionConstant(node->left, count_of_changes, var_name_table);
+			int right = ConvolutionConstant(node->right, count_of_changes, var_name_table);
 			if ((left && right) || (left && !node->right)) {
-				Number_t result = Eval(node);
+				Number_t result = Eval(node, var_name_table);
 				node->type = NUM;
 				SetNodeValue(node, {.val_num = result});
 				if (node->right) { TreeDtor(node->right); node->right = NULL; }

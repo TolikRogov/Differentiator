@@ -3,7 +3,7 @@
 #define EOP '$'
 #define TOC '#'
 
-BinaryTreeStatusCode SkipExtra(const char* buffer, size_t* token_start, size_t* token_end) {
+BinaryTreeStatusCode SkipExtra(const char* buffer, size_t* token_start) {
 
 	while (isspace(buffer[*token_start]))
 		(*token_start)++;
@@ -18,8 +18,6 @@ BinaryTreeStatusCode SkipExtra(const char* buffer, size_t* token_start, size_t* 
 
 	while (isspace(buffer[*token_start]))
 		(*token_start)++;
-
-	*token_end = *token_start;
 
 	return TREE_NO_ERROR;
 }
@@ -75,22 +73,22 @@ static const char* GetTokenStringType(NodeType type) {
 	}
 }
 
-static BinaryTreeStatusCode PrintTokenValue(Token* token) {
+static BinaryTreeStatusCode PrintTokenValue(Token* token, VariableNameTable* var_name_table) {
 
 	printf(" value - ");
 
 	switch (token->type) {
-		case NUM: { printf("%lg", token->data.val_num); break; }
-		case VAR: { printf("%s", VarNameTableGetSymbol(token->data.val_var)); break; }
-		case OP:  { printf("%s", OpNameTableGetMathSymbol(token->data.val_op)); break; }
+		case NUM: { printf(GREEN("%lg"), token->data.val_num); break; }
+		case VAR: { printf(GREEN("%s"), VarNameTableGetSymbol(var_name_table, token->data.val_var)); break; }
+		case OP:  { printf(GREEN("%s"), OpNameTableGetMathSymbol(token->data.val_op)); break; }
 		case UNW:
-		default:  { printf("%s", RET_STRING(UNW)); break; }
+		default:  { printf(GREEN("%s"), RET_STRING(UNW)); break; }
 	}
 	printf("\n");
 	return TREE_NO_ERROR;
 }
 
-BinaryTreeStatusCode PrintLexer(Lexer* lexer) {
+BinaryTreeStatusCode PrintLexer(Lexer* lexer, VariableNameTable* var_name_table) {
 
 	if (!lexer)
 		return TREE_NULL_POINTER;
@@ -101,37 +99,95 @@ BinaryTreeStatusCode PrintLexer(Lexer* lexer) {
 
 	for (size_t i = 0; i < lexer->size; i++) {
 		printf(BLUE("Lexer token[%zu]:") " type - " GREEN("%s") " index - " GREEN("%zu"), i, GetTokenStringType(lexer->tokens[i].type), lexer->tokens[i].index);
-		PrintTokenValue(&lexer->tokens[i]);
+		PrintTokenValue(&lexer->tokens[i], var_name_table);
 	}
 
 	return TREE_NO_ERROR;
 }
 
-BinaryTreeStatusCode LexicalAnalysis(const char* buffer, Lexer* lexer) {
+BinaryTreeStatusCode LexicalAnalysis(const char* buffer, Lexer* lexer, VariableNameTable* var_name_table) {
 
 	BinaryTreeStatusCode tree_status = TREE_NO_ERROR;
 
 	size_t token_start = 0;
+	char* token_end_pointer = NULL;
 	size_t token_end = 0;
 
 	while (buffer[token_start] != EOP) {
 
-		SKIP_EXTRA(buffer, &token_start, &token_end);
+		SKIP_EXTRA(buffer, &token_start);
 
 		LEXER_REALLOC(lexer);
+		printf("%c", buffer[token_start]);
 
-		if (!isalpha(buffer[token_start]) && !isdigit(buffer[token_start])) {
-			lexer->tokens[lexer->size].type = OP;
-			char op[MAX_OPERATION_NAME_SIZE] = { buffer[token_start], '\0' };
-			lexer->tokens[lexer->size].data.val_op = OpNameTableFindOperation(op);
+		Number_t number = strtod(buffer + token_start, &token_end_pointer);
+		if (!DiffCompareDouble(number, 0)) {
+			lexer->tokens[lexer->size].type = NUM;
+			lexer->tokens[lexer->size].data.val_num = number;
 			lexer->tokens[lexer->size].index = token_start;
 			lexer->size++;
+			token_start = (size_t)(token_end_pointer - buffer);
+			continue;
 		}
 
-		printf("%c", buffer[token_start]);
+		token_end = token_start;
+		while (isalpha(buffer[token_end])) { token_end++; }
+
+		int op_find = 0;
+		for (size_t i = 0; i < AMOUNT_OF_OPERATIONS; i++) {
+			op_find = 1;
+			for (size_t j = 0; j != token_end && *(op_name_table[i].math_symbol + j) != '\0'; j++) {
+				if (buffer[token_start + j] != *(op_name_table[i].math_symbol + j)) {
+					op_find = 0;
+					break;
+				}
+			}
+			if (op_find) {
+				lexer->tokens[lexer->size].type = OP;
+				lexer->tokens[lexer->size].data.val_op = op_name_table[i].num;
+				lexer->tokens[lexer->size].index = token_start;
+				lexer->size++;
+				token_start = token_end + 1;
+				break;
+			}
+		}
+
+		if (op_find)
+			continue;
+
+		int var_find = 0;
+		for (size_t i = 0; i < var_name_table->size; i++) {
+			var_find = 1;
+			for (size_t j = 0; j != token_end && *(var_name_table->data[i].symbol + j) != '\0'; j++) {
+				if (buffer[token_start + j] != *(var_name_table->data[i].symbol + j)) {
+					var_find = 0;
+					break;
+				}
+			}
+			if (var_find) {
+				lexer->tokens[lexer->size].type = VAR;
+				lexer->tokens[lexer->size].data.val_var = var_name_table->data[i].num;
+				lexer->tokens[lexer->size].index = token_start;
+				lexer->size++;
+				token_start = token_end + 1;
+				break;
+			}
+		}
+
+		if (var_find)
+			continue;
+
+		VAR_NAME_TABLE_REALLOC(var_name_table);
+
+		var_name_table->data[var_name_table->size].num = var_name_table->size;
+		var_name_table->data[var_name_table->size].status = VAR_STATUS_USING;
+		for (size_t i = 0; i < token_end - token_end; i++)
+			var_name_table->data[var_name_table->size].symbol[i] = buffer[token_start + i];
+		var_name_table->data[var_name_table->size].symbol[token_end] = '\0';
+		var_name_table->size++;
+
 		token_start++;
 	}
-	printf("\n");
-	LEXER_PRINT(lexer);
+	LEXER_PRINT(lexer, var_name_table);
 	return TREE_NO_ERROR;
 }

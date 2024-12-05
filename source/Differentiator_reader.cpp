@@ -2,12 +2,12 @@
 #include "Differentiator_dump.hpp"
 #include "Differentiator_latex.hpp"
 #include "Differentiator_lexer.hpp"
+#include "Variables.hpp"
 
 Node_t* GetGrammar(const char* buffer, size_t* pc);
 Node_t* GetExpression(const char* buffer, size_t* pc);
 Node_t* GetTerminator(const char* buffer, size_t* pc);
 Node_t* GetPriority(const char* buffer, size_t* pc);
-Node_t* GetVariable(const char* buffer, size_t* pc);
 Node_t* GetNumber(const char* buffer, size_t* pc);
 
 Node_t* GetNumber(const char* buffer, size_t* pc) {
@@ -19,22 +19,10 @@ Node_t* GetNumber(const char* buffer, size_t* pc) {
 		value = value * 10 + (buffer[(*pc)++] - '0');
 
 	if (old_p == *pc) {
-		//TREE_ERROR_MESSAGE(TREE_EXPRESSION_SYNTAX_ERROR);
+		TREE_ERROR_MESSAGE(TREE_EXPRESSION_SYNTAX_ERROR);
 		return NULL;
 	}
 	return _NUM(value);
-}
-
-Node_t* GetVariable(const char* buffer, size_t* pc) {
-	switch (buffer[(*pc)]) {
-		case 'x': return _VAR(VAR_X);
-		case 'y': return _VAR(VAR_Y);
-		case 'z': return _VAR(VAR_Z);
-		default: {
-			TREE_ERROR_MESSAGE(TREE_EXPRESSION_SYNTAX_ERROR);
-			return NULL;
-		}
-	}
 }
 
 Node_t* GetPriority(const char* buffer, size_t* pc) {
@@ -57,10 +45,8 @@ Node_t* GetPriority(const char* buffer, size_t* pc) {
 		(*pc)++;
 		return node;
 	}
-	else if ((node = GetNumber(buffer, pc)) != NULL)
-		return	node;
 	else
-		return GetVariable(buffer, pc);
+		return GetNumber(buffer, pc);
 }
 
 Node_t* GetTerminator(const char* buffer, size_t* pc) {
@@ -129,16 +115,16 @@ Node_t* GetGrammar(const char* buffer, size_t* pc) {
 	return node;
 }
 
-BinaryTreeStatusCode OriginalFunction(Tree* tree) {
+BinaryTreeStatusCode OriginalFunction(Tree* tree, VariableNameTable* var_name_table) {
 
 	BinaryTreeStatusCode tree_status = TREE_NO_ERROR;
 
-	tree_status = ReadExpression(tree);
+	tree_status = ReadExpression(tree, var_name_table);
 	TREE_ERROR_CHECK(tree_status);
 
-	VarNameTableSetDiff();
-	NameTablePrint();
-	BINARY_TREE_GRAPH_DUMP(tree, "ExpressionReader", NULL);
+	VarNameTableSetDiff(var_name_table);
+	NameTablePrint(var_name_table);
+	BINARY_TREE_GRAPH_DUMP(tree, "ExpressionReader", NULL, var_name_table);
 
 	FILE* tex_file = fopen(DIFF_LATEX_FILE_ DIFF_TEX_EXTENSION_, "a");
 	if (!tex_file)
@@ -148,30 +134,30 @@ BinaryTreeStatusCode OriginalFunction(Tree* tree) {
 
 	TEX_PRINTF("\\chapter{Исходная функция}\n");
 	TEX_PRINTF("\\hfil $f(");
-	for (size_t i = 0, j = 0; i < AMOUNT_OF_VARIABLES; i++) {
-		if (var_name_table[i].status == VAR_STATUS_USING) {
+	for (size_t i = 0, j = 0; i < var_name_table->size; i++) {
+		if (var_name_table->data[i].status == VAR_STATUS_USING) {
 			j++;
 			if (j == 1)
-				TEX_PRINTF("%s", var_name_table[i].symbol);
+				TEX_PRINTF("%s", var_name_table->data[i].symbol);
 			else
-				TEX_PRINTF(", %s", var_name_table[i].symbol);
+				TEX_PRINTF(", %s", var_name_table->data[i].symbol);
 		}
 	}
 	TEX_PRINTF(") = ");
 
-	PrintExpressionTree(tree->root, tex_file);
+	PrintExpressionTree(tree->root, tex_file, var_name_table);
 	TEX_PRINTF("$\\\\\n");
 
 	if(fclose(tex_file))
 		TREE_ERROR_CHECK(TREE_FILE_CLOSE_ERROR);
 
-	tree_status = DrawGraph(tree);
+	tree_status = DrawGraph(tree, var_name_table);
 	TREE_ERROR_CHECK(tree_status);
 
 	return TREE_NO_ERROR;
 }
 
-BinaryTreeStatusCode ReadExpression(Tree* tree) {
+BinaryTreeStatusCode ReadExpression(Tree* tree, VariableNameTable* var_name_table) {
 
 	BinaryTreeStatusCode tree_status = TREE_NO_ERROR;
 
@@ -210,12 +196,12 @@ BinaryTreeStatusCode ReadExpression(Tree* tree) {
 	// if (new_row_index - (int)size >= 0)
 	// 	return TREE_NOTHING_TO_READ;
 
-	ResetVariables();
+	ResetVariables(var_name_table);
 
 	Lexer lexer = {};
 	LEXER_CTOR(&lexer);
 
-	LexicalAnalysis(buffer, &lexer);
+	LexicalAnalysis(buffer, &lexer, var_name_table);
 
 	//RecursionReadExpression(buffer + new_row_index, tree->root, 0);
 	// size_t pc = 0;
@@ -231,7 +217,7 @@ BinaryTreeStatusCode ReadExpression(Tree* tree) {
 	return TREE_NO_ERROR;
 }
 
-BinaryTreeStatusCode RecursionReadExpression(char* buffer, Node_t* node, int prev_node_depth) {
+BinaryTreeStatusCode RecursionReadExpression(char* buffer, Node_t* node, int prev_node_depth, VariableNameTable* var_name_table) {
 
 	if (!buffer)
 		TREE_ERROR_CHECK(TREE_NULL_POINTER);
@@ -256,7 +242,7 @@ BinaryTreeStatusCode RecursionReadExpression(char* buffer, Node_t* node, int pre
 
 			if (prev_node_depth == 0) {
 				index++;
-				RecursionReadExpression(buffer, node, count_brackets);
+				RecursionReadExpression(buffer, node, count_brackets, var_name_table);
 				break;
 			}
 
@@ -272,7 +258,7 @@ BinaryTreeStatusCode RecursionReadExpression(char* buffer, Node_t* node, int pre
 #endif
 
 			index++;
-			RecursionReadExpression(buffer, new_node, prev_node_depth);
+			RecursionReadExpression(buffer, new_node, prev_node_depth, var_name_table);
 
 			break;
 		}
@@ -294,7 +280,7 @@ BinaryTreeStatusCode RecursionReadExpression(char* buffer, Node_t* node, int pre
 				node->data.val_num = node_data.val_num;
 
 				index++;
-				RecursionReadExpression(buffer, node, count_brackets);
+				RecursionReadExpression(buffer, node, count_brackets, var_name_table);
 				return TREE_NO_ERROR;
 			}
 
@@ -306,20 +292,21 @@ BinaryTreeStatusCode RecursionReadExpression(char* buffer, Node_t* node, int pre
 				node->data.val_op = node_data.val_op;
 
 				index++;
-				RecursionReadExpression(buffer, node, count_brackets);
+				RecursionReadExpression(buffer, node, count_brackets, var_name_table);
 				return TREE_NO_ERROR;
 			}
 
-			if ((node_data.val_var = VarNameTableFindVariable(operation)) != INVALID_VARIABLE) {
+			int var_find = VarNameTableFindVariable(var_name_table, operation);
+			if ((var_find != -1) && (node_data.val_var = (size_t)var_find)) {
 #ifdef PRINT_DEBUG
 				printf("It is variable: %s\n", operation);
 #endif
 				node->type = VAR;
 				node->data.val_var = node_data.val_var;
-				var_name_table[node->data.val_var].status = VAR_STATUS_USING;
+				var_name_table->data[node->data.val_var].status = VAR_STATUS_USING;
 
 				index++;
-				RecursionReadExpression(buffer, node, count_brackets);
+				RecursionReadExpression(buffer, node, count_brackets, var_name_table);
 				return TREE_NO_ERROR;
 			}
 
@@ -328,7 +315,7 @@ BinaryTreeStatusCode RecursionReadExpression(char* buffer, Node_t* node, int pre
 	}
 
 	index++;
-	RecursionReadExpression(buffer, node, prev_node_depth);
+	RecursionReadExpression(buffer, node, prev_node_depth, var_name_table);
 
 	return TREE_NO_ERROR;
 }
