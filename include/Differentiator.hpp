@@ -3,8 +3,6 @@
 #include "Tree.hpp"
 #include "Variables.hpp"
 
-#define RET_STRING(val) #val
-
 #define BINARY_TREE_GRAPH_DUMP(tree, func_name, point, var_name_table) {	 																\
 	tree_status = BinaryTreeGraphDump(tree, {.file = __FILE__, .line = __LINE__, .func = func_name, .pointer = point}, var_name_table);		\
 	TREE_ERROR_CHECK(tree_status);																	 					   				   \

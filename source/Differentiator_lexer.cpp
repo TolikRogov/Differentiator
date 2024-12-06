@@ -93,6 +93,7 @@ BinaryTreeStatusCode PrintLexer(Lexer* lexer, VariableNameTable* var_name_table)
 	if (!lexer)
 		return TREE_NULL_POINTER;
 
+	printf("\n");
 	printf(BLUE("Lexer address:") " " GREEN("%p") "\n", lexer);
 	printf(BLUE("Lexer capacity:") " " GREEN("%zu") "\n", lexer->capacity);
 	printf(BLUE("Lexer size:") " " GREEN("%zu") "\n", lexer->size);
@@ -113,12 +114,11 @@ BinaryTreeStatusCode LexicalAnalysis(const char* buffer, Lexer* lexer, VariableN
 	char* token_end_pointer = NULL;
 	size_t token_end = 0;
 
-	while (buffer[token_start] != EOP) {
+	do {
 
 		SKIP_EXTRA(buffer, &token_start);
 
 		LEXER_REALLOC(lexer);
-		printf("%c", buffer[token_start]);
 
 		Number_t number = strtod(buffer + token_start, &token_end_pointer);
 		if (!DiffCompareDouble(number, 0)) {
@@ -181,13 +181,28 @@ BinaryTreeStatusCode LexicalAnalysis(const char* buffer, Lexer* lexer, VariableN
 
 		var_name_table->data[var_name_table->size].num = var_name_table->size;
 		var_name_table->data[var_name_table->size].status = VAR_STATUS_USING;
-		for (size_t i = 0; i < token_end - token_end; i++)
-			var_name_table->data[var_name_table->size].symbol[i] = buffer[token_start + i];
-		var_name_table->data[var_name_table->size].symbol[token_end] = '\0';
-		var_name_table->size++;
+		var_name_table->data[var_name_table->size].state = VAR_DIFF_STATUS_NUM;
+		var_name_table->data[var_name_table->size].value = 0;
 
-		token_start++;
-	}
+		var_name_table->data[var_name_table->size].symbol = (char*)calloc((size_t)(token_end - token_start + 1), sizeof(char));
+		if (!var_name_table->data[var_name_table->size].symbol)
+			TREE_ERROR_CHECK(TREE_ALLOC_ERROR);
+
+		for (size_t i = 0; i < token_end - token_start; i++)
+			var_name_table->data[var_name_table->size].symbol[i] = buffer[token_start + i];
+		var_name_table->data[var_name_table->size].symbol[token_end - token_start] = '\0';
+
+		lexer->tokens[lexer->size].type = VAR;
+		lexer->tokens[lexer->size].data.val_var = var_name_table->data[var_name_table->size++].num;
+		lexer->tokens[lexer->size].index = token_start;
+		lexer->size++;
+		token_start = token_end + 1;
+	} while (buffer[token_start] != EOP);
+
+#ifdef PRINT_DEBUG
 	LEXER_PRINT(lexer, var_name_table);
+	PrintVarNameTable(var_name_table);
+#endif
+
 	return TREE_NO_ERROR;
 }

@@ -15,4 +15,6 @@ Operation op_name_table[AMOUNT_OF_OPERATIONS] = {
 	[LN]			= 	{ .num = LN,			.math_symbol = "ln",	.tex_symbol = "\\ln",		},
 	[EXP]			=	{ .num = EXP,			.math_symbol = "exp",	.tex_symbol = "e^",			},
 	[OPEN_BRACKET] 	=	{ .num = OPEN_BRACKET,	.math_symbol = "(",		.tex_symbol = "(",			},
-	[CLOSE_BRACKET] =	{ .num = CLOSE_BRACKET,	.math_symbol = ")",		.tex_symbol = ")",			}};
+	[CLOSE_BRACKET] =	{ .num = CLOSE_BRACKET,	.math_symbol = ")",		.tex_symbol = ")",			},
+	[EOP]			=	{ .num = EOP,			.math_symbol = "$",		.tex_symbol = "$",			},
+	[COMMENT]		= 	{ .num = COMMENT,		.math_symbol = "#", 	.tex_symbol = "#",			}};

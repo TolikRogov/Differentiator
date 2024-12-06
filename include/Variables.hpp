@@ -32,7 +32,7 @@ enum VarDiffStatus {
 
 struct Variable {
 	size_t num;
-	char symbol[MAX_OPERATION_NAME_SIZE];
+	char* symbol;
 	Number_t value;
 	VarStatus status;
 	VarDiffStatus state;
@@ -57,3 +57,5 @@ VarStatus VarNameTableGetStatus(VariableNameTable* var_name_table, size_t VarNum
 const char* VarNameTableGetStateVariable(VariableNameTable* var_name_table);
 int VarNameTableGetStateVariableNumber(VariableNameTable* var_name_table);
 BinaryTreeStatusCode ResetVariables(VariableNameTable* var_name_table);
+BinaryTreeStatusCode PrintVarNameTable(VariableNameTable* var_name_table);
+int GetMaxSizeOfVariable(VariableNameTable* var_name_table);

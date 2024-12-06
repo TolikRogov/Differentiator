@@ -2,6 +2,11 @@
 
 #include "Differentiator.hpp"
 
+#define LEXICAL_ANALYSIS(buffer, lexer, var_name_table) {				 \
+	tree_status = LexicalAnalysis(buffer, lexer, var_name_table);		\
+	TREE_ERROR_CHECK(tree_status);										\
+}
+
 #define SKIP_EXTRA(buffer, token_start) {					 \
 	tree_status = SkipExtra(buffer, token_start);			\
 	TREE_ERROR_CHECK(tree_status);							\

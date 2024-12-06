@@ -1,1 +1,1 @@
-x * (1 + x ^ # How does it work, you know?  #  	(x + sin(x)))$
+1 + 3 - (7 * 8 - 52)$

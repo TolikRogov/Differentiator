@@ -71,6 +71,8 @@ Number_t Eval(Node_t* node, VariableNameTable* var_name_table) {
 							  	else { TREE_ERROR_MESSAGE(TREE_DEFINITION_AREA_ERROR); return 0; }
 							}
 				case EXP:   return exp(eL);
+				case OPEN_BRACKET:
+				case CLOSE_BRACKET:
 				case AMOUNT_OF_OPERATIONS:
 				case INVALID_OPERATION:
 				default:					TREE_ERROR_CHECK(TREE_INVALID_TYPE);
@@ -103,6 +105,8 @@ Node_t* doCopySubtree(Node_t* node) {
 				case LN:	return _LN(cL);
 				case EXP:	return _EXP(cL);
 
+				case OPEN_BRACKET:
+				case CLOSE_BRACKET:
 				case AMOUNT_OF_OPERATIONS:
 				case INVALID_OPERATION:
 				default: return NULL;
@@ -150,6 +154,8 @@ Node_t* doDifferentiation(Node_t* node, VariableNameTable* var_name_table) {
 				case LN:	{ new_node = _MUL(_DIV(_NUM(1), cL), dL); break; }
 				case EXP:	{ new_node = _MUL(cP, dL); break; }
 
+				case OPEN_BRACKET:
+				case CLOSE_BRACKET:
 				case AMOUNT_OF_OPERATIONS:
 				case INVALID_OPERATION:
 				default: return NULL;
@@ -255,6 +261,8 @@ int TrivialTransformations(Node_t* node, size_t* count_of_changes) {
 				case LN:
 				case SQRT:
 				case EXP:
+				case OPEN_BRACKET:
+				case CLOSE_BRACKET:
 				case AMOUNT_OF_OPERATIONS:
 				case INVALID_OPERATION:
 				default: return SIMPLIFY_IMPOSSIBLE;
@@ -293,6 +301,8 @@ int ConvolutionConstant(Node_t* node, size_t* count_of_changes, VariableNameTabl
 				case LN:
 				case SIN:
 				case COS:
+				case OPEN_BRACKET:
+				case CLOSE_BRACKET:
 				case AMOUNT_OF_OPERATIONS:
 				case INVALID_OPERATION:
 				default: return SIMPLIFY_IMPOSSIBLE;

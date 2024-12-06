@@ -4,40 +4,34 @@
 #include "Differentiator_lexer.hpp"
 #include "Variables.hpp"
 
-Node_t* GetGrammar(const char* buffer, size_t* pc);
-Node_t* GetExpression(const char* buffer, size_t* pc);
-Node_t* GetTerminator(const char* buffer, size_t* pc);
-Node_t* GetPriority(const char* buffer, size_t* pc);
-Node_t* GetNumber(const char* buffer, size_t* pc);
+Node_t* GetGrammar(Lexer* lexer, size_t* pc);
+Node_t* GetExpression(Lexer* lexer, size_t* pc);
+Node_t* GetTerminator(Lexer* lexer, size_t* pc);
+Node_t* GetPriority(Lexer* lexer, size_t* pc);
+Node_t* GetNumber(Lexer* lexer, size_t* pc);
 
-Node_t* GetNumber(const char* buffer, size_t* pc) {
-	printf("%s - %c(%zu)\n", __PRETTY_FUNCTION__, buffer[*pc], *pc);
-	size_t old_p = *pc;
-	Number_t value = 0;
-
-	while ('0' <= buffer[*pc] && buffer[*pc] <= '9')
-		value = value * 10 + (buffer[(*pc)++] - '0');
-
-	if (old_p == *pc) {
-		TREE_ERROR_MESSAGE(TREE_EXPRESSION_SYNTAX_ERROR);
+Node_t* GetNumber(Lexer* lexer, size_t* pc) {
+	printf("Number %zu\n", *pc);
+	if (lexer->tokens[*pc].type == NUM)
+		return _NUM(lexer->tokens[(*pc)++].data.val_num);
+	else
 		return NULL;
-	}
-	return _NUM(value);
+
 }
 
-Node_t* GetPriority(const char* buffer, size_t* pc) {
-
+Node_t* GetPriority(Lexer* lexer, size_t* pc) {
+	printf("Priority %zu\n", *pc);
 	Node_t* node = NULL;
 
-	if (buffer[*pc] == '(') {
+	if (lexer->tokens[*pc].type == OP && lexer->tokens[*pc].data.val_op == OPEN_BRACKET) {
 		(*pc)++;
-		node = GetExpression(buffer, pc);
+		node = GetExpression(lexer, pc);
 		if (!node) {
 			TREE_ERROR_MESSAGE(TREE_EXPRESSION_SYNTAX_ERROR);
 			return NULL;
 		}
 
-		if (buffer[*pc] != ')') {
+		if (lexer->tokens[*pc].type == OP && lexer->tokens[*pc].data.val_op != CLOSE_BRACKET) {
 			TREE_ERROR_MESSAGE(TREE_EXPRESSION_SYNTAX_ERROR);
 			return NULL;
 		}
@@ -46,26 +40,29 @@ Node_t* GetPriority(const char* buffer, size_t* pc) {
 		return node;
 	}
 	else
-		return GetNumber(buffer, pc);
+		return GetNumber(lexer, pc);
 }
 
-Node_t* GetTerminator(const char* buffer, size_t* pc) {
-
-	Node_t* node1 = GetPriority(buffer, pc);
+Node_t* GetTerminator(Lexer* lexer, size_t* pc) {
+	printf("Terminator %zu\n", *pc);
+	Node_t* node1 = GetPriority(lexer, pc);
 	if (!node1) {
 		TREE_ERROR_MESSAGE(TREE_EXPRESSION_SYNTAX_ERROR);
 		return NULL;
 	}
+	printf("%d\n", lexer->tokens[*pc].type);
+	if (lexer->tokens[*pc].type != OP)
+		return node1;
 
-	while (buffer[*pc] == '*' || buffer[*pc] == '/') {
-		int op = buffer[(*pc)++];
-		Node_t* node2 = GetPriority(buffer, pc);
+	while (lexer->tokens[*pc].data.val_op == MUL || lexer->tokens[*pc].data.val_op == DIV) {
+		OpNum op = lexer->tokens[(*pc)++].data.val_op;
+		Node_t* node2 = GetPriority(lexer, pc);
 		if (!node2) {
 			TREE_ERROR_MESSAGE(TREE_EXPRESSION_SYNTAX_ERROR);
 			return NULL;
 		}
 
-		if (op == '*')
+		if (op == MUL)
 			node1 = _MUL(node1, node2);
 		else
 			node1 = _DIV(node1, node2);
@@ -74,23 +71,26 @@ Node_t* GetTerminator(const char* buffer, size_t* pc) {
 	return node1;
 }
 
-Node_t* GetExpression(const char* buffer, size_t* pc) {
-
-	Node_t* node1 = GetTerminator(buffer, pc);
+Node_t* GetExpression(Lexer* lexer, size_t* pc) {
+	printf("Expression %zu\n", *pc);
+	Node_t* node1 = GetTerminator(lexer, pc);
 	if (!node1) {
 		TREE_ERROR_MESSAGE(TREE_EXPRESSION_SYNTAX_ERROR);
 		return NULL;
 	}
 
-	while (buffer[*pc] == '+' || buffer[*pc] == '-') {
-		int op = buffer[(*pc)++];
-		Node_t* node2 = GetTerminator(buffer, pc);
+	if (lexer->tokens[*pc].type != OP)
+		return node1;
+
+	while (lexer->tokens[*pc].data.val_op == ADD || lexer->tokens[*pc].data.val_op == SUB) {
+		OpNum op = lexer->tokens[(*pc)++].data.val_op;
+		Node_t* node2 = GetTerminator(lexer, pc);
 		if (!node2) {
 			TREE_ERROR_MESSAGE(TREE_EXPRESSION_SYNTAX_ERROR);
 			return NULL;
 		}
 
-		if (op == '+')
+		if (op == ADD)
 			node1 = _ADD(node1, node2);
 		else
 			node1 = _SUB(node1, node2);
@@ -99,15 +99,15 @@ Node_t* GetExpression(const char* buffer, size_t* pc) {
 	return node1;
 }
 
-Node_t* GetGrammar(const char* buffer, size_t* pc) {
-
-	Node_t* node = GetExpression(buffer, pc);
+Node_t* GetGrammar(Lexer* lexer, size_t* pc) {
+	printf("Grammar %zu\n", *pc);
+	Node_t* node = GetExpression(lexer, pc);
 	if (!node) {
 		TREE_ERROR_MESSAGE(TREE_EXPRESSION_SYNTAX_ERROR);
 		return NULL;
 	}
 
-	if (buffer[(*pc)++] != ';') {
+	if (lexer->tokens[*pc].type == OP && lexer->tokens[(*pc)++].data.val_op != EOP) {
 		TREE_ERROR_MESSAGE(TREE_EXPRESSION_SYNTAX_ERROR);
 		return NULL;
 	}
@@ -186,28 +186,17 @@ BinaryTreeStatusCode ReadExpression(Tree* tree, VariableNameTable* var_name_tabl
 	}
 #endif
 
-	// int new_row_index = 0;
-	// for (; new_row_index < (int)size;) {
-	// 	if (*(buffer + new_row_index) == '#')
-	// 		while (*(buffer + new_row_index++) != '\n') {}
-	// 	else
-	// 		break;
-	// }
-	// if (new_row_index - (int)size >= 0)
-	// 	return TREE_NOTHING_TO_READ;
-
 	ResetVariables(var_name_table);
 
 	Lexer lexer = {};
 	LEXER_CTOR(&lexer);
 
-	LexicalAnalysis(buffer, &lexer, var_name_table);
+	LEXICAL_ANALYSIS(buffer, &lexer, var_name_table);
 
-	//RecursionReadExpression(buffer + new_row_index, tree->root, 0);
-	// size_t pc = 0;
-	// tree->root = GetGrammar(buffer + new_row_index, &pc);
-	// if (!tree->root)
-	// 	TREE_ERROR_CHECK(TREE_EXPRESSION_SYNTAX_ERROR);
+	size_t pc = 0;
+	tree->root = GetGrammar(&lexer, &pc);
+	if (!tree->root)
+		TREE_ERROR_CHECK(TREE_EXPRESSION_SYNTAX_ERROR);
 
 	if (buffer) {
 		free(buffer);
@@ -254,7 +243,7 @@ BinaryTreeStatusCode RecursionReadExpression(char* buffer, Node_t* node, int pre
 			INIT_TREE(tree);
 			tree.root = FindTreeRoot(node);
 			BinaryTreeStatusCode tree_status = TREE_NO_ERROR;
-			BINARY_TREE_GRAPH_DUMP(&tree, "RecursionReadExpression", node);
+			BINARY_TREE_GRAPH_DUMP(&tree, "RecursionReadExpression", node, var_name_table);
 #endif
 
 			index++;

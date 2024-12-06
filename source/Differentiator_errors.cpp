@@ -48,3 +48,14 @@ int Factorial(int n) {
 		return n;
 	return n * Factorial(n - 1);
 }
+
+int StrLen(const char* str) {
+
+	if (!str)
+		return -1;
+
+	int i = 0;
+	for (; *(str + i) != '\0'; i++) {}
+
+	return i;
+}

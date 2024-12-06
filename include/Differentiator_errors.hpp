@@ -55,5 +55,6 @@ const double DIFF_EPS = 1e-10;
 
 const char* BinaryTreeErrorsMessenger(BinaryTreeStatusCode status);
 int StrCmp(const char* str1, const char* str2);
+int StrLen(const char* str);
 int DiffCompareDouble(double var1, double var2);
 int Factorial(int n);

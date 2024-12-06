@@ -274,6 +274,8 @@ BinaryTreeStatusCode PrintExpressionTree(Node_t* node, FILE* tex_file, VariableN
 
 					break;
 				}
+				case OPEN_BRACKET:
+				case CLOSE_BRACKET:
 				case INVALID_OPERATION:
 				default: TREE_ERROR_CHECK(TREE_EXPRESSION_SYNTAX_ERROR);
 			}
@@ -352,6 +354,8 @@ BinaryTreeStatusCode PrintMathExpression(Node_t* node, FILE* tex_file, VariableN
 
 					break;
 				}
+				case OPEN_BRACKET:
+				case CLOSE_BRACKET:
 				case INVALID_OPERATION:
 				default: TREE_ERROR_CHECK(TREE_EXPRESSION_SYNTAX_ERROR);
 			}

@@ -13,8 +13,6 @@ BinaryTreeStatusCode VarNameTableRealloc(VariableNameTable* var_name_table) {
 
 BinaryTreeStatusCode VarNameTableCtor(VariableNameTable* var_name_table) {
 
-	BinaryTreeStatusCode tree_status = TREE_NO_ERROR;
-
 	var_name_table->capacity = DEFAULT_VAR_NAME_TABLE_CAPACITY;
 	var_name_table->data = (Variable*)calloc(var_name_table->capacity, sizeof(Variable));
 	if (!var_name_table->data)
@@ -25,10 +23,16 @@ BinaryTreeStatusCode VarNameTableCtor(VariableNameTable* var_name_table) {
 
 BinaryTreeStatusCode VarNameTableDtor(VariableNameTable* var_name_table) {
 
-	BinaryTreeStatusCode tree_status = TREE_NO_ERROR;
+	for (size_t i = 0; i < var_name_table->size; i++) {
+		if (var_name_table->data[i].symbol) {
+			free(var_name_table->data[i].symbol);
+			var_name_table->data[i].symbol = NULL;
+		}
+	}
 
 	var_name_table->capacity = 0;
 	var_name_table->size = 0;
+
 	if (var_name_table->data) {
 		free(var_name_table->data);
 		var_name_table->data = NULL;
@@ -73,14 +77,10 @@ int VarNameTableGetStateVariableNumber(VariableNameTable* var_name_table) {
 
 	for (size_t i = 0; i < var_name_table->size; i++) {
 		if (var_name_table->data[i].state == VAR_DIFF_STATUS_VAR)
-			return var_name_table->data[i].num;
+			return (int)var_name_table->data[i].num;
 	}
 
 	return -1;
-}
-
-VarDiffStatus VarNameTableGetVariableState(VariableNameTable* var_name_table, size_t VarNumber) {
-
 }
 
 BinaryTreeStatusCode ResetVariables(VariableNameTable* var_name_table) {
@@ -120,7 +120,10 @@ BinaryTreeStatusCode VarNameTableSetDiff(VariableNameTable* var_name_table) {
 		}
 	}
 	else if (cnt_of_using_variables > 1) {
-		char variable[MAX_OPERATION_NAME_SIZE] = {};
+		char* variable = (char*)calloc((size_t)(GetMaxSizeOfVariable(var_name_table) + 1), sizeof(char));
+		if (!variable)
+			TREE_ERROR_CHECK(TREE_ALLOC_ERROR);
+
 		int var_number = -1;
 
 		printf(BLUE("Using variables"));
@@ -133,10 +136,45 @@ BinaryTreeStatusCode VarNameTableSetDiff(VariableNameTable* var_name_table) {
 			printf(YELLOW("Enter the variable by which to differentiate:")" ");
 			scanf("%s", variable);
 			getchar();
-		} while ((var_number = VarNameTableFindVariable(var_name_table, variable)) == -1 || VarNameTableGetStatus(var_name_table, var_number) == VAR_STATUS_DISUSING);
+		} while ((var_number = VarNameTableFindVariable(var_name_table, variable)) == -1 || VarNameTableGetStatus(var_name_table, (size_t)var_number) == VAR_STATUS_DISUSING);
 
 		var_name_table->data[var_number].state = VAR_DIFF_STATUS_VAR;
+		if (variable) {
+			free(variable);
+			variable = NULL;
+		}
 	}
 
 	return TREE_NO_ERROR;
+}
+
+BinaryTreeStatusCode PrintVarNameTable(VariableNameTable* var_name_table) {
+
+	printf("\n");
+	printf(BLUE("Struct address:") " " GREEN("%p") "\n", var_name_table);
+	printf(BLUE("Table capacity:") " " GREEN("%zu") "\n", var_name_table->capacity);
+	printf(BLUE("Table size:") 	   " " GREEN("%zu") "\n", var_name_table->size);
+	printf(BLUE("data address:")   " " GREEN("%p") "\n", var_name_table->data);
+
+	for (size_t i = 0; i < var_name_table->size; i++) {
+		printf(BLUE("Variable[%zu]:") " number - " GREEN("%zu") " state - " GREEN("%s") " status - " GREEN("%s") " symbol - " GREEN("%s") " value - " GREEN("%lg") "\n",
+			   i, var_name_table->data[i].num, (var_name_table->data[i].state == VAR_DIFF_STATUS_NUM ? RET_STRING(VAR_DIFF_STATUS_NUM) : RET_STRING(VAR_DIFF_STATUS_VAR)),
+			   (var_name_table->data[i].status == VAR_STATUS_USING ? RET_STRING(VAR_STATUS_USING) : RET_STRING(VAR_STATUS_DISUSING)), var_name_table->data[i].symbol,
+			   var_name_table->data[i].value);
+	}
+
+	return TREE_NO_ERROR;
+}
+
+int GetMaxSizeOfVariable(VariableNameTable* var_name_table) {
+
+	int max_size = 0;
+
+	for (size_t i = 0; i < var_name_table->size; i++) {
+		int cur_size = StrLen(var_name_table->data[i].symbol);
+		if (max_size < cur_size)
+			max_size = cur_size;
+	}
+
+	return max_size;
 }

@@ -16,10 +16,9 @@ int main() {
 	VAR_NAME_TABLE_CTOR(&var_name_table);
 
 	INIT_TREE(tree);
-	TREE_CTOR(&tree);
+	TREE_CTOR(&tree, &var_name_table);
 
 	READ_EXPRESSION(&tree, &var_name_table);
-
 // 	Calculator(&tree, &var_name_table);
 //
 // 	GET_TAYLOR(&tree, &var_name_table);
@@ -27,8 +26,8 @@ int main() {
 	VAR_NAME_TABLE_DTOR(&var_name_table);
 	TREE_DTOR(&tree);
 
-// 	OPEN_LATEX_PDF();
-// 	OPEN_HTML_FILE();
+	OPEN_LATEX_PDF();
+	OPEN_HTML_FILE();
 
 	return 0;
 }
