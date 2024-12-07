@@ -1,7 +1,8 @@
 #include "Differentiator_dump.hpp"
 #include "Differentiator_latex.hpp"
 #include "Differentiator_reader.hpp"
-#include "Variables.hpp"
+#include "Differentiator_lexer.hpp"
+#include "Identifiers.hpp"
 #include "NameTable.hpp"
 
 int main() {
@@ -12,18 +13,22 @@ int main() {
 
 	LATEX_DUMP_START();
 
-	INIT_VAR_NAME_TABLE(var_name_table);
-	VAR_NAME_TABLE_CTOR(&var_name_table);
+	INIT_LEXER(lexer);
+	LEXER_CTOR(&lexer);
+
+	INIT_ID_NAME_TABLE(id_name_table);
+	ID_NAME_TABLE_CTOR(&id_name_table);
 
 	INIT_TREE(tree);
-	TREE_CTOR(&tree, &var_name_table);
+	TREE_CTOR(&tree, &id_name_table);
 
-	READ_EXPRESSION(&tree, &var_name_table);
-// 	Calculator(&tree, &var_name_table);
-//
-// 	GET_TAYLOR(&tree, &var_name_table);
+	READ_EXPRESSION(&tree, &id_name_table, &lexer);
+	Calculator(&tree, &id_name_table);
 
-	VAR_NAME_TABLE_DTOR(&var_name_table);
+	GET_TAYLOR(&tree, &id_name_table);
+
+	LEXER_DTOR(&lexer);
+	ID_NAME_TABLE_DTOR(&id_name_table);
 	TREE_DTOR(&tree);
 
 	OPEN_LATEX_PDF();

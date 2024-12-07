@@ -15,12 +15,12 @@
 #define _LN(left)			CreateNode(OP,	{.val_op = LN},		left, NULL, NULL)
 #define _EXP(left)			CreateNode(OP,	{.val_op = EXP},	left, NULL, NULL)
 
-#define dL doDifferentiation(node->left, var_name_table)
-#define dR doDifferentiation(node->right, var_name_table)
+#define dL doDifferentiation(node->left, id_name_table, IdNumber)
+#define dR doDifferentiation(node->right, id_name_table, IdNumber)
 
 #define cL doCopySubtree(node->left)
 #define cR doCopySubtree(node->right)
 #define cP doCopySubtree(node)
 
-#define eR Eval(node->right, var_name_table)
-#define eL Eval(node->left, var_name_table)
+#define eR Eval(node->right, id_name_table)
+#define eL Eval(node->left, id_name_table)

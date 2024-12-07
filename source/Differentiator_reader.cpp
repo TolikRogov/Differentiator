@@ -2,12 +2,14 @@
 #include "Differentiator_dump.hpp"
 #include "Differentiator_latex.hpp"
 #include "Differentiator_lexer.hpp"
-#include "Variables.hpp"
+#include "Identifiers.hpp"
 
 Node_t* GetGrammar(Lexer* lexer, size_t* pc);
 Node_t* GetExpression(Lexer* lexer, size_t* pc);
 Node_t* GetTerminator(Lexer* lexer, size_t* pc);
 Node_t* GetPriority(Lexer* lexer, size_t* pc);
+Node_t* GetFunction(Lexer* lexer, size_t* pc);
+Node_t* GetIdentifier(Lexer* lexer, size_t* pc);
 Node_t* GetNumber(Lexer* lexer, size_t* pc);
 
 Node_t* GetNumber(Lexer* lexer, size_t* pc) {
@@ -19,11 +21,54 @@ Node_t* GetNumber(Lexer* lexer, size_t* pc) {
 
 }
 
+Node_t* GetIdentifier(Lexer* lexer, size_t* pc) {
+	printf("Identifier %zu\n", *pc);
+	if (lexer->tokens[*pc].type == VAR)
+		return _VAR(lexer->tokens[(*pc)++].data.val_var);
+	else
+		return NULL;
+}
+
+Node_t* GetFunction(Lexer* lexer, size_t* pc) {
+	printf("Function %zu\n", *pc);
+	Node_t* node = NULL;
+
+	if (lexer->tokens[*pc].type == OP) {
+		OpNum op = lexer->tokens[(*pc)++].data.val_op;
+
+		if (lexer->tokens[*pc].data.val_op == OPEN_BRACKET) {
+			(*pc)++;
+			node = GetExpression(lexer, pc);
+			if (!node) {
+				TREE_ERROR_MESSAGE(TREE_EXPRESSION_SYNTAX_ERROR);
+				return NULL;
+			}
+
+			if (lexer->tokens[*pc].data.val_op != CLOSE_BRACKET) {
+				TREE_ERROR_MESSAGE(TREE_EXPRESSION_SYNTAX_ERROR);
+				return NULL;
+			}
+
+			(*pc)++;
+			switch (op) {
+				case SIN:  return node = _SIN(node);
+				case COS:  return node = _COS(node);
+				case SQRT: return node = _SQRT(node);
+				case LN:   return node = _LN(node);
+				case EXP:  return node = _EXP(node);
+				default:   return NULL;
+			}
+		}
+	}
+
+	return node;
+}
+
 Node_t* GetPriority(Lexer* lexer, size_t* pc) {
 	printf("Priority %zu\n", *pc);
 	Node_t* node = NULL;
 
-	if (lexer->tokens[*pc].type == OP && lexer->tokens[*pc].data.val_op == OPEN_BRACKET) {
+	if (lexer->tokens[*pc].data.val_op == OPEN_BRACKET) {
 		(*pc)++;
 		node = GetExpression(lexer, pc);
 		if (!node) {
@@ -31,7 +76,7 @@ Node_t* GetPriority(Lexer* lexer, size_t* pc) {
 			return NULL;
 		}
 
-		if (lexer->tokens[*pc].type == OP && lexer->tokens[*pc].data.val_op != CLOSE_BRACKET) {
+		if (lexer->tokens[*pc].data.val_op != CLOSE_BRACKET) {
 			TREE_ERROR_MESSAGE(TREE_EXPRESSION_SYNTAX_ERROR);
 			return NULL;
 		}
@@ -39,8 +84,12 @@ Node_t* GetPriority(Lexer* lexer, size_t* pc) {
 		(*pc)++;
 		return node;
 	}
+	else if ((node = GetNumber(lexer, pc)) != NULL)
+		return node;
+	else if ((node = GetIdentifier(lexer, pc)) != NULL)
+		return node;
 	else
-		return GetNumber(lexer, pc);
+		return GetFunction(lexer, pc);
 }
 
 Node_t* GetTerminator(Lexer* lexer, size_t* pc) {
@@ -50,9 +99,6 @@ Node_t* GetTerminator(Lexer* lexer, size_t* pc) {
 		TREE_ERROR_MESSAGE(TREE_EXPRESSION_SYNTAX_ERROR);
 		return NULL;
 	}
-	printf("%d\n", lexer->tokens[*pc].type);
-	if (lexer->tokens[*pc].type != OP)
-		return node1;
 
 	while (lexer->tokens[*pc].data.val_op == MUL || lexer->tokens[*pc].data.val_op == DIV) {
 		OpNum op = lexer->tokens[(*pc)++].data.val_op;
@@ -79,9 +125,6 @@ Node_t* GetExpression(Lexer* lexer, size_t* pc) {
 		return NULL;
 	}
 
-	if (lexer->tokens[*pc].type != OP)
-		return node1;
-
 	while (lexer->tokens[*pc].data.val_op == ADD || lexer->tokens[*pc].data.val_op == SUB) {
 		OpNum op = lexer->tokens[(*pc)++].data.val_op;
 		Node_t* node2 = GetTerminator(lexer, pc);
@@ -107,7 +150,7 @@ Node_t* GetGrammar(Lexer* lexer, size_t* pc) {
 		return NULL;
 	}
 
-	if (lexer->tokens[*pc].type == OP && lexer->tokens[(*pc)++].data.val_op != EOP) {
+	if (lexer->tokens[(*pc)++].data.val_op != EOP) {
 		TREE_ERROR_MESSAGE(TREE_EXPRESSION_SYNTAX_ERROR);
 		return NULL;
 	}
@@ -115,16 +158,15 @@ Node_t* GetGrammar(Lexer* lexer, size_t* pc) {
 	return node;
 }
 
-BinaryTreeStatusCode OriginalFunction(Tree* tree, VariableNameTable* var_name_table) {
+BinaryTreeStatusCode OriginalFunction(Tree* tree, IdNameTable* id_name_table, Lexer* lexer) {
 
 	BinaryTreeStatusCode tree_status = TREE_NO_ERROR;
 
-	tree_status = ReadExpression(tree, var_name_table);
+	tree_status = ReadExpression(tree, id_name_table, lexer);
 	TREE_ERROR_CHECK(tree_status);
 
-	VarNameTableSetDiff(var_name_table);
-	NameTablePrint(var_name_table);
-	BINARY_TREE_GRAPH_DUMP(tree, "ExpressionReader", NULL, var_name_table);
+	NameTablePrint(id_name_table);
+	BINARY_TREE_GRAPH_DUMP(tree, "ExpressionReader", NULL, id_name_table);
 
 	FILE* tex_file = fopen(DIFF_LATEX_FILE_ DIFF_TEX_EXTENSION_, "a");
 	if (!tex_file)
@@ -134,30 +176,28 @@ BinaryTreeStatusCode OriginalFunction(Tree* tree, VariableNameTable* var_name_ta
 
 	TEX_PRINTF("\\chapter{Исходная функция}\n");
 	TEX_PRINTF("\\hfil $f(");
-	for (size_t i = 0, j = 0; i < var_name_table->size; i++) {
-		if (var_name_table->data[i].status == VAR_STATUS_USING) {
-			j++;
-			if (j == 1)
-				TEX_PRINTF("%s", var_name_table->data[i].symbol);
-			else
-				TEX_PRINTF(", %s", var_name_table->data[i].symbol);
+	for (size_t i = 0, j = 0; i < id_name_table->size; i++) {
+		if (id_name_table->data[i].type == ID_VAR) {
+			if (j++ != 0)
+				TEX_PRINTF(", ");
+			PrintNString(tex_file, id_name_table->data[i].string, id_name_table->data[i].length);
 		}
 	}
 	TEX_PRINTF(") = ");
 
-	PrintExpressionTree(tree->root, tex_file, var_name_table);
+	PrintExpressionTree(tree->root, tex_file, id_name_table);
 	TEX_PRINTF("$\\\\\n");
 
 	if(fclose(tex_file))
 		TREE_ERROR_CHECK(TREE_FILE_CLOSE_ERROR);
 
-	tree_status = DrawGraph(tree, var_name_table);
+	tree_status = DrawGraph(tree, id_name_table);
 	TREE_ERROR_CHECK(tree_status);
 
 	return TREE_NO_ERROR;
 }
 
-BinaryTreeStatusCode ReadExpression(Tree* tree, VariableNameTable* var_name_table) {
+BinaryTreeStatusCode ReadExpression(Tree* tree, IdNameTable* id_name_table, Lexer* lexer) {
 
 	BinaryTreeStatusCode tree_status = TREE_NO_ERROR;
 
@@ -186,27 +226,18 @@ BinaryTreeStatusCode ReadExpression(Tree* tree, VariableNameTable* var_name_tabl
 	}
 #endif
 
-	ResetVariables(var_name_table);
-
-	Lexer lexer = {};
-	LEXER_CTOR(&lexer);
-
-	LEXICAL_ANALYSIS(buffer, &lexer, var_name_table);
+	lexer->buffer = buffer;
+	LEXICAL_ANALYSIS(buffer, lexer, id_name_table, size);
 
 	size_t pc = 0;
-	tree->root = GetGrammar(&lexer, &pc);
+	tree->root = GetGrammar(lexer, &pc);
 	if (!tree->root)
 		TREE_ERROR_CHECK(TREE_EXPRESSION_SYNTAX_ERROR);
-
-	if (buffer) {
-		free(buffer);
-		buffer = NULL;
-	}
 
 	return TREE_NO_ERROR;
 }
 
-BinaryTreeStatusCode RecursionReadExpression(char* buffer, Node_t* node, int prev_node_depth, VariableNameTable* var_name_table) {
+BinaryTreeStatusCode RecursionReadExpression(char* buffer, Node_t* node, int prev_node_depth, IdNameTable* id_name_table) {
 
 	if (!buffer)
 		TREE_ERROR_CHECK(TREE_NULL_POINTER);
@@ -231,7 +262,7 @@ BinaryTreeStatusCode RecursionReadExpression(char* buffer, Node_t* node, int pre
 
 			if (prev_node_depth == 0) {
 				index++;
-				RecursionReadExpression(buffer, node, count_brackets, var_name_table);
+				RecursionReadExpression(buffer, node, count_brackets, id_name_table);
 				break;
 			}
 
@@ -243,11 +274,11 @@ BinaryTreeStatusCode RecursionReadExpression(char* buffer, Node_t* node, int pre
 			INIT_TREE(tree);
 			tree.root = FindTreeRoot(node);
 			BinaryTreeStatusCode tree_status = TREE_NO_ERROR;
-			BINARY_TREE_GRAPH_DUMP(&tree, "RecursionReadExpression", node, var_name_table);
+			BINARY_TREE_GRAPH_DUMP(&tree, "RecursionReadExpression", node, id_name_table);
 #endif
 
 			index++;
-			RecursionReadExpression(buffer, new_node, prev_node_depth, var_name_table);
+			RecursionReadExpression(buffer, new_node, prev_node_depth, id_name_table);
 
 			break;
 		}
@@ -269,7 +300,7 @@ BinaryTreeStatusCode RecursionReadExpression(char* buffer, Node_t* node, int pre
 				node->data.val_num = node_data.val_num;
 
 				index++;
-				RecursionReadExpression(buffer, node, count_brackets, var_name_table);
+				RecursionReadExpression(buffer, node, count_brackets, id_name_table);
 				return TREE_NO_ERROR;
 			}
 
@@ -281,21 +312,20 @@ BinaryTreeStatusCode RecursionReadExpression(char* buffer, Node_t* node, int pre
 				node->data.val_op = node_data.val_op;
 
 				index++;
-				RecursionReadExpression(buffer, node, count_brackets, var_name_table);
+				RecursionReadExpression(buffer, node, count_brackets, id_name_table);
 				return TREE_NO_ERROR;
 			}
 
-			int var_find = VarNameTableFindVariable(var_name_table, operation);
+			int var_find = IdNameTableGetIdNumber(id_name_table, operation, (size_t)StrLen(operation));
 			if ((var_find != -1) && (node_data.val_var = (size_t)var_find)) {
 #ifdef PRINT_DEBUG
 				printf("It is variable: %s\n", operation);
 #endif
 				node->type = VAR;
 				node->data.val_var = node_data.val_var;
-				var_name_table->data[node->data.val_var].status = VAR_STATUS_USING;
 
 				index++;
-				RecursionReadExpression(buffer, node, count_brackets, var_name_table);
+				RecursionReadExpression(buffer, node, count_brackets, id_name_table);
 				return TREE_NO_ERROR;
 			}
 
@@ -304,7 +334,7 @@ BinaryTreeStatusCode RecursionReadExpression(char* buffer, Node_t* node, int pre
 	}
 
 	index++;
-	RecursionReadExpression(buffer, node, prev_node_depth, var_name_table);
+	RecursionReadExpression(buffer, node, prev_node_depth, id_name_table);
 
 	return TREE_NO_ERROR;
 }

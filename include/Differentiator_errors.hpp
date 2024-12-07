@@ -53,6 +53,7 @@ enum BinaryTreeStatusCode {
 
 const double DIFF_EPS = 1e-10;
 
+BinaryTreeStatusCode PrintNString(FILE* stream, const char* string, size_t n);
 const char* BinaryTreeErrorsMessenger(BinaryTreeStatusCode status);
 int StrCmp(const char* str1, const char* str2);
 int StrLen(const char* str);

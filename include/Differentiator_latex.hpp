@@ -20,8 +20,8 @@
 	TREE_ERROR_CHECK(tree_status);		\
 }
 
-#define GET_TAYLOR(tree, var_name_table) {			 			 \
-	tree_status = LaTexTaylorExpansion(tree, var_name_table);	\
+#define GET_TAYLOR(tree, id_name_table) {			 			 \
+	tree_status = LaTexTaylorExpansion(tree, id_name_table);	\
 	TREE_ERROR_CHECK(tree_status);								\
 }
 
@@ -29,6 +29,6 @@ BinaryTreeStatusCode LatexDumpStart();
 BinaryTreeStatusCode LaTexDumpFinish();
 BinaryTreeStatusCode LaTexCreateDir();
 
-BinaryTreeStatusCode PrintMathExpression(Node_t* node, FILE* tex_file, VariableNameTable* var_name_table);
-BinaryTreeStatusCode LaTexTaylorExpansion(Tree* tree, VariableNameTable* var_name_table);
-BinaryTreeStatusCode DrawGraph(Tree* tree, VariableNameTable* var_name_table);
+BinaryTreeStatusCode PrintMathExpression(Node_t* node, FILE* tex_file, IdNameTable* id_name_table);
+BinaryTreeStatusCode LaTexTaylorExpansion(Tree* tree, IdNameTable* id_name_table);
+BinaryTreeStatusCode DrawGraph(Tree* tree, IdNameTable* id_name_table);

@@ -17,7 +17,7 @@ typedef double Number_t;
 #define RET_STRING(val) #val
 
 #define INIT_TREE(tree) Tree tree = {.info = {.name = #tree, .file_name = __FILE__, .line = __LINE__}};
-#define INIT_VAR_NAME_TABLE(var_name_table) VariableNameTable var_name_table = {};
+#define INIT_ID_NAME_TABLE(id_name_table) IdNameTable id_name_table = {};
 
 #define TREE_HTML_DUMP_START() {				 \
 	tree_status = BinaryTreeHtmlDumpStart();	\
@@ -30,13 +30,13 @@ typedef double Number_t;
 }
 
 #ifdef PRINT_DEBUG
-	#define TREE_CTOR(tree, var_name_table) {						 		 \
+	#define TREE_CTOR(tree, id_name_table) {						 		 \
 		tree_status = TreeCtor(tree);										\
 		TREE_ERROR_CHECK(tree_status);										\
-		BINARY_TREE_GRAPH_DUMP(tree, "TreeCtor", NULL, var_name_table);		\
+		BINARY_TREE_GRAPH_DUMP(tree, "TreeCtor", NULL, id_name_table);		\
 	}
 #else
-	#define TREE_CTOR(tree, var_name_table) {				 \
+	#define TREE_CTOR(tree, id_name_table) {				 \
 		tree_status = TreeCtor(tree);						\
 		TREE_ERROR_CHECK(tree_status);						\
 	}

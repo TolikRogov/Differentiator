@@ -1,11 +1,12 @@
 #include "Differentiator.hpp"
 
-BinaryTreeStatusCode Calculator(Tree* tree, VariableNameTable* var_name_table) {
+BinaryTreeStatusCode Calculator(Tree* tree, IdNameTable* id_name_table) {
 
 	printf("-------------------------------------------------------------------------------------------------\n");
 	printf("\t\t\t" BLUE("CALCULATOR")"\n");
 	printf("-------------------------------------------------------------------------------------------------\n");
 	printf(BLUE("Do you want to calculate value of expression? [y/n]:")" ");
+
 	int check = 0;
 	while ((check = getchar()) != EOF) {
 		getchar();
@@ -17,30 +18,33 @@ BinaryTreeStatusCode Calculator(Tree* tree, VariableNameTable* var_name_table) {
 		printf(BLUE("Do you want to calculate value of expression? [y/n]:")" ");
 	}
 
-	if (NumberOfVarStatusUsingVariables(var_name_table)) {
+	if (id_name_table->size > 0) {
 		printf("-------------------------------------\n");
 		printf(BLUE("Set using variables values:")"\n");
 	}
-	for (size_t i = 0; i < var_name_table->size; i++) {
-		if (var_name_table->data[i].status == VAR_STATUS_USING) {
-			printf("\t" YELLOW("%s")" = ", var_name_table->data[i].symbol);
-			scanf("%lg", &var_name_table->data[i].value);
+
+	for (size_t i = 0; i < id_name_table->size; i++) {
+		if (id_name_table->data[i].type == ID_VAR) {
+			printf("\t");
+			PrintNString(stdout, id_name_table->data[i].string, id_name_table->data[i].length);
+			printf(" = ");
+			scanf("%lg", &id_name_table->data[i].value);
 		}
 	}
 	printf("-------------------------------------\n");
-	printf(GREEN("Eval result: %lg\n"), Eval(tree->root, var_name_table));
+	printf(GREEN("Eval result: %lg\n"), Eval(tree->root, id_name_table));
 
 	return TREE_NO_ERROR;
 }
 
-Number_t Eval(Node_t* node, VariableNameTable* var_name_table) {
+Number_t Eval(Node_t* node, IdNameTable* id_name_table) {
 
 	if (!node)
 		TREE_ERROR_MESSAGE(TREE_NULL_POINTER);
 
 	switch (node->type) {
 		case NUM: return node->data.val_num;
-		case VAR: return VarNameTableGetValue(var_name_table, node->data.val_var);
+		case VAR: return id_name_table->data[node->data.val_var].value;
 		case OP: {
 			switch (node->data.val_op) {
 				case ADD: 	return eL + eR;
@@ -117,7 +121,7 @@ Node_t* doCopySubtree(Node_t* node) {
 	}
 }
 
-Node_t* doDifferentiation(Node_t* node, VariableNameTable* var_name_table) {
+Node_t* doDifferentiation(Node_t* node, IdNameTable* id_name_table, int IdNumber) {
 
 	if (!node)
 		return NULL;
@@ -127,7 +131,7 @@ Node_t* doDifferentiation(Node_t* node, VariableNameTable* var_name_table) {
 	switch (node->type) {
 		case NUM: return _NUM(0);
 		case VAR: {
-			if (var_name_table->data[node->data.val_var].state == VAR_DIFF_STATUS_VAR)
+			if (node->data.val_var == (size_t)IdNumber)
 				return _NUM(1);
 			else
 				return _NUM(0);
@@ -160,8 +164,8 @@ Node_t* doDifferentiation(Node_t* node, VariableNameTable* var_name_table) {
 				case INVALID_OPERATION:
 				default: return NULL;
 			}
-			Simplification(new_node, var_name_table);
-			LaTexSubtreeDifferential(node, new_node, var_name_table);
+			Simplification(new_node, id_name_table);
+			LaTexSubtreeDifferential(node, new_node, id_name_table);
 			return new_node;
 		}
 		case UNW:
@@ -169,13 +173,13 @@ Node_t* doDifferentiation(Node_t* node, VariableNameTable* var_name_table) {
 	}
 }
 
-BinaryTreeStatusCode Simplification(Node_t* subtree_root, VariableNameTable* var_name_table) {
+BinaryTreeStatusCode Simplification(Node_t* subtree_root, IdNameTable* id_name_table) {
 
 	size_t count_of_changes = 0;
 
 	do {
 		count_of_changes = 0;
-		ConvolutionConstant(subtree_root, &count_of_changes, var_name_table);
+		ConvolutionConstant(subtree_root, &count_of_changes, id_name_table);
 		TrivialTransformations(subtree_root, &count_of_changes);
 	} while (count_of_changes);
 
@@ -278,7 +282,7 @@ int TrivialTransformations(Node_t* node, size_t* count_of_changes) {
 #undef CHANGE_OPERATION
 }
 
-int ConvolutionConstant(Node_t* node, size_t* count_of_changes, VariableNameTable* var_name_table) {
+int ConvolutionConstant(Node_t* node, size_t* count_of_changes, IdNameTable* id_name_table) {
 
 	if (!node)
 		return SIMPLIFY_IMPOSSIBLE;
@@ -308,10 +312,10 @@ int ConvolutionConstant(Node_t* node, size_t* count_of_changes, VariableNameTabl
 				default: return SIMPLIFY_IMPOSSIBLE;
 			}
 
-			int left = ConvolutionConstant(node->left, count_of_changes, var_name_table);
-			int right = ConvolutionConstant(node->right, count_of_changes, var_name_table);
+			int left = ConvolutionConstant(node->left, count_of_changes, id_name_table);
+			int right = ConvolutionConstant(node->right, count_of_changes, id_name_table);
 			if ((left && right) || (left && !node->right)) {
-				Number_t result = Eval(node, var_name_table);
+				Number_t result = Eval(node, id_name_table);
 				node->type = NUM;
 				SetNodeValue(node, {.val_num = result});
 				if (node->right) { TreeDtor(node->right); node->right = NULL; }

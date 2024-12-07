@@ -1,5 +1,13 @@
 #include "Differentiator_errors.hpp"
 
+BinaryTreeStatusCode PrintNString(FILE* stream, const char* string, size_t n) {
+
+	for (size_t i = 0; i < n; i++)
+		fprintf(stream, "%c", string[i]);
+
+	return TREE_NO_ERROR;
+}
+
 const char* BinaryTreeErrorsMessenger(BinaryTreeStatusCode status) {
 	switch(status) {
 		case TREE_NO_ERROR:						return "TREE ERROR - NO ERROR";

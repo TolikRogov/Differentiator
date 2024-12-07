@@ -1,11 +1,18 @@
 #include "Differentiator_latex.hpp"
 
-BinaryTreeStatusCode LaTexTaylorExpansion(Tree* tree, VariableNameTable* var_name_table) {
+BinaryTreeStatusCode LaTexTaylorExpansion(Tree* tree, IdNameTable* id_name_table) {
 
 	BinaryTreeStatusCode tree_status = TREE_NO_ERROR;
 
-	if (NumberOfVarStatusUsingVariables(var_name_table) > 1)
-		TREE_ERROR_CHECK(TREE_TAYLOR_CONDITION_ERROR);
+	if (id_name_table->size != 1) {
+
+		INIT_TREE(diff_tree);
+		diff_tree.root = tree->root;
+		diff_tree.diff_number = tree->diff_number;
+		DIFFERENTIATION(tree, &diff_tree, id_name_table, 0);
+
+		return TREE_NO_ERROR;
+	}
 
 	FILE* tex_file = fopen(DIFF_LATEX_FILE_ DIFF_TEX_EXTENSION_, "a");
 	if (!tex_file)
@@ -32,19 +39,27 @@ BinaryTreeStatusCode LaTexTaylorExpansion(Tree* tree, VariableNameTable* var_nam
 	if (max_degree < 0)
 		TREE_ERROR_CHECK(TREE_WRONG_TAYLOR_DEGREE);
 
-	const char* used_variable = VarNameTableGetStateVariable(var_name_table);
-	TEX_PRINTF("\\chapter{Разложение по формуле Тейлора до \\\\ $o((%s - %s_0)^{%d})$ в точке $%s_0 = %lg$}\n", used_variable, used_variable, max_degree, used_variable, point);
-	var_name_table->data[VarNameTableGetStateVariableNumber(var_name_table)].value = point;
+	Identifier used_variable = id_name_table->data[id_name_table->size - 1];
+	TEX_PRINTF("\\chapter{Разложение по формуле Тейлора до \\\\ $o((");
+	PrintNString(tex_file, used_variable.string, used_variable.length);
+	TEX_PRINTF(" - ");
+	PrintNString(tex_file, used_variable.string, used_variable.length);
+	TEX_PRINTF("_0)^{%d})$ в точке $", max_degree);
+	PrintNString(tex_file, used_variable.string, used_variable.length);
+	TEX_PRINTF("_0 = %lg$}\n", point);
+	id_name_table->data[used_variable.num].value = point;
 
-	TEX_PRINTF("\\begin{center} $f^{0}(%s) = ", used_variable);
-	PrintExpressionTree(tree->root, tex_file, var_name_table);
+	TEX_PRINTF("\\begin{center} $f^{0}(");
+	PrintNString(tex_file, used_variable.string, used_variable.length);
+	TEX_PRINTF(") = ");
+	PrintExpressionTree(tree->root, tex_file, id_name_table);
 	TEX_PRINTF("$ \\end{center}\n");
 
 	Number_t* members = (Number_t*)calloc((size_t)(max_degree + 1), sizeof(Number_t));
 	if (!members)
 		TREE_ERROR_CHECK(TREE_ALLOC_ERROR);
 
-	members[0] = Eval(tree->root, var_name_table);
+	members[0] = Eval(tree->root, id_name_table);
 	TEX_PRINTF("\\begin{center} $f^{0}(%lg) = %lg$ \\end{center}\n", point, members[0]);
 
 	if (fclose(tex_file))
@@ -54,13 +69,13 @@ BinaryTreeStatusCode LaTexTaylorExpansion(Tree* tree, VariableNameTable* var_nam
 	diff_tree.root = tree->root;
 	diff_tree.diff_number = tree->diff_number;
 	for (size_t i = 0; i < (size_t)max_degree; i++) {
-		DIFFERENTIATION(&diff_tree, &diff_tree, var_name_table);
+		DIFFERENTIATION(&diff_tree, &diff_tree, id_name_table, 1);
 
 		tex_file = fopen(DIFF_LATEX_FILE_ DIFF_TEX_EXTENSION_, "a");
 		if (!tex_file)
 		TREE_ERROR_CHECK(TREE_FILE_OPEN_ERROR);
 
-		members[i + 1] = Eval(diff_tree.root, var_name_table);
+		members[i + 1] = Eval(diff_tree.root, id_name_table);
 		TEX_PRINTF("\\begin{center} $f^{%zu}(%lg) = %lg$ \\end{center}\n", diff_tree.diff_number, point, members[i + 1]);
 
 		if (fclose(tex_file))
@@ -72,12 +87,18 @@ BinaryTreeStatusCode LaTexTaylorExpansion(Tree* tree, VariableNameTable* var_nam
 		TREE_ERROR_CHECK(TREE_FILE_OPEN_ERROR);
 
 	TEX_PRINTF("\\section{Ответ}\n");
-	TEX_PRINTF("\\begin{center} $f(%s) = %lg", used_variable, members[0]);
+	TEX_PRINTF("\\begin{center} $f(");
+	PrintNString(tex_file, used_variable.string, used_variable.length);
+	TEX_PRINTF(") = %lg", members[0]);
 	for (size_t i = 0; i < (size_t)max_degree; i++) {
-		TEX_PRINTF(" + \\frac{%lg}{%zu!}\\cdot(%s - %lg)^{%zu}", members[i + 1], i + 1, used_variable, point, i + 1);
+		TEX_PRINTF(" + \\frac{%lg}{%zu!}\\cdot(", members[i + 1], i + 1);
+		PrintNString(tex_file, used_variable.string, used_variable.length);
+		TEX_PRINTF(" - %lg)^{%zu}", point, i + 1);
 	}
 
-	TEX_PRINTF(" + o((%s - %lg)^{%d})$ \\end{center}\n", used_variable, point, max_degree);
+	TEX_PRINTF(" + o((");
+	PrintNString(tex_file, used_variable.string, used_variable.length);
+	TEX_PRINTF(" - %lg)^{%d})$ \\end{center}\n", point, max_degree);
 
 	TEX_PRINTF("\\section{График членов Тейлора}\n");
 
@@ -97,8 +118,12 @@ BinaryTreeStatusCode LaTexTaylorExpansion(Tree* tree, VariableNameTable* var_nam
 			   "\\begin{tikzpicture}\n"
 			   "\\begin{axis} [\n"
 			   "\tlegend pos = north west,\n"
-			   "\txlabel = {$x$},\n"
-			   "\tylabel = {$f$},\n"
+			   "\txlabel = {$");
+	PrintNString(tex_file, id_name_table->data[id_name_table->size - 1].string, id_name_table->data[id_name_table->size - 1].length);
+	TEX_PRINTF("$},\n"
+			   "\tylabel = {$f(");
+	PrintNString(tex_file, id_name_table->data[id_name_table->size - 1].string, id_name_table->data[id_name_table->size - 1].length);
+	TEX_PRINTF(")$},\n"
 			   "\twidth = 300,\n"
 			   "\theight = 300,\n"
 			   "\tgrid = major,\n"
@@ -110,14 +135,19 @@ BinaryTreeStatusCode LaTexTaylorExpansion(Tree* tree, VariableNameTable* var_nam
 
 	for (size_t i = 0; i < (size_t)(max_degree + 1); i++) {
 		TEX_PRINTF("\\addplot+ [samples=750]{%lg", members[0]);
-		for (size_t j = 0; j < i; j++)
-			TEX_PRINTF(" + (%lg/%d) * (%s - %lg) ^ %zu", members[j + 1], Factorial(int(j + 1)), used_variable, point, j + 1);
+		for (size_t j = 0; j < i; j++) {
+			TEX_PRINTF(" + (%lg/%d) * (", members[j + 1], Factorial(int(j + 1)));
+			PrintNString(tex_file, "x", 1);
+			TEX_PRINTF(" - %lg) ^ %zu", point, j + 1);
+		}
 		TEX_PRINTF("};\n");
 	}
 
 	TEX_PRINTF("\\legend{\n");
 	for (size_t i = 0; i < diff_tree.diff_number + 1; i++) {
-		TEX_PRINTF("\t$o({x^{%zu}})$", i);
+		TEX_PRINTF("\t$o({");
+		PrintNString(tex_file, id_name_table->data[id_name_table->size - 1].string, id_name_table->data[id_name_table->size - 1].length);
+		TEX_PRINTF("^{%zu}})$", i);
 		if (i != diff_tree.diff_number)
 			TEX_PRINTF(",\n");
 		else
@@ -138,7 +168,7 @@ BinaryTreeStatusCode LaTexTaylorExpansion(Tree* tree, VariableNameTable* var_nam
 	return TREE_NO_ERROR;
 }
 
-BinaryTreeStatusCode LaTexDifferentiation(Tree* function_tree, Tree* diff_tree, VariableNameTable* var_name_table) {
+BinaryTreeStatusCode LaTexDifferentiation(Tree* function_tree, Tree* diff_tree, IdNameTable* id_name_table, int old_var_dif) {
 
 	BinaryTreeStatusCode tree_status = TREE_NO_ERROR;
 
@@ -150,7 +180,10 @@ BinaryTreeStatusCode LaTexDifferentiation(Tree* function_tree, Tree* diff_tree, 
 
 	diff_tree->diff_number = function_tree->diff_number + 1;
 
-	TEX_PRINTF("\\section{Производная $f^{(%zu)}$ по переменной \"$%s$\"}\n", diff_tree->diff_number, VarNameTableGetStateVariable(var_name_table));
+	Identifier used_variable = id_name_table->data[IdNameTableGetDiffVarNumber(id_name_table, old_var_dif)];
+	TEX_PRINTF("\\section{Производная $f^{(%zu)}$ по переменной \"$", diff_tree->diff_number);
+	PrintNString(tex_file, used_variable.string, used_variable.length);
+	TEX_PRINTF("$\"}\n");
 	TEX_PRINTF("\\renewcommand{\\thesubsection}{\\arabic{subsection}}\n"
 			   "\\titleformat{\\subsection}{\\normalfont\\bfseries}{}{0em}{#1\\ \\thesubsection}\n");
 
@@ -159,10 +192,10 @@ BinaryTreeStatusCode LaTexDifferentiation(Tree* function_tree, Tree* diff_tree, 
 	if (fclose(tex_file))
 		TREE_ERROR_CHECK(TREE_FILE_CLOSE_ERROR);
 
-	diff_tree->root = doDifferentiation(function_tree->root, var_name_table);
-	BINARY_TREE_GRAPH_DUMP(diff_tree, "ExpressionDifferentiation", diff_tree->root, var_name_table);
+	diff_tree->root = doDifferentiation(function_tree->root, id_name_table, used_variable.num);
+	BINARY_TREE_GRAPH_DUMP(diff_tree, "ExpressionDifferentiation", diff_tree->root, id_name_table);
 
-	LATEX_PRINT_TREE(diff_tree, var_name_table);
+	LATEX_PRINT_TREE(diff_tree, id_name_table);
 
 #ifdef DRAW_PLOT
 	tree_status = DrawGraph(diff_tree);
@@ -172,7 +205,7 @@ BinaryTreeStatusCode LaTexDifferentiation(Tree* function_tree, Tree* diff_tree, 
 	return TREE_NO_ERROR;
 }
 
-BinaryTreeStatusCode LaTexSubtreeDifferential(Node_t* subtree_root, Node_t* diff_subtree_root, VariableNameTable* var_name_table) {
+BinaryTreeStatusCode LaTexSubtreeDifferential(Node_t* subtree_root, Node_t* diff_subtree_root, IdNameTable* id_name_table) {
 
 	FILE* tex_file = fopen(DIFF_LATEX_FILE_ DIFF_TEX_EXTENSION_, "a");
 	if (!tex_file)
@@ -182,9 +215,9 @@ BinaryTreeStatusCode LaTexSubtreeDifferential(Node_t* subtree_root, Node_t* diff
 
 	TEX_PRINTF("\\subsection{Шаг}\n"
 			   "\\begin{center} $");
-	PrintExpressionTree(subtree_root, tex_file, var_name_table);
+	PrintExpressionTree(subtree_root, tex_file, id_name_table);
 	TEX_PRINTF("^{\\prime} = ");
-	PrintExpressionTree(diff_subtree_root, tex_file, var_name_table);
+	PrintExpressionTree(diff_subtree_root, tex_file, id_name_table);
 	TEX_PRINTF("$ \\end{center} \n\n");
 
 #undef TEX_PRINTF
@@ -195,7 +228,7 @@ BinaryTreeStatusCode LaTexSubtreeDifferential(Node_t* subtree_root, Node_t* diff
 	return TREE_NO_ERROR;
 }
 
-BinaryTreeStatusCode LaTexPrintTree(Tree* tree, VariableNameTable* var_name_table) {
+BinaryTreeStatusCode LaTexPrintTree(Tree* tree, IdNameTable* id_name_table) {
 
 	FILE* tex_file = fopen(DIFF_LATEX_FILE_ DIFF_TEX_EXTENSION_, "a");
 	if (!tex_file)
@@ -207,14 +240,14 @@ BinaryTreeStatusCode LaTexPrintTree(Tree* tree, VariableNameTable* var_name_tabl
 			   "\\subsection{Результат}\n");
 
 	TEX_PRINTF("\\begin{center} $f^{(%zu)}(", tree->diff_number);
-	for (size_t i = 0; i < var_name_table->size; i++) {
-		if (var_name_table->data[i].state == VAR_DIFF_STATUS_VAR) {
-				TEX_PRINTF("%s", var_name_table->data[i].symbol);
-				break;
+	for (size_t i = 0; i < id_name_table->size; i++) {
+		if (id_name_table->data[i].type == ID_VAR) {
+			PrintNString(tex_file, id_name_table->data[i].string, id_name_table->data[i].length);
+			break;
 		}
 	}
 	TEX_PRINTF(") = ");
-	PrintExpressionTree(tree->root, tex_file, var_name_table);
+	PrintExpressionTree(tree->root, tex_file, id_name_table);
 	TEX_PRINTF("$ \\end{center} \n");
 
 	if (fclose(tex_file))
@@ -225,7 +258,7 @@ BinaryTreeStatusCode LaTexPrintTree(Tree* tree, VariableNameTable* var_name_tabl
 	return TREE_NO_ERROR;
 }
 
-BinaryTreeStatusCode PrintExpressionTree(Node_t* node, FILE* tex_file, VariableNameTable* var_name_table) {
+BinaryTreeStatusCode PrintExpressionTree(Node_t* node, FILE* tex_file, IdNameTable* id_name_table) {
 
 	if (!node)
 		return TREE_NO_ERROR;
@@ -237,11 +270,11 @@ BinaryTreeStatusCode PrintExpressionTree(Node_t* node, FILE* tex_file, VariableN
 				case LOG:
 				case DIV: {
 					fprintf(tex_file, "(\\%s{", OpNameTableGetTexSymbol(node->data.val_op));
-					if (node->left) PrintExpressionTree(node->left, tex_file, var_name_table);
+					if (node->left) PrintExpressionTree(node->left, tex_file, id_name_table);
 					else TREE_ERROR_CHECK(TREE_LATEX_SYNTAX_ERROR);
 
 					fprintf(tex_file, "}{");
-					if (node->right) PrintExpressionTree(node->right, tex_file, var_name_table);
+					if (node->right) PrintExpressionTree(node->right, tex_file, id_name_table);
 					else TREE_ERROR_CHECK(TREE_LATEX_SYNTAX_ERROR);
 					fprintf(tex_file, "})");
 
@@ -252,11 +285,11 @@ BinaryTreeStatusCode PrintExpressionTree(Node_t* node, FILE* tex_file, VariableN
 				case MUL:
 				case SUB: {
 					fprintf(tex_file, "({");
-					if (node->left) PrintExpressionTree(node->left, tex_file, var_name_table);
+					if (node->left) PrintExpressionTree(node->left, tex_file, id_name_table);
 					else TREE_ERROR_CHECK(TREE_LATEX_SYNTAX_ERROR);
 
 					fprintf(tex_file, "}%s{", OpNameTableGetTexSymbol(node->data.val_op));
-					if (node->right) PrintExpressionTree(node->right, tex_file, var_name_table);
+					if (node->right) PrintExpressionTree(node->right, tex_file, id_name_table);
 					else TREE_ERROR_CHECK(TREE_LATEX_SYNTAX_ERROR);
 					fprintf(tex_file, "})");
 
@@ -268,7 +301,7 @@ BinaryTreeStatusCode PrintExpressionTree(Node_t* node, FILE* tex_file, VariableN
 				case EXP:
 				case SIN: {
 					fprintf(tex_file, "(%s{", OpNameTableGetTexSymbol(node->data.val_op));
-					if (node->left) PrintExpressionTree(node->left, tex_file, var_name_table);
+					if (node->left) PrintExpressionTree(node->left, tex_file, id_name_table);
 					else TREE_ERROR_CHECK(TREE_LATEX_SYNTAX_ERROR);
 					fprintf(tex_file, "})");
 
@@ -286,7 +319,7 @@ BinaryTreeStatusCode PrintExpressionTree(Node_t* node, FILE* tex_file, VariableN
 			break;
 		}
 		case VAR: {
-			fprintf(tex_file, "%s", VarNameTableGetSymbol(var_name_table, node->data.val_var));
+			PrintNString(tex_file, id_name_table->data[node->data.val_var].string, id_name_table->data[node->data.val_var].length);
 			break;
 		}
 		case UNW: return TREE_NO_ERROR;
@@ -296,7 +329,7 @@ BinaryTreeStatusCode PrintExpressionTree(Node_t* node, FILE* tex_file, VariableN
 	return TREE_NO_ERROR;
 }
 
-BinaryTreeStatusCode PrintMathExpression(Node_t* node, FILE* tex_file, VariableNameTable* var_name_table) {
+BinaryTreeStatusCode PrintMathExpression(Node_t* node, FILE* tex_file, IdNameTable* id_name_table) {
 
 	if (!node)
 		return TREE_NO_ERROR;
@@ -309,11 +342,11 @@ BinaryTreeStatusCode PrintMathExpression(Node_t* node, FILE* tex_file, VariableN
 				case AMOUNT_OF_OPERATIONS: break;
 				case LOG: {
 					TEX_PRINTF("(ln(");
-					if (node->right) PrintMathExpression(node->right, tex_file, var_name_table);
+					if (node->right) PrintMathExpression(node->right, tex_file, id_name_table);
 					else TREE_ERROR_CHECK(TREE_LATEX_SYNTAX_ERROR);
 
 					TEX_PRINTF(")/ln(");
-					if (node->left) PrintMathExpression(node->left, tex_file, var_name_table);
+					if (node->left) PrintMathExpression(node->left, tex_file, id_name_table);
 					else TREE_ERROR_CHECK(TREE_LATEX_SYNTAX_ERROR);
 					TEX_PRINTF("))");
 
@@ -325,11 +358,11 @@ BinaryTreeStatusCode PrintMathExpression(Node_t* node, FILE* tex_file, VariableN
 				case SUB:
 				case DIV: {
 					TEX_PRINTF("((");
-					if (node->left) PrintMathExpression(node->left, tex_file, var_name_table);
+					if (node->left) PrintMathExpression(node->left, tex_file, id_name_table);
 					else TREE_ERROR_CHECK(TREE_LATEX_SYNTAX_ERROR);
 
 					TEX_PRINTF(")%s(", OpNameTableGetMathSymbol(node->data.val_op));
-					if (node->right) PrintMathExpression(node->right, tex_file, var_name_table);
+					if (node->right) PrintMathExpression(node->right, tex_file, id_name_table);
 					else TREE_ERROR_CHECK(TREE_LATEX_SYNTAX_ERROR);
 					TEX_PRINTF("))");
 
@@ -339,7 +372,7 @@ BinaryTreeStatusCode PrintMathExpression(Node_t* node, FILE* tex_file, VariableN
 				case EXP:
 				case SQRT: {
 					TEX_PRINTF("(%s(", OpNameTableGetMathSymbol(node->data.val_op));
-					if (node->left) PrintMathExpression(node->left, tex_file, var_name_table);
+					if (node->left) PrintMathExpression(node->left, tex_file, id_name_table);
 					else TREE_ERROR_CHECK(TREE_LATEX_SYNTAX_ERROR);
 					TEX_PRINTF("))");
 
@@ -348,7 +381,7 @@ BinaryTreeStatusCode PrintMathExpression(Node_t* node, FILE* tex_file, VariableN
 				case COS:
 				case SIN: {
 					TEX_PRINTF("(%s(deg(", OpNameTableGetMathSymbol(node->data.val_op));
-					if (node->left) PrintMathExpression(node->left, tex_file, var_name_table);
+					if (node->left) PrintMathExpression(node->left, tex_file, id_name_table);
 					else TREE_ERROR_CHECK(TREE_LATEX_SYNTAX_ERROR);
 					TEX_PRINTF(")))");
 
@@ -366,7 +399,7 @@ BinaryTreeStatusCode PrintMathExpression(Node_t* node, FILE* tex_file, VariableN
 			break;
 		}
 		case VAR: {
-			TEX_PRINTF("(%s)", VarNameTableGetSymbol(var_name_table, node->data.val_var));
+			TEX_PRINTF("(x)");
 			break;
 		}
 		case UNW: return TREE_NO_ERROR;
@@ -378,14 +411,14 @@ BinaryTreeStatusCode PrintMathExpression(Node_t* node, FILE* tex_file, VariableN
 	return TREE_NO_ERROR;
 }
 
-BinaryTreeStatusCode DrawGraph(Tree* tree, VariableNameTable* var_name_table) {
+BinaryTreeStatusCode DrawGraph(Tree* tree, IdNameTable* id_name_table) {
 
 	FILE* tex_file = fopen(DIFF_LATEX_FILE_ DIFF_TEX_EXTENSION_, "a");
 	if (!tex_file)
 		TREE_ERROR_CHECK(TREE_FILE_OPEN_ERROR);
 
-	for (size_t i = 0, j = 0; i < var_name_table->size; i++) {
-		if (var_name_table->data[i].status == VAR_STATUS_USING)
+	for (size_t i = 0, j = 0; i < id_name_table->size; i++) {
+		if (id_name_table->data[i].type == ID_VAR)
 			j++;
 		if (j > 1)
 			return TREE_NO_ERROR;
@@ -398,8 +431,12 @@ BinaryTreeStatusCode DrawGraph(Tree* tree, VariableNameTable* var_name_table) {
 			   "\\begin{tikzpicture}\n"
 			   "\\begin{axis} [\n"
     		   "\tlegend pos = north west,\n"
-			   "\txlabel = {$x$},\n"
-			   "\tylabel = {$f$},\n"
+			   "\txlabel = {$");
+	PrintNString(tex_file, id_name_table->data[id_name_table->size - 1].string, id_name_table->data[id_name_table->size - 1].length);
+	TEX_PRINTF("$},\n"
+			   "\tylabel = {$f(");
+	PrintNString(tex_file, id_name_table->data[id_name_table->size - 1].string, id_name_table->data[id_name_table->size - 1].length);
+	TEX_PRINTF(")$},\n"
 			   "\twidth = 300,\n"
 			   "\theight = 300,\n"
 			   "\trestrict y to domain=-30:30,\n"
@@ -409,7 +446,7 @@ BinaryTreeStatusCode DrawGraph(Tree* tree, VariableNameTable* var_name_table) {
 			   "\\legend{\n"
 			   "\t$f^{(%zu)}$\n}\n", tree->diff_number);
 	TEX_PRINTF("\\addplot[blue, samples=750]{");
-	PrintMathExpression(tree->root, tex_file, var_name_table);
+	PrintMathExpression(tree->root, tex_file, id_name_table);
 	TEX_PRINTF("};\n"
 			   "\\end{axis}\n"
 			   "\\end{tikzpicture}\n"
