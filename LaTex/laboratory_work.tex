@@ -19,7 +19,7 @@
 \vspace*{1cm}
 \textbf{МОСКОВСКИЙ ФИЗИКО-ТЕХНИЧЕСКИЙ ИНСТИТУТ (НАЦИОНАЛЬНЫЙ ИССЛЕДОВАТЕЛЬСКИЙ УНИВЕРСИТЕТ)}\\
 \vspace{0.5cm} Физтех-школа Радиотехники и компьютерных технологий\\
-\vspace{5cm} \LARGE{Лабораторная работа 3.9.7\\
+\vspace{5cm} \LARGE{Лабораторная работа 4.5.6\\
 Исследование функции}
 \vfill
 \large{\textbf{Рогов Анатолий Б01-406}} \\
@@ -28,130 +28,133 @@
 \end{center}
 \end{titlepage}
 \chapter{Исходная функция}
-\hfil $f(ded) = (\frac{({(\sin{ded})}+{(\cos{ded})})}{({(\ln{ded})}+{9})})$\\
+\hfil $f(x) = ({({1}+{({x}^{({x}+{(\sin{x})})})})}\cdot{x})$\\
 \begin{figure}[h]
 \centering
 \begin{tikzpicture}
 \begin{axis} [
 	legend pos = north west,
-	xlabel = {$ded$},
-	ylabel = {$f(ded)$},
+	xlabel = {$x$},
+	ylabel = {$f(x)$},
 	width = 300,
 	height = 300,
-	restrict y to domain=-30:30,
+	restrict y to domain=-2:2,
 	grid = major,
 	enlargelimits=true,
 ]
 \legend{
 	$f^{(0)}$
 }
-\addplot[blue, samples=750]{(((((sin(deg((x)))))+((cos(deg((x)))))))/((((ln((x))))+((9)))))};
+\addplot[blue, samples=750]{(((((1))+((((x))^((((x))+((sin(deg((x)))))))))))*((x)))};
 \end{axis}
 \end{tikzpicture}
 \caption{График функции}
 \end{figure}
-\chapter{Разложение по формуле Тейлора до \\ $o((ded - ded_0)^{2})$ в точке $ded_0 = 1$}
-\begin{center} $f^{0}(ded) = (\frac{({(\sin{ded})}+{(\cos{ded})})}{({(\ln{ded})}+{9})})$ \end{center}
-\begin{center} $f^{0}(1) = 0.15353$ \end{center}
-\section{Производная $f^{(1)}$ по переменной "$ded$"}
+\chapter{Разложение по формуле Тейлора до \\ $o((x - x_0)^{2})$ в точке $x_0 = 2$}
+\begin{center} $f^{0}(x) = ({({1}+{({x}^{({x}+{(\sin{x})})})})}\cdot{x})$ \end{center}
+\begin{center} $f^{0}(2) = 17.025$ \end{center}
+\section{Производная $f^{(1)}$ по переменной "$x$"}
 \renewcommand{\thesubsection}{\arabic{subsection}}
 \titleformat{\subsection}{\normalfont\bfseries}{}{0em}{#1\ \thesubsection}
 \subsection{Шаг}
-\begin{center} $(\sin{ded})^{\prime} = (\cos{ded})$ \end{center} 
+\begin{center} $(\sin{x})^{\prime} = (\cos{x})$ \end{center} 
 
 \subsection{Шаг}
-\begin{center} $(\cos{ded})^{\prime} = ({-1}\cdot{(\sin{ded})})$ \end{center} 
+\begin{center} $({x}+{(\sin{x})})^{\prime} = ({1}+{(\cos{x})})$ \end{center} 
 
 \subsection{Шаг}
-\begin{center} $({(\sin{ded})}+{(\cos{ded})})^{\prime} = ({(\cos{ded})}+{({-1}\cdot{(\sin{ded})})})$ \end{center} 
+\begin{center} $({x}^{({x}+{(\sin{x})})})^{\prime} = ({({x}^{({x}+{(\sin{x})})})}\cdot{({({({1}+{(\cos{x})})}\cdot{(\ln{x})})}+{({({x}+{(\sin{x})})}\cdot{(\frac{1}{x})})})})$ \end{center} 
 
 \subsection{Шаг}
-\begin{center} $(\ln{ded})^{\prime} = (\frac{1}{ded})$ \end{center} 
+\begin{center} $({1}+{({x}^{({x}+{(\sin{x})})})})^{\prime} = ({({x}^{({x}+{(\sin{x})})})}\cdot{({({({1}+{(\cos{x})})}\cdot{(\ln{x})})}+{({({x}+{(\sin{x})})}\cdot{(\frac{1}{x})})})})$ \end{center} 
 
 \subsection{Шаг}
-\begin{center} $({(\ln{ded})}+{9})^{\prime} = (\frac{1}{ded})$ \end{center} 
-
-\subsection{Шаг}
-\begin{center} $(\frac{({(\sin{ded})}+{(\cos{ded})})}{({(\ln{ded})}+{9})})^{\prime} = (\frac{({({({(\cos{ded})}+{({-1}\cdot{(\sin{ded})})})}\cdot{({(\ln{ded})}+{9})})}-{({({(\sin{ded})}+{(\cos{ded})})}\cdot{(\frac{1}{ded})})})}{({({(\ln{ded})}+{9})}^{2})})$ \end{center} 
+\begin{center} $({({1}+{({x}^{({x}+{(\sin{x})})})})}\cdot{x})^{\prime} = ({({({({x}^{({x}+{(\sin{x})})})}\cdot{({({({1}+{(\cos{x})})}\cdot{(\ln{x})})}+{({({x}+{(\sin{x})})}\cdot{(\frac{1}{x})})})})}\cdot{x})}+{({1}+{({x}^{({x}+{(\sin{x})})})})})$ \end{center} 
 
 \titleformat{\subsection}{\normalfont\bfseries}{}{0em}{\thesubsection \ #1\ }
 \subsection{Результат}
-\begin{center} $f^{(1)}(ded) = (\frac{({({({(\cos{ded})}+{({-1}\cdot{(\sin{ded})})})}\cdot{({(\ln{ded})}+{9})})}-{({({(\sin{ded})}+{(\cos{ded})})}\cdot{(\frac{1}{ded})})})}{({({(\ln{ded})}+{9})}^{2})})$ \end{center} 
-\begin{center} $f^{1}(1) = -0.0505221$ \end{center}
-\section{Производная $f^{(2)}$ по переменной "$ded$"}
+\begin{center} $f^{(1)}(x) = ({({({({x}^{({x}+{(\sin{x})})})}\cdot{({({({1}+{(\cos{x})})}\cdot{(\ln{x})})}+{({({x}+{(\sin{x})})}\cdot{(\frac{1}{x})})})})}\cdot{x})}+{({1}+{({x}^{({x}+{(\sin{x})})})})})$ \end{center} 
+\begin{center} $f^{1}(2) = 36.4493$ \end{center}
+\section{Производная $f^{(2)}$ по переменной "$x$"}
 \renewcommand{\thesubsection}{\arabic{subsection}}
 \titleformat{\subsection}{\normalfont\bfseries}{}{0em}{#1\ \thesubsection}
 \subsection{Шаг}
-\begin{center} $(\cos{ded})^{\prime} = ({-1}\cdot{(\sin{ded})})$ \end{center} 
+\begin{center} $(\sin{x})^{\prime} = (\cos{x})$ \end{center} 
 
 \subsection{Шаг}
-\begin{center} $(\sin{ded})^{\prime} = (\cos{ded})$ \end{center} 
+\begin{center} $({x}+{(\sin{x})})^{\prime} = ({1}+{(\cos{x})})$ \end{center} 
 
 \subsection{Шаг}
-\begin{center} $({-1}\cdot{(\sin{ded})})^{\prime} = ({-1}\cdot{(\cos{ded})})$ \end{center} 
+\begin{center} $({x}^{({x}+{(\sin{x})})})^{\prime} = ({({x}^{({x}+{(\sin{x})})})}\cdot{({({({1}+{(\cos{x})})}\cdot{(\ln{x})})}+{({({x}+{(\sin{x})})}\cdot{(\frac{1}{x})})})})$ \end{center} 
 
 \subsection{Шаг}
-\begin{center} $({(\cos{ded})}+{({-1}\cdot{(\sin{ded})})})^{\prime} = ({({-1}\cdot{(\sin{ded})})}+{({-1}\cdot{(\cos{ded})})})$ \end{center} 
+\begin{center} $(\cos{x})^{\prime} = ({-1}\cdot{(\sin{x})})$ \end{center} 
 
 \subsection{Шаг}
-\begin{center} $(\ln{ded})^{\prime} = (\frac{1}{ded})$ \end{center} 
+\begin{center} $({1}+{(\cos{x})})^{\prime} = ({-1}\cdot{(\sin{x})})$ \end{center} 
 
 \subsection{Шаг}
-\begin{center} $({(\ln{ded})}+{9})^{\prime} = (\frac{1}{ded})$ \end{center} 
+\begin{center} $(\ln{x})^{\prime} = (\frac{1}{x})$ \end{center} 
 
 \subsection{Шаг}
-\begin{center} $({({(\cos{ded})}+{({-1}\cdot{(\sin{ded})})})}\cdot{({(\ln{ded})}+{9})})^{\prime} = ({({({({-1}\cdot{(\sin{ded})})}+{({-1}\cdot{(\cos{ded})})})}\cdot{({(\ln{ded})}+{9})})}+{({({(\cos{ded})}+{({-1}\cdot{(\sin{ded})})})}\cdot{(\frac{1}{ded})})})$ \end{center} 
+\begin{center} $({({1}+{(\cos{x})})}\cdot{(\ln{x})})^{\prime} = ({({({-1}\cdot{(\sin{x})})}\cdot{(\ln{x})})}+{({({1}+{(\cos{x})})}\cdot{(\frac{1}{x})})})$ \end{center} 
 
 \subsection{Шаг}
-\begin{center} $(\sin{ded})^{\prime} = (\cos{ded})$ \end{center} 
+\begin{center} $(\sin{x})^{\prime} = (\cos{x})$ \end{center} 
 
 \subsection{Шаг}
-\begin{center} $(\cos{ded})^{\prime} = ({-1}\cdot{(\sin{ded})})$ \end{center} 
+\begin{center} $({x}+{(\sin{x})})^{\prime} = ({1}+{(\cos{x})})$ \end{center} 
 
 \subsection{Шаг}
-\begin{center} $({(\sin{ded})}+{(\cos{ded})})^{\prime} = ({(\cos{ded})}+{({-1}\cdot{(\sin{ded})})})$ \end{center} 
+\begin{center} $(\frac{1}{x})^{\prime} = (\frac{-1}{({x}^{2})})$ \end{center} 
 
 \subsection{Шаг}
-\begin{center} $(\frac{1}{ded})^{\prime} = (\frac{-1}{({ded}^{2})})$ \end{center} 
+\begin{center} $({({x}+{(\sin{x})})}\cdot{(\frac{1}{x})})^{\prime} = ({({({1}+{(\cos{x})})}\cdot{(\frac{1}{x})})}+{({({x}+{(\sin{x})})}\cdot{(\frac{-1}{({x}^{2})})})})$ \end{center} 
 
 \subsection{Шаг}
-\begin{center} $({({(\sin{ded})}+{(\cos{ded})})}\cdot{(\frac{1}{ded})})^{\prime} = ({({({(\cos{ded})}+{({-1}\cdot{(\sin{ded})})})}\cdot{(\frac{1}{ded})})}+{({({(\sin{ded})}+{(\cos{ded})})}\cdot{(\frac{-1}{({ded}^{2})})})})$ \end{center} 
+\begin{center} $({({({1}+{(\cos{x})})}\cdot{(\ln{x})})}+{({({x}+{(\sin{x})})}\cdot{(\frac{1}{x})})})^{\prime} = ({({({({-1}\cdot{(\sin{x})})}\cdot{(\ln{x})})}+{({({1}+{(\cos{x})})}\cdot{(\frac{1}{x})})})}+{({({({1}+{(\cos{x})})}\cdot{(\frac{1}{x})})}+{({({x}+{(\sin{x})})}\cdot{(\frac{-1}{({x}^{2})})})})})$ \end{center} 
 
 \subsection{Шаг}
-\begin{center} $({({({(\cos{ded})}+{({-1}\cdot{(\sin{ded})})})}\cdot{({(\ln{ded})}+{9})})}-{({({(\sin{ded})}+{(\cos{ded})})}\cdot{(\frac{1}{ded})})})^{\prime} = ({({({({({-1}\cdot{(\sin{ded})})}+{({-1}\cdot{(\cos{ded})})})}\cdot{({(\ln{ded})}+{9})})}+{({({(\cos{ded})}+{({-1}\cdot{(\sin{ded})})})}\cdot{(\frac{1}{ded})})})}-{({({({(\cos{ded})}+{({-1}\cdot{(\sin{ded})})})}\cdot{(\frac{1}{ded})})}+{({({(\sin{ded})}+{(\cos{ded})})}\cdot{(\frac{-1}{({ded}^{2})})})})})$ \end{center} 
+\begin{center} $({({x}^{({x}+{(\sin{x})})})}\cdot{({({({1}+{(\cos{x})})}\cdot{(\ln{x})})}+{({({x}+{(\sin{x})})}\cdot{(\frac{1}{x})})})})^{\prime} = ({({({({x}^{({x}+{(\sin{x})})})}\cdot{({({({1}+{(\cos{x})})}\cdot{(\ln{x})})}+{({({x}+{(\sin{x})})}\cdot{(\frac{1}{x})})})})}\cdot{({({({1}+{(\cos{x})})}\cdot{(\ln{x})})}+{({({x}+{(\sin{x})})}\cdot{(\frac{1}{x})})})})}+{({({x}^{({x}+{(\sin{x})})})}\cdot{({({({({-1}\cdot{(\sin{x})})}\cdot{(\ln{x})})}+{({({1}+{(\cos{x})})}\cdot{(\frac{1}{x})})})}+{({({({1}+{(\cos{x})})}\cdot{(\frac{1}{x})})}+{({({x}+{(\sin{x})})}\cdot{(\frac{-1}{({x}^{2})})})})})})})$ \end{center} 
 
 \subsection{Шаг}
-\begin{center} $(\ln{ded})^{\prime} = (\frac{1}{ded})$ \end{center} 
+\begin{center} $({({({x}^{({x}+{(\sin{x})})})}\cdot{({({({1}+{(\cos{x})})}\cdot{(\ln{x})})}+{({({x}+{(\sin{x})})}\cdot{(\frac{1}{x})})})})}\cdot{x})^{\prime} = ({({({({({({x}^{({x}+{(\sin{x})})})}\cdot{({({({1}+{(\cos{x})})}\cdot{(\ln{x})})}+{({({x}+{(\sin{x})})}\cdot{(\frac{1}{x})})})})}\cdot{({({({1}+{(\cos{x})})}\cdot{(\ln{x})})}+{({({x}+{(\sin{x})})}\cdot{(\frac{1}{x})})})})}+{({({x}^{({x}+{(\sin{x})})})}\cdot{({({({({-1}\cdot{(\sin{x})})}\cdot{(\ln{x})})}+{({({1}+{(\cos{x})})}\cdot{(\frac{1}{x})})})}+{({({({1}+{(\cos{x})})}\cdot{(\frac{1}{x})})}+{({({x}+{(\sin{x})})}\cdot{(\frac{-1}{({x}^{2})})})})})})})}\cdot{x})}+{({({x}^{({x}+{(\sin{x})})})}\cdot{({({({1}+{(\cos{x})})}\cdot{(\ln{x})})}+{({({x}+{(\sin{x})})}\cdot{(\frac{1}{x})})})})})$ \end{center} 
 
 \subsection{Шаг}
-\begin{center} $({(\ln{ded})}+{9})^{\prime} = (\frac{1}{ded})$ \end{center} 
+\begin{center} $(\sin{x})^{\prime} = (\cos{x})$ \end{center} 
 
 \subsection{Шаг}
-\begin{center} $({({(\ln{ded})}+{9})}^{2})^{\prime} = ({({2}\cdot{({(\ln{ded})}+{9})})}\cdot{(\frac{1}{ded})})$ \end{center} 
+\begin{center} $({x}+{(\sin{x})})^{\prime} = ({1}+{(\cos{x})})$ \end{center} 
 
 \subsection{Шаг}
-\begin{center} $(\frac{({({({(\cos{ded})}+{({-1}\cdot{(\sin{ded})})})}\cdot{({(\ln{ded})}+{9})})}-{({({(\sin{ded})}+{(\cos{ded})})}\cdot{(\frac{1}{ded})})})}{({({(\ln{ded})}+{9})}^{2})})^{\prime} = (\frac{({({({({({({({-1}\cdot{(\sin{ded})})}+{({-1}\cdot{(\cos{ded})})})}\cdot{({(\ln{ded})}+{9})})}+{({({(\cos{ded})}+{({-1}\cdot{(\sin{ded})})})}\cdot{(\frac{1}{ded})})})}-{({({({(\cos{ded})}+{({-1}\cdot{(\sin{ded})})})}\cdot{(\frac{1}{ded})})}+{({({(\sin{ded})}+{(\cos{ded})})}\cdot{(\frac{-1}{({ded}^{2})})})})})}\cdot{({({(\ln{ded})}+{9})}^{2})})}-{({({({({(\cos{ded})}+{({-1}\cdot{(\sin{ded})})})}\cdot{({(\ln{ded})}+{9})})}-{({({(\sin{ded})}+{(\cos{ded})})}\cdot{(\frac{1}{ded})})})}\cdot{({({2}\cdot{({(\ln{ded})}+{9})})}\cdot{(\frac{1}{ded})})})})}{({({({(\ln{ded})}+{9})}^{2})}^{2})})$ \end{center} 
+\begin{center} $({x}^{({x}+{(\sin{x})})})^{\prime} = ({({x}^{({x}+{(\sin{x})})})}\cdot{({({({1}+{(\cos{x})})}\cdot{(\ln{x})})}+{({({x}+{(\sin{x})})}\cdot{(\frac{1}{x})})})})$ \end{center} 
+
+\subsection{Шаг}
+\begin{center} $({1}+{({x}^{({x}+{(\sin{x})})})})^{\prime} = ({({x}^{({x}+{(\sin{x})})})}\cdot{({({({1}+{(\cos{x})})}\cdot{(\ln{x})})}+{({({x}+{(\sin{x})})}\cdot{(\frac{1}{x})})})})$ \end{center} 
+
+\subsection{Шаг}
+\begin{center} $({({({({x}^{({x}+{(\sin{x})})})}\cdot{({({({1}+{(\cos{x})})}\cdot{(\ln{x})})}+{({({x}+{(\sin{x})})}\cdot{(\frac{1}{x})})})})}\cdot{x})}+{({1}+{({x}^{({x}+{(\sin{x})})})})})^{\prime} = ({({({({({({({x}^{({x}+{(\sin{x})})})}\cdot{({({({1}+{(\cos{x})})}\cdot{(\ln{x})})}+{({({x}+{(\sin{x})})}\cdot{(\frac{1}{x})})})})}\cdot{({({({1}+{(\cos{x})})}\cdot{(\ln{x})})}+{({({x}+{(\sin{x})})}\cdot{(\frac{1}{x})})})})}+{({({x}^{({x}+{(\sin{x})})})}\cdot{({({({({-1}\cdot{(\sin{x})})}\cdot{(\ln{x})})}+{({({1}+{(\cos{x})})}\cdot{(\frac{1}{x})})})}+{({({({1}+{(\cos{x})})}\cdot{(\frac{1}{x})})}+{({({x}+{(\sin{x})})}\cdot{(\frac{-1}{({x}^{2})})})})})})})}\cdot{x})}+{({({x}^{({x}+{(\sin{x})})})}\cdot{({({({1}+{(\cos{x})})}\cdot{(\ln{x})})}+{({({x}+{(\sin{x})})}\cdot{(\frac{1}{x})})})})})}+{({({x}^{({x}+{(\sin{x})})})}\cdot{({({({1}+{(\cos{x})})}\cdot{(\ln{x})})}+{({({x}+{(\sin{x})})}\cdot{(\frac{1}{x})})})})})$ \end{center} 
 
 \titleformat{\subsection}{\normalfont\bfseries}{}{0em}{\thesubsection \ #1\ }
 \subsection{Результат}
-\begin{center} $f^{(2)}(ded) = (\frac{({({({({({({({-1}\cdot{(\sin{ded})})}+{({-1}\cdot{(\cos{ded})})})}\cdot{({(\ln{ded})}+{9})})}+{({({(\cos{ded})}+{({-1}\cdot{(\sin{ded})})})}\cdot{(\frac{1}{ded})})})}-{({({({(\cos{ded})}+{({-1}\cdot{(\sin{ded})})})}\cdot{(\frac{1}{ded})})}+{({({(\sin{ded})}+{(\cos{ded})})}\cdot{(\frac{-1}{({ded}^{2})})})})})}\cdot{({({(\ln{ded})}+{9})}^{2})})}-{({({({({(\cos{ded})}+{({-1}\cdot{(\sin{ded})})})}\cdot{({(\ln{ded})}+{9})})}-{({({(\sin{ded})}+{(\cos{ded})})}\cdot{(\frac{1}{ded})})})}\cdot{({({2}\cdot{({(\ln{ded})}+{9})})}\cdot{(\frac{1}{ded})})})})}{({({({(\ln{ded})}+{9})}^{2})}^{2})})$ \end{center} 
-\begin{center} $f^{2}(1) = -0.125244$ \end{center}
+\begin{center} $f^{(2)}(x) = ({({({({({({({x}^{({x}+{(\sin{x})})})}\cdot{({({({1}+{(\cos{x})})}\cdot{(\ln{x})})}+{({({x}+{(\sin{x})})}\cdot{(\frac{1}{x})})})})}\cdot{({({({1}+{(\cos{x})})}\cdot{(\ln{x})})}+{({({x}+{(\sin{x})})}\cdot{(\frac{1}{x})})})})}+{({({x}^{({x}+{(\sin{x})})})}\cdot{({({({({-1}\cdot{(\sin{x})})}\cdot{(\ln{x})})}+{({({1}+{(\cos{x})})}\cdot{(\frac{1}{x})})})}+{({({({1}+{(\cos{x})})}\cdot{(\frac{1}{x})})}+{({({x}+{(\sin{x})})}\cdot{(\frac{-1}{({x}^{2})})})})})})})}\cdot{x})}+{({({x}^{({x}+{(\sin{x})})})}\cdot{({({({1}+{(\cos{x})})}\cdot{(\ln{x})})}+{({({x}+{(\sin{x})})}\cdot{(\frac{1}{x})})})})})}+{({({x}^{({x}+{(\sin{x})})})}\cdot{({({({1}+{(\cos{x})})}\cdot{(\ln{x})})}+{({({x}+{(\sin{x})})}\cdot{(\frac{1}{x})})})})})$ \end{center} 
+\begin{center} $f^{2}(2) = 68.2552$ \end{center}
 \section{Ответ}
-\begin{center} $f(ded) = 0.15353 + \frac{-0.0505221}{1!}\cdot(ded - 1)^{1} + \frac{-0.125244}{2!}\cdot(ded - 1)^{2} + o((ded - 1)^{2})$ \end{center}
+\begin{center} $f(x) = 17.025 + \frac{36.4493}{1!}\cdot(x - 2)^{1} + \frac{68.2552}{2!}\cdot(x - 2)^{2} + o((x - 2)^{2})$ \end{center}
 \section{График членов Тейлора}
 \pgfplotsset{
 	colormap={bright}{
-	rgb255=(31,219,68),
-	rgb255=(222,217,147),
-	rgb255=(188,37,70)
+	rgb255=(213,9,83),
+	rgb255=(157,218,50),
+	rgb255=(75,226,243)
 }}
 \begin{figure}[h]
 \centering
 \begin{tikzpicture}
 \begin{axis} [
 	legend pos = north west,
-	xlabel = {$ded$},
-	ylabel = {$f(ded)$},
+	xlabel = {$x$},
+	ylabel = {$f(x)$},
 	width = 300,
 	height = 300,
 	grid = major,
@@ -160,13 +163,13 @@
 	cycle list={[of colormap]},
 	every axis plot/.append style={mark=none,ultra thick}
 ]
-\addplot+ [samples=750]{0.15353};
-\addplot+ [samples=750]{0.15353 + (-0.0505221/1) * (x - 1) ^ 1};
-\addplot+ [samples=750]{0.15353 + (-0.0505221/1) * (x - 1) ^ 1 + (-0.125244/2) * (x - 1) ^ 2};
+\addplot+ [samples=750]{17.025};
+\addplot+ [samples=750]{17.025 + (36.4493/1) * (x - 2) ^ 1};
+\addplot+ [samples=750]{17.025 + (36.4493/1) * (x - 2) ^ 1 + (68.2552/2) * (x - 2) ^ 2};
 \legend{
-	$o({ded^{0}})$,
-	$o({ded^{1}})$,
-	$o({ded^{2}})$
+	$o({x^{0}})$,
+	$o({x^{1}})$,
+	$o({x^{2}})$
 }
 \end{axis}
 \end{tikzpicture}

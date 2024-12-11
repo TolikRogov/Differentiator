@@ -102,6 +102,18 @@ static BinaryTreeStatusCode PrintTokenValue(Token* token, IdNameTable* id_name_t
 	return TREE_NO_ERROR;
 }
 
+BinaryTreeStatusCode PrintTokenValueGrammar(Token* token) {
+	switch (token->type) {
+		case NUM: { printf(GREEN("%lg"), token->data.val_num); break; }
+		case VAR: { printf(GREEN("%zu"), token->data.val_var); break; }
+		case OP:  { printf(GREEN("%s"), OpNameTableGetMathSymbol(token->data.val_op)); break; }
+		case UNW:
+		default:  { printf(GREEN("%s"), RET_STRING(UNW)); break; }
+	}
+	printf("\n");
+	return TREE_NO_ERROR;
+}
+
 BinaryTreeStatusCode PrintLexer(Lexer* lexer, IdNameTable* id_name_table) {
 
 	if (!lexer)

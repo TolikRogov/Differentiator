@@ -439,7 +439,7 @@ BinaryTreeStatusCode DrawGraph(Tree* tree, IdNameTable* id_name_table) {
 	TEX_PRINTF(")$},\n"
 			   "\twidth = 300,\n"
 			   "\theight = 300,\n"
-			   "\trestrict y to domain=-30:30,\n"
+			   "\trestrict y to domain=-2:2,\n"
     		   "\tgrid = major,\n"
 			   "\tenlargelimits=true,\n"
 			   "]\n"

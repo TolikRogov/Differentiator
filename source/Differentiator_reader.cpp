@@ -8,12 +8,18 @@ Node_t* GetGrammar(Lexer* lexer, size_t* pc);
 Node_t* GetExpression(Lexer* lexer, size_t* pc);
 Node_t* GetTerminator(Lexer* lexer, size_t* pc);
 Node_t* GetPriority(Lexer* lexer, size_t* pc);
+Node_t* GetPower(Lexer* lexer, size_t* pc);
 Node_t* GetFunction(Lexer* lexer, size_t* pc);
 Node_t* GetIdentifier(Lexer* lexer, size_t* pc);
 Node_t* GetNumber(Lexer* lexer, size_t* pc);
 
 Node_t* GetNumber(Lexer* lexer, size_t* pc) {
-	printf("Number %zu\n", *pc);
+
+#ifdef PRINT_DEBUG
+	printf("Number (%zu): ", *pc);
+	PrintTokenValueGrammar(&lexer->tokens[*pc]);
+#endif
+
 	if (lexer->tokens[*pc].type == NUM)
 		return _NUM(lexer->tokens[(*pc)++].data.val_num);
 	else
@@ -22,7 +28,12 @@ Node_t* GetNumber(Lexer* lexer, size_t* pc) {
 }
 
 Node_t* GetIdentifier(Lexer* lexer, size_t* pc) {
-	printf("Identifier %zu\n", *pc);
+
+#ifdef PRINT_DEBUG
+	printf("Identifier (%zu): ", *pc);
+	PrintTokenValueGrammar(&lexer->tokens[*pc]);
+#endif
+
 	if (lexer->tokens[*pc].type == VAR)
 		return _VAR(lexer->tokens[(*pc)++].data.val_var);
 	else
@@ -30,7 +41,12 @@ Node_t* GetIdentifier(Lexer* lexer, size_t* pc) {
 }
 
 Node_t* GetFunction(Lexer* lexer, size_t* pc) {
-	printf("Function %zu\n", *pc);
+
+#ifdef PRINT_DEBUG
+	printf("Function (%zu): ", *pc);
+	PrintTokenValueGrammar(&lexer->tokens[*pc]);
+#endif
+
 	Node_t* node = NULL;
 
 	if (lexer->tokens[*pc].type == OP) {
@@ -56,6 +72,24 @@ Node_t* GetFunction(Lexer* lexer, size_t* pc) {
 				case SQRT: return node = _SQRT(node);
 				case LN:   return node = _LN(node);
 				case EXP:  return node = _EXP(node);
+				case LOG: {
+					if (lexer->tokens[*pc].data.val_op == OPEN_BRACKET) {
+						(*pc)++;
+						Node_t* node2 = GetExpression(lexer, pc);
+						if (!node2) {
+							TREE_ERROR_MESSAGE(TREE_EXPRESSION_SYNTAX_ERROR);
+							return NULL;
+						}
+
+						if (lexer->tokens[*pc].data.val_op != CLOSE_BRACKET) {
+							TREE_ERROR_MESSAGE(TREE_EXPRESSION_SYNTAX_ERROR);
+							return NULL;
+						}
+
+						(*pc)++;
+						return node2 = _LOG(node, node2);
+					}
+				}
 				default:   return NULL;
 			}
 		}
@@ -64,8 +98,40 @@ Node_t* GetFunction(Lexer* lexer, size_t* pc) {
 	return node;
 }
 
+Node_t* GetPower(Lexer* lexer, size_t* pc) {
+
+#ifdef PRINT_DEBUG
+	printf("Power (%zu): ", *pc);
+	PrintTokenValueGrammar(&lexer->tokens[*pc]);
+#endif
+
+	Node_t* node1 = GetPriority(lexer, pc);
+	if (!node1) {
+		TREE_ERROR_MESSAGE(TREE_EXPRESSION_SYNTAX_ERROR);
+		return NULL;
+	}
+
+	while (lexer->tokens[*pc].data.val_op == POW) {
+		(*pc)++;
+		Node_t* node2 = GetPriority(lexer, pc);
+		if (!node2) {
+			TREE_ERROR_MESSAGE(TREE_EXPRESSION_SYNTAX_ERROR);
+			return NULL;
+		}
+
+		node1 = _POW(node1, node2);
+	}
+
+	return node1;
+}
+
 Node_t* GetPriority(Lexer* lexer, size_t* pc) {
-	printf("Priority %zu\n", *pc);
+
+#ifdef PRINT_DEBUG
+	printf("Priority (%zu): ", *pc);
+	PrintTokenValueGrammar(&lexer->tokens[*pc]);
+#endif
+
 	Node_t* node = NULL;
 
 	if (lexer->tokens[*pc].data.val_op == OPEN_BRACKET) {
@@ -84,17 +150,26 @@ Node_t* GetPriority(Lexer* lexer, size_t* pc) {
 		(*pc)++;
 		return node;
 	}
-	else if ((node = GetNumber(lexer, pc)) != NULL)
+	if ((node = GetNumber(lexer, pc)) != NULL)
 		return node;
-	else if ((node = GetIdentifier(lexer, pc)) != NULL)
+
+	if ((node = GetIdentifier(lexer, pc)) != NULL)
 		return node;
-	else
-		return GetFunction(lexer, pc);
+
+	if ((node = GetFunction(lexer, pc)) != NULL)
+		return node;
+
+	return NULL;
 }
 
 Node_t* GetTerminator(Lexer* lexer, size_t* pc) {
-	printf("Terminator %zu\n", *pc);
-	Node_t* node1 = GetPriority(lexer, pc);
+
+#ifdef PRINT_DEBUG
+	printf("Terminator (%zu): ", *pc);
+	PrintTokenValueGrammar(&lexer->tokens[*pc]);
+#endif
+
+	Node_t* node1 = GetPower(lexer, pc);
 	if (!node1) {
 		TREE_ERROR_MESSAGE(TREE_EXPRESSION_SYNTAX_ERROR);
 		return NULL;
@@ -102,7 +177,7 @@ Node_t* GetTerminator(Lexer* lexer, size_t* pc) {
 
 	while (lexer->tokens[*pc].data.val_op == MUL || lexer->tokens[*pc].data.val_op == DIV) {
 		OpNum op = lexer->tokens[(*pc)++].data.val_op;
-		Node_t* node2 = GetPriority(lexer, pc);
+		Node_t* node2 = GetPower(lexer, pc);
 		if (!node2) {
 			TREE_ERROR_MESSAGE(TREE_EXPRESSION_SYNTAX_ERROR);
 			return NULL;
@@ -118,7 +193,12 @@ Node_t* GetTerminator(Lexer* lexer, size_t* pc) {
 }
 
 Node_t* GetExpression(Lexer* lexer, size_t* pc) {
-	printf("Expression %zu\n", *pc);
+
+#ifdef PRINT_DEBUG
+	printf("Expression (%zu): ", *pc);
+	PrintTokenValueGrammar(&lexer->tokens[*pc]);
+#endif
+
 	Node_t* node1 = GetTerminator(lexer, pc);
 	if (!node1) {
 		TREE_ERROR_MESSAGE(TREE_EXPRESSION_SYNTAX_ERROR);
@@ -143,7 +223,12 @@ Node_t* GetExpression(Lexer* lexer, size_t* pc) {
 }
 
 Node_t* GetGrammar(Lexer* lexer, size_t* pc) {
-	printf("Grammar %zu\n", *pc);
+
+#ifdef PRINT_DEBUG
+	printf("Grammar (%zu): ", *pc);
+	PrintTokenValueGrammar(&lexer->tokens[*pc]);
+#endif
+
 	Node_t* node = GetExpression(lexer, pc);
 	if (!node) {
 		TREE_ERROR_MESSAGE(TREE_EXPRESSION_SYNTAX_ERROR);

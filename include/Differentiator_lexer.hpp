@@ -55,3 +55,4 @@ BinaryTreeStatusCode LexerRealloc(Lexer* lexer);
 BinaryTreeStatusCode PrintLexer(Lexer* lexer, IdNameTable* id_name_table);
 BinaryTreeStatusCode SkipExtra(const char* buffer, size_t* token_start);
 BinaryTreeStatusCode LexicalAnalysis(char* buffer, Lexer* lexer, IdNameTable* id_name_table, size_t size);
+BinaryTreeStatusCode PrintTokenValueGrammar(Token* token);

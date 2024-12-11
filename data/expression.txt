@@ -1,1 +1,1 @@
-(sin(ded) + cos(ded)) / (ln(ded) + 9)$
+(1 + (x ^ (x + sin(x)))) * x$
